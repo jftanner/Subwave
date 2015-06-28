@@ -67,9 +67,7 @@ public class ClientTUI extends ClientUIFramework {
                   displayHelp(Command.MESSAGE);
                   return;
                }
-               conversationID = Integer.parseInt(tokens[1]);
-               messageStartIndex += tokens[1].length();
-               messageStartIndex = input.indexOf(tokens[2], messageStartIndex);
+               messageText = recombineTokensAfter(tokens, input, 2);
                break;
 
             case EMOTE:
@@ -78,9 +76,7 @@ public class ClientTUI extends ClientUIFramework {
                   displayHelp(Command.MESSAGE);
                   return;
                }
-               conversationID = Integer.parseInt(tokens[1]);
-               messageStartIndex += tokens[1].length();
-               messageStartIndex = input.indexOf(tokens[2], messageStartIndex);
+               messageText = recombineTokensAfter(tokens, input, 2);
                break;
 
             case REPLY:
@@ -158,6 +154,11 @@ public class ClientTUI extends ClientUIFramework {
       ArrayList<String> tokens = new ArrayList<String>();
       while (tokenizer.hasNext()) tokens.add(tokenizer.next());
       return tokens.toArray(new String[tokens.size()]);
+   }
+
+   private String recombineTokensAfter(String[] tokens, String original, int lastUsedIndex) {
+      if (lastUsedIndex > tokens.length) return null;
+      return original.substring(original.indexOf(tokens[lastUsedIndex]));
    }
 
    protected void handleServerInput(Message message) {
