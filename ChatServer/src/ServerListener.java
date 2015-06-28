@@ -59,6 +59,10 @@ public class ServerListener extends Thread {
             Message finalACK = new Message(MessageType.NETWORK_CONNECT, 0, clientID, CONNECTION_FINAL_ACK);
             connection.send(finalACK);
 
+            // TODO Remove debug code
+            Message debugConnect = new Message(MessageType.DEBUG_MESSAGE, 0, clientID, "New client: " + nickname);
+            Server.broadcast(debugConnect);
+
          } catch (IOException e) {
             System.err.println("IO exception thrown by SeverListener.");
             e.printStackTrace();

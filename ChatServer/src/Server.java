@@ -48,4 +48,10 @@ public class Server {
       // Return the next client ID available and increment the counter.
       return nextClientID++;
    }
+
+   public synchronized static void broadcast(Message message) {
+      for (ClientRecord client : clientMap.values()) {
+         client.clientConnection.send(message);
+      }
+   }
 }
