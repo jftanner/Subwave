@@ -18,7 +18,7 @@ public class ConnectionListener extends Thread {
       while (!connection.isClosed()) {
          Message message = connection.receive();
          if (message == null) continue;
-         Server.handleClientMessage(connection, message);
+         Server.sortClientMessage(connection, message);
       }
       Server.removeClient(connection.getClientID());
    }

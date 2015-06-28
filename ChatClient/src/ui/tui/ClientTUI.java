@@ -62,6 +62,10 @@ public class ClientTUI extends ClientUIFramework {
             case REPLY:
                messageType = MessageType.CHAT_MESSAGE;
 
+            case CONVERSATION_NEW:
+               // TODO start new conversation.
+               break;
+
             case CONVERSATION_INVITE:
                // TODO conversation invite.
                break;

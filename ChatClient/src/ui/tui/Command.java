@@ -13,6 +13,8 @@ public enum Command {
    REPLY("\\r"),
    REPLY_VERBOSE("\\reply"),
 
+   CONVERSATION_NEW("\\new"),
+
    CONVERSATION_INVITE("\\i"),
    CONVERSATION_INVITE_VERBOSE("\\invite"),
 
@@ -54,6 +56,8 @@ public enum Command {
 
       if (token.equalsIgnoreCase(REPLY.value)) return REPLY;
       if (token.equalsIgnoreCase(REPLY_VERBOSE.value)) return REPLY;
+
+      if (token.equalsIgnoreCase(CONVERSATION_NEW.value)) return CONVERSATION_NEW;
 
       if (token.equalsIgnoreCase(CONVERSATION_INVITE.value)) return CONVERSATION_INVITE;
       if (token.equalsIgnoreCase(CONVERSATION_INVITE_VERBOSE.value)) return CONVERSATION_INVITE;

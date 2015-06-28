@@ -7,4 +7,5 @@ public class Settings {
    public static final int DEFAULT_PORT = 4444;
    public static final String DEFAULT_ADDRESS = "localhost";
    public static final String DEFAULT_NICKNAME = "Someone";
+   public static final String DEFAULT_CONVERSATION_NAME = "Conversation";
 }

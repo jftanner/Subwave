@@ -12,18 +12,30 @@ import java.util.Iterator;
 public class Conversation {
 
    public final int conversationID;
-   private HashSet<ClientRecord> members = new HashSet<ClientRecord>();
+   private String name;
+   private HashSet<ClientRecord> members;
 
-   public Conversation(int conversationID) {
+   public Conversation(int conversationID, String name) {
       this.conversationID = conversationID;
+      this.name = name;
+      members = new HashSet<ClientRecord>();
    }
 
    public synchronized boolean addMember(ClientRecord client) {
-      return members.add(client);
+      boolean result = members.add(client);
+
+      // Announce to all members if the add succeeded.
+      if (result) {
+         Message reply = new Message(MessageType.CONVERSATION_JOIN, conversationID, client.clientID, client.getNickname());
+         broadcastToConversation(reply);
+      }
+      return result;
    }
 
    public synchronized boolean removeMember(ClientRecord client) {
-      return members.remove(client);
+      boolean result = members.remove(client);
+      if (members.size() < 1) Server.removeConversation(conversationID);
+      return result;
    }
 
    public synchronized void removeDisconnected() {
@@ -54,5 +66,17 @@ public class Conversation {
       if (auditNeeded) removeDisconnected();
 
       return true;
+   }
+
+   public boolean hasMembers() {
+      return members.size() > 0;
+   }
+
+   public String getName() {
+      return name;
+   }
+
+   public void setName(String name) {
+      this.name = name;
    }
 }

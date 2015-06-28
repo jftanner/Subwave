@@ -14,6 +14,7 @@ public class Message implements Serializable {
    public static final String DISCONNECT_UNEXPECTED = "Disconnected";
    public static final String UNHANDLED_MSG = "Not configured to process that message type";
    public static final String INVALID_SOURCEID = "ClientID does not match ID of source";
+   public static final String INVALID_CONVERSATION = "ConversationID does not match a valid conversation.";
 
    public final MessageType messageType;
    public final int conversationID;

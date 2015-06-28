@@ -6,6 +6,7 @@ package com.tanndev.subwave.common;
 public enum MessageType {
    CHAT_MESSAGE("MSG"),
    CHAT_EMOTE("EMOTE"),
+   CONVERSATION_NEW("NEW"),
    CONVERSATION_INVITE("INVITE"),
    CONVERSATION_JOIN("JOIN"),
    CONVERSATION_QUIT("LEAVE"),

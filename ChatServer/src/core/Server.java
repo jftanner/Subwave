@@ -14,7 +14,7 @@ public class Server {
 
 
    private static TreeMap<Integer, ClientRecord> clientMap = new TreeMap<Integer, ClientRecord>();
-   private static TreeMap<Integer, Conversation> conversations = new TreeMap<Integer, Conversation>();
+   private static TreeMap<Integer, Conversation> conversationMap = new TreeMap<Integer, Conversation>();
    private static int nextUniqueID = 1;
 
    /**
@@ -52,6 +52,22 @@ public class Server {
       }
    }
 
+   public synchronized static Conversation addConversation(int conversationID, String conversationName) {
+      Conversation conversation = new Conversation(conversationID, conversationName);
+      if (conversationMap.putIfAbsent(conversationID, conversation) != null) {
+         System.err.println("Attempted to add a non-unique conversationID to the conversation map.");
+         return null;
+      }
+      return conversation;
+   }
+
+   public synchronized static void removeConversation(int conversationID) {
+      Conversation conversation = conversationMap.remove(conversationID);
+      if (conversation != null) {
+         // TODO Kick existing members of the conversation.
+      }
+   }
+
    /**
     * Returns the next available unique ID for a client or conversation and increments the counter.
     * <p/>
@@ -70,39 +86,124 @@ public class Server {
       }
    }
 
-   protected static void handleClientMessage(Connection connection, Message message) {
+   protected static void sortClientMessage(Connection connection, Message message) {
       if (message == null) return;
-      int sourceID = connection.getClientID();
-      Message reply;
       switch (message.messageType) {
-         case CHAT_MESSAGE:
+         case CHAT_MESSAGE: // Client sending a message to an existing chat.
+            // TODO add Emote feature.
+            handleChatMessage(connection, message);
+
+         case CONVERSATION_NEW:
+            // TODO Create new conversation.
+            replyToUnhandledMessage(connection, message);
+
          case CONVERSATION_INVITE:
+            // TODO Invite user to conversation.
+            replyToUnhandledMessage(connection, message);
+
          case CONVERSATION_JOIN:
+            // TODO Add user to conversation.
+            replyToUnhandledMessage(connection, message);
+
          case CONVERSATION_QUIT:
+            // TODO Remove user from conversation
+            replyToUnhandledMessage(connection, message);
+
          case NAME_UPDATE:
+            // TODO Change name of user or conversation.
+            replyToUnhandledMessage(connection, message);
+
          case ACKNOWLEDGE:
+            // TODO Respond to ACK
+            replyToUnhandledMessage(connection, message);
+
          case REFUSE:
+            // TODO Respond to refusal.
+            replyToUnhandledMessage(connection, message);
+
          case NETWORK_CONNECT:
-            reply = new Message(MessageType.ACKNOWLEDGE, 0, sourceID, Message.UNHANDLED_MSG);
-            connection.send(reply);
+            // TODO Handle network connect message.
+            replyToUnhandledMessage(connection, message);
             break;
-         case NETWORK_DISCONNECT:
-            if (isValidSource(sourceID, message)) {
-               removeClient(sourceID);
-            } else {
-               reply = new Message(MessageType.REFUSE, 0, sourceID, Message.INVALID_SOURCEID);
-               connection.send(reply);
-            }
+
+         case NETWORK_DISCONNECT: // Client announces intent to sign off.
+            handleNetworkDisconnect(connection, message);
             break;
-         case DEBUG_MESSAGE:
+
+         case DEBUG_MESSAGE: // Received debug message.
+            // Send debut message to standard err.
             System.err.println(message.toString());
             break;
+
          default:
             System.err.println("Unhandled message type received: " + message.messageType);
       }
    }
 
-   private static boolean isValidSource(int sourceID, Message message) {
-      return sourceID == message.clientID;
+   private static void handleChatMessage(Connection connection, Message message) {
+      // Verify client.
+      ClientRecord client = validateClientMessage(connection, message);
+      if (client == null) return;
+
+      // Verify that conversation exists.
+      Conversation conversation = conversationMap.get(message.conversationID);
+      if (conversation == null) {
+         Message reply = new Message(MessageType.REFUSE, 0, client.clientID, Message.INVALID_CONVERSATION);
+         connection.send(reply);
+         return;
+      }
+
+      // Send the message.
+      conversation.broadcastToConversation(message);
+   }
+
+   private static void handleConversationNew(Connection connection, Message message) {
+      // Verify sourceID.
+      ClientRecord client = validateClientMessage(connection, message);
+      if (client == null) return;
+
+      // Create a new conversation.
+      int conversationID = getUniqueID();
+      String conversationName = message.messageBody;
+      if (conversationName == null || conversationName.trim().length() < 1)
+         conversationName = Settings.DEFAULT_CONVERSATION_NAME;
+      Conversation conversation = addConversation(conversationID, conversationName);
+
+      // Add client to the conversation as a member. On fail, remove the conversation.
+      if (!conversation.addMember(client)) removeConversation(conversationID);
+   }
+
+
+   private static void handleNetworkDisconnect(Connection connection, Message message) {
+      ClientRecord client = validateClientMessage(connection, message);
+      if (client == null) return;
+      removeClient(client.clientID);
+   }
+
+   private static void replyToUnhandledMessage(Connection connection, Message message) {
+      System.err.println("Could not handle message: " + message.toString());
+      Message reply = new Message(MessageType.REFUSE, 0, connection.getClientID(), Message.UNHANDLED_MSG);
+      connection.send(reply);
+   }
+
+   /**
+    * Checks the clientID of the connection against the clientID of the message.
+    * <p/>
+    * If validation fails, validateClientMessage() automatically sends a refusal message and returns null.
+    * Otherwise, it returns the client record matching the clientID from the connection and message.
+    *
+    * @param connection Connection the message was received from.
+    * @param message    Message received.
+    * @return The client record matching the connection and message if validated. Otherwise null.
+    */
+   private static ClientRecord validateClientMessage(Connection connection, Message message) {
+      int sourceID = connection.getClientID();
+      if (sourceID != message.clientID) {
+         Message reply = new Message(MessageType.REFUSE, 0, sourceID, Message.INVALID_SOURCEID);
+         connection.send(reply);
+         return null;
+      }
+      // TODO Check if connection object matches client record.
+      return clientMap.get(sourceID);
    }
 }
