@@ -500,5 +500,9 @@
             depends="init, clean, compile.module.common, compile.module.subwave, compile.module.chatclient, compile.module.chatserver"
             description="build all modules"/>
 
+    <target name="test"
+            depends="build.modules"
+            description="test all modules"/>
+
     <target name="all" depends="build.modules" description="build all"/>
 </project>
