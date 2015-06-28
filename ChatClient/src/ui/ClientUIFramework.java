@@ -24,7 +24,7 @@ public abstract class ClientUIFramework extends Thread {
       return serverConnection.send(message);
    }
 
-   protected final Message recieveFromServer(Connection serverConnection) {
+   protected final Message receiveFromServer(Connection serverConnection) {
       if (serverConnection.isClosed()) return null;
       return serverConnection.receive();
    }

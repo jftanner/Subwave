@@ -26,6 +26,7 @@ public class ClientRecord implements Comparable<ClientRecord> {
 
    @Override
    public int compareTo(ClientRecord o) {
+      if (o == null) return 1;
       return this.clientID - o.clientID;
    }
 }
