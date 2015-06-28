@@ -3,7 +3,7 @@
  */
 public class ConnectionListener extends Thread {
 
-   private static final String UNHANDLED_ACK = "Server not configured for this message type";
+   private static final String UNHANDLED_MSG = "Server not configured for this message type";
 
    private Connection connection;
 
@@ -12,7 +12,6 @@ public class ConnectionListener extends Thread {
    }
 
    public void run() {
-      System.out.println("Waiting for message from remote client.");
       while (!connection.isClosed()) {
          Message message = connection.receive();
          handleMessage(message);
@@ -27,12 +26,12 @@ public class ConnectionListener extends Thread {
          case CONVERSATION_JOIN:
          case CONVERSATION_QUIT:
          case NICKNAME_UPDATE:
-         case SERVER_ACK:
-         case CLIENT_CONNECT:
-            Message reply = new Message(MessageType.SERVER_ACK, 0, message.clientID, UNHANDLED_ACK);
+         case ACKNOWLEDGE:
+         case NETWORK_CONNECT:
+            Message reply = new Message(MessageType.ACKNOWLEDGE, 0, message.clientID, UNHANDLED_MSG);
             connection.send(reply);
             break;
-         case CLIENT_DISCONNECT:
+         case NETWORK_DISCONNECT:
             connection.close();
             break;
          case DEBUG_MESSAGE:

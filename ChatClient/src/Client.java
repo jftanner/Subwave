@@ -13,6 +13,9 @@ public class Client {
    private static int myClientID;
 
    public static void main(String[] args) {
+
+      // Parse arguments.
+      // TODO Parse arguments more elegantly.
       int port = Settings.DEFAULT_PORT;
       String serverAddress = Settings.DEFAULT_ADDRESS;
       if (args.length > 1) {
@@ -22,36 +25,49 @@ public class Client {
          port = Integer.parseInt(args[0]);
       }
 
+      // Attempt to connect to server.
+      connectToServer(serverAddress, port);
+
+      // TODO exchange messages with server.
+
+      // Disconnect gracefully before exiting.
+      disconnectFromServer();
+   }
+
+   private static void connectToServer(String serverAddress, int port) {
       // Create the socket.
       try {
          Socket socket = new Socket(serverAddress, port);
          serverConnection = new Connection(socket);
 
-         // Wait for ACK message
-         Message message = serverConnection.receive();
-         if (message == null || message.messageType != MessageType.CLIENT_CONNECT) {
-            System.err.println("An error occurred while establishing a connection.");
-            serverConnection.close();
-            System.exit(1);
-         }
-         myClientID = message.clientID;
+         // Wait for server ack.
+         Message serverACK = serverConnection.receive();
+         if (serverACK == null || serverACK.messageType != MessageType.NETWORK_CONNECT)
+            throw new IOException("Failed server ACK.");
+         myClientID = serverACK.clientID;
 
-         // Send the reply message.
-         message = new Message(MessageType.NICKNAME_UPDATE, 0, myClientID, DEFAULT_NICKNAME);
-         serverConnection.send(message);
+         // Send the reply with nickname.
+         Message clientACK = new Message(MessageType.NETWORK_CONNECT, 0, myClientID, DEFAULT_NICKNAME);
+         serverConnection.send(clientACK);
 
-         // Wait for answer.
-         serverConnection.receive();
+         // Wait for final ack.
+         Message finalACK = serverConnection.receive();
+         if (finalACK == null || finalACK.messageType != MessageType.NETWORK_CONNECT)
+            throw new IOException("Failed final ACK.");
 
-         // Shut down.
-         message = new Message(MessageType.CLIENT_DISCONNECT, 0, myClientID, DISCONNECT_MESSAGE);
-         serverConnection.send(message);
-         serverConnection.close();
-
+         System.out.println("CONNECTED!");
 
       } catch (IOException e) {
-         System.err.println("Could not create socket.");
+         System.err.println("An error occurred while establishing a connection.");
          e.printStackTrace();
       }
+   }
+
+   private static void disconnectFromServer() {
+      // Shut down.
+      Message disconnectNotice = new Message(MessageType.NETWORK_DISCONNECT, 0, myClientID, DISCONNECT_MESSAGE);
+      serverConnection.send(disconnectNotice);
+      serverConnection.close();
+      serverConnection = null;
    }
 }

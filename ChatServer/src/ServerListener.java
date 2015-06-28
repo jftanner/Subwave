@@ -7,7 +7,8 @@ import java.net.Socket;
  */
 public class ServerListener extends Thread {
 
-   private static final String CONNECTION_ACK_MESSAGE = "Server Acknowledges Connection";
+   private static final String CONNECTION_GREETING_ACK = "Connection request received";
+   private static final String CONNECTION_FINAL_ACK = "Connection accepted";
 
    private static ServerSocket serverSocket;
 
@@ -33,16 +34,33 @@ public class ServerListener extends Thread {
 
             // Create a new connection with this socket.
             Connection connection = new Connection(clientSocket);
-            int clientID = Server.addClientConnection(connection);
 
-            // Send the greeting message.
-            Message greeting = new Message(MessageType.CLIENT_CONNECT, 0, clientID, CONNECTION_ACK_MESSAGE);
-            connection.send(greeting);
+
+            // Get a new client ID and send greeting.
+            int clientID = Server.getNewClientID();
+            Message serverACK = new Message(MessageType.NETWORK_CONNECT, 0, clientID, CONNECTION_GREETING_ACK);
+            connection.send(serverACK);
+
+            // Wait for connection ack from client.
+            Message clientACK = connection.receive();
+            if (clientACK == null || clientACK.messageType != MessageType.NETWORK_CONNECT) {
+               System.err.println("Invalid or no response from client.");
+               continue;
+            }
+
+            // Create and add client record.
+            String nickname = clientACK.messageBody;
+            ClientRecord client = Server.addNewClient(clientID, connection, nickname);
 
             // Start message listener.
             new ConnectionListener(connection).start();
 
+            // Send final ack to enable client.
+            Message finalACK = new Message(MessageType.NETWORK_CONNECT, 0, clientID, CONNECTION_FINAL_ACK);
+            connection.send(finalACK);
+
          } catch (IOException e) {
+            System.err.println("IO exception thrown by SeverListener.");
             e.printStackTrace();
          }
       }
