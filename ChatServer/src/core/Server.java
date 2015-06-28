@@ -178,6 +178,9 @@ public class Server {
 
       // Add client to the conversation as a member. On fail, remove the conversation.
       if (!conversation.addMember(client)) removeConversation(conversationID);
+
+      // Broadcast the conversation name to confirm.
+      conversation.broadcastConversationName();
    }
 
 

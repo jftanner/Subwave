@@ -67,6 +67,7 @@ public class ClientTUI extends ClientUIFramework {
                break;
 
             case REPLY:
+               conversationID = lastConversationID;
                messageType = MessageType.CHAT_MESSAGE;
                break;
 
@@ -138,8 +139,14 @@ public class ClientTUI extends ClientUIFramework {
    }
 
    protected void handleServerInput(Message message) {
+      if (message == null) return;
+
       // TODO switch on server input.
       System.out.println("RECEIVED > " + message.toString());
+
+      // Set reply conversation, for messages tagged with a conversation.
+      int conversationID = message.conversationID;
+      if (conversationID > 0) lastConversationID = conversationID;
    }
 
 }

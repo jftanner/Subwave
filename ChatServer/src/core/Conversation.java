@@ -68,6 +68,11 @@ public class Conversation {
       return true;
    }
 
+   public void broadcastConversationName() {
+      Message message = new Message(MessageType.NAME_UPDATE, conversationID, 0, name);
+      broadcastToConversation(message);
+   }
+
    public boolean hasMembers() {
       return members.size() > 0;
    }
@@ -79,4 +84,6 @@ public class Conversation {
    public void setName(String name) {
       this.name = name;
    }
+
+
 }
