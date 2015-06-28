@@ -3,7 +3,7 @@ package com.tanndev.subwave.client.ui.tui;
 import com.tanndev.subwave.common.Connection;
 
 /**
- * Created by jtanner on 6/29/2015.
+ * Created by James Tanner on 6/29/2015.
  */
 class ServerListener extends Thread {
 

@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 /**
- * Created by jtanner on 6/28/2015.
+ * Created by James Tanner on 6/28/2015.
  */
 public class Conversation {
 

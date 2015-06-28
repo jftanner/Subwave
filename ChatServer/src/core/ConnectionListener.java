@@ -4,7 +4,7 @@ import com.tanndev.subwave.common.Connection;
 import com.tanndev.subwave.common.Message;
 
 /**
- * Created by jtanner on 6/28/2015.
+ * Created by James Tanner on 6/28/2015.
  */
 public class ConnectionListener extends Thread {
 
@@ -17,13 +17,9 @@ public class ConnectionListener extends Thread {
    public void run() {
       while (!connection.isClosed()) {
          Message message = connection.receive();
-         handleMessage(message);
+         if (message == null) continue;
+         Server.handleClientMessage(connection, message);
       }
-      System.out.println("Remote client disconnected.");
-   }
-
-   private void handleMessage(Message message) {
-      if (message == null) return;
-
+      Server.removeClient(connection.getClientID());
    }
 }

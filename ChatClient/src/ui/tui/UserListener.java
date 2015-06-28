@@ -5,7 +5,7 @@ import com.tanndev.subwave.common.Connection;
 import java.util.Scanner;
 
 /**
- * Created by jtanner on 6/29/2015.
+ * Created by James Tanner on 6/29/2015.
  */
 class UserListener extends Thread {
    private ClientTUI parentUI;

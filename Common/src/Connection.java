@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.Socket;
 
 /**
- * Created by jtanner on 6/28/2015.
+ * Created by James Tanner on 6/28/2015.
  */
 public class Connection {
    private int clientID;
@@ -42,7 +42,7 @@ public class Connection {
          e.printStackTrace();
       }
 
-      // com.tanndev.subwave.common.Message failed to send.
+      //Message failed to send.
       return false;
    }
 
@@ -54,9 +54,9 @@ public class Connection {
          return message;
 
       } catch (IOException e) {
-         System.err.println("IO exception thrown while receiving message.");
-         e.printStackTrace();
+         // Silently handle exception and close the socket.
          close();
+         return null;
       } catch (ClassNotFoundException e) {
          System.err.println("Class exception thrown while receiving message.");
          e.printStackTrace();
@@ -65,6 +65,7 @@ public class Connection {
    }
 
    public boolean messageAvailable() {
+      if (socket.isClosed()) return false;
       try {
          return rawInStream.available() > 0;
       } catch (IOException e) {
@@ -75,6 +76,7 @@ public class Connection {
    }
 
    public void close() {
+      if (socket.isClosed()) return;
       try {
          socket.close();
       } catch (IOException e) {

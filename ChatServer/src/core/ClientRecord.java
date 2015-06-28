@@ -3,7 +3,7 @@ package com.tanndev.subwave.server.core;
 import com.tanndev.subwave.common.Connection;
 
 /**
- * Created by jtanner on 6/28/2015.
+ * Created by James Tanner on 6/28/2015.
  */
 public class ClientRecord implements Comparable<ClientRecord> {
    public final int clientID;

@@ -9,7 +9,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- * Created by jtanner on 6/27/2015.
+ * Created by James Tanner on 6/27/2015.
  */
 public class SocketListener extends Thread {
 
@@ -41,6 +41,8 @@ public class SocketListener extends Thread {
 
             // Get a new client ID and send greeting.
             int clientID = Server.getUniqueID();
+            connection.setClientID(clientID);
+            System.out.println("NC - ClientID: " + clientID);
             Message serverACK = new Message(MessageType.NETWORK_CONNECT, 0, clientID, Message.CONNECTION_START_ACK);
             connection.send(serverACK);
 
@@ -53,7 +55,7 @@ public class SocketListener extends Thread {
 
             // Create and add client record.
             String nickname = clientACK.messageBody;
-            ClientRecord client = Server.addNewClient(clientID, connection, nickname);
+            ClientRecord client = Server.addClient(clientID, connection, nickname);
 
             // Start message listener.
             new ConnectionListener(connection).start();

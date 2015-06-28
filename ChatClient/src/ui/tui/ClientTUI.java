@@ -7,7 +7,7 @@ import com.tanndev.subwave.common.MessageType;
 import com.tanndev.subwave.common.Settings;
 
 /**
- * Created by jtanner on 6/28/2015.
+ * Created by James Tanner on 6/28/2015.
  */
 public class ClientTUI extends ClientUIFramework {
 
@@ -15,6 +15,10 @@ public class ClientTUI extends ClientUIFramework {
 
    public ClientTUI() {
       serverConnection = openConnection(Settings.DEFAULT_ADDRESS, Settings.DEFAULT_PORT, null);
+      if (serverConnection == null) {
+         System.err.println("No server connection for TUI to use.");
+         System.exit(0);
+      }
    }
 
    public void run() {

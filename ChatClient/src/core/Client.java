@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 /**
- * Created by jtanner on 6/28/2015.
+ * Created by James Tanner on 6/28/2015.
  */
 public class Client {
 
@@ -53,8 +53,7 @@ public class Client {
          return connection;
 
       } catch (IOException e) {
-         System.err.println("An error occurred while establishing a connection.");
-         e.printStackTrace();
+         System.err.println("Could not connect to server.");
          return null;
       }
    }

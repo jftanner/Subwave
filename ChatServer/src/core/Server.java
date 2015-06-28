@@ -35,14 +35,21 @@ public class Server {
       new SocketListener(port).start();
    }
 
-   public synchronized static ClientRecord addNewClient(int clientID, Connection clientConnection, String nickname) {
+   public synchronized static ClientRecord addClient(int clientID, Connection clientConnection, String nickname) {
       ClientRecord client = new ClientRecord(clientID, clientConnection, nickname);
-
-      if (clientMap.containsKey(clientID)) {
+      if (clientMap.putIfAbsent(clientID, client) != null) {
          System.err.println("Attempted to add a non-unique client ID to the client map.");
          return null;
       }
-      return clientMap.put(clientID, client);
+      return client;
+   }
+
+   public synchronized static void removeClient(int clientID) {
+      ClientRecord clientRecord = clientMap.remove(clientID);
+      if (clientRecord != null) {
+         clientRecord.clientConnection.close();
+         System.out.println("DC - ClientID: " + clientID);
+      }
    }
 
    /**
@@ -63,8 +70,10 @@ public class Server {
       }
    }
 
-   private void handleClientMessage(Connection connection, Message message) {
+   protected static void handleClientMessage(Connection connection, Message message) {
       if (message == null) return;
+      int sourceID = connection.getClientID();
+      Message reply;
       switch (message.messageType) {
          case CHAT_MESSAGE:
          case CONVERSATION_INVITE:
@@ -72,12 +81,18 @@ public class Server {
          case CONVERSATION_QUIT:
          case NICKNAME_UPDATE:
          case ACKNOWLEDGE:
+         case REFUSE:
          case NETWORK_CONNECT:
-            Message reply = new Message(MessageType.ACKNOWLEDGE, 0, message.clientID, Message.UNHANDLED_MSG);
+            reply = new Message(MessageType.ACKNOWLEDGE, 0, sourceID, Message.UNHANDLED_MSG);
             connection.send(reply);
             break;
          case NETWORK_DISCONNECT:
-            connection.close();
+            if (isValidSource(sourceID, message)) {
+               removeClient(sourceID);
+            } else {
+               reply = new Message(MessageType.REFUSE, 0, sourceID, Message.INVALID_SOURCEID);
+               connection.send(reply);
+            }
             break;
          case DEBUG_MESSAGE:
             System.err.println(message.toString());
@@ -85,5 +100,9 @@ public class Server {
          default:
             System.err.println("Unhandled message type received: " + message.messageType);
       }
+   }
+
+   private static boolean isValidSource(int sourceID, Message message) {
+      return sourceID == message.clientID;
    }
 }

@@ -5,7 +5,7 @@ import com.tanndev.subwave.common.Connection;
 import com.tanndev.subwave.common.Message;
 
 /**
- * Created by jtanner on 6/28/2015.
+ * Created by James Tanner on 6/28/2015.
  */
 public abstract class ClientUIFramework extends Thread {
 

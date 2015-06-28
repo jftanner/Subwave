@@ -1,7 +1,7 @@
 package com.tanndev.subwave.common;
 
 /**
- * Created by jtanner on 6/28/2015.
+ * Created by James Tanner on 6/28/2015.
  */
 public enum MessageType {
    CHAT_MESSAGE("MSG"),
@@ -10,6 +10,7 @@ public enum MessageType {
    CONVERSATION_QUIT("LEAVE"),
    NICKNAME_UPDATE("NAME"),
    ACKNOWLEDGE("ACK"),
+   REFUSE("REFUSE"),
    NETWORK_CONNECT("CONNECT"),
    NETWORK_DISCONNECT("DISCONNECT_INTENT"),
    DEBUG_MESSAGE("DEBUG");
