@@ -402,6 +402,8 @@
   <target name="clean" depends="clean.module.common, clean.module.subwave, clean.module.chatclient, clean.module.chatserver" description="cleanup all"/>
   
   <target name="build.modules" depends="init, clean, compile.module.common, compile.module.subwave, compile.module.chatclient, compile.module.chatserver" description="build all modules"/>
-  
+
+  <target name="test" depends="build.modules" description="test all"/>
+
   <target name="all" depends="build.modules" description="build all"/>
 </project>
