@@ -30,6 +30,11 @@ public class ClientTUI extends ClientUIFramework {
       System.out.println("Hiding TX/RX messages.");
    }
 
+   public static void displayHelp(Command command) {
+      // TODO display a help file.
+      System.out.println("Malformed command.");
+   }
+
    public void run() {
       // Start a new input listeners.
       new UserListener(this).start();
@@ -57,13 +62,25 @@ public class ClientTUI extends ClientUIFramework {
 
          switch (command) {
             case MESSAGE:
-               // TODO new message.
                messageType = MessageType.CHAT_MESSAGE;
+               if (tokens.length < 3) {
+                  displayHelp(Command.MESSAGE);
+                  return;
+               }
+               conversationID = Integer.parseInt(tokens[1]);
+               messageStartIndex += tokens[1].length();
+               messageStartIndex = input.indexOf(tokens[2], messageStartIndex);
                break;
 
             case EMOTE:
-               // TODO emote.
                messageType = MessageType.CHAT_EMOTE;
+               if (tokens.length < 3) {
+                  displayHelp(Command.MESSAGE);
+                  return;
+               }
+               conversationID = Integer.parseInt(tokens[1]);
+               messageStartIndex += tokens[1].length();
+               messageStartIndex = input.indexOf(tokens[2], messageStartIndex);
                break;
 
             case REPLY:
@@ -119,8 +136,13 @@ public class ClientTUI extends ClientUIFramework {
          }
          // Trim command off sending message.
          messageText = messageText.substring(messageStartIndex);
+
       } else {
-         // TODO properly handle non-command input.
+         // No command. If there is an ongoing conversation, assume this is a reply. Otherwise, show help.
+         if (lastConversationID > 0) {
+            messageType = MessageType.CHAT_MESSAGE;
+            conversationID = lastConversationID;
+         } else displayHelp(null);
       }
 
       Message message = new Message(messageType, conversationID, clientID, messageText);

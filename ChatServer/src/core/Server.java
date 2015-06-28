@@ -230,7 +230,7 @@ public class Server {
    private static Conversation validateConversation(Connection connection, Message message) {
       Conversation conversation = conversationMap.get(message.conversationID);
       if (conversation == null) {
-         Message reply = new Message(MessageType.REFUSE, 0, client.clientID, Message.INVALID_CONVERSATION);
+         Message reply = new Message(MessageType.REFUSE, 0, connection.getClientID(), Message.INVALID_CONVERSATION);
          connection.send(reply);
       }
       return conversation;

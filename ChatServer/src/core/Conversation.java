@@ -69,7 +69,7 @@ public class Conversation {
    }
 
    public void broadcastConversationName() {
-      broadcastToConversation(getNameUpdateMessage();
+      broadcastToConversation(getNameUpdateMessage());
    }
 
    public Message getNameUpdateMessage() {
