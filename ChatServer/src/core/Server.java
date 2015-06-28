@@ -148,17 +148,12 @@ public class Server {
    }
 
    private static void handleChatMessage(Connection connection, Message message) {
-      // Verify client.
+      // Validate client.
       ClientRecord client = validateClientMessage(connection, message);
       if (client == null) return;
 
-      // Verify that conversation exists.
-      Conversation conversation = conversationMap.get(message.conversationID);
-      if (conversation == null) {
-         Message reply = new Message(MessageType.REFUSE, 0, client.clientID, Message.INVALID_CONVERSATION);
-         connection.send(reply);
-         return;
-      }
+      // Validate conversation.
+      Conversation conversation = validateConversation(connection, message);
 
       // Send the message.
       conversation.broadcastToConversation(message);
@@ -176,11 +171,26 @@ public class Server {
          conversationName = Settings.DEFAULT_CONVERSATION_NAME;
       Conversation conversation = addConversation(conversationID, conversationName);
 
+      // Send the conversation name to the client.
+      connection.send(conversation.getNameUpdateMessage());
+
       // Add client to the conversation as a member. On fail, remove the conversation.
       if (!conversation.addMember(client)) removeConversation(conversationID);
+   }
 
-      // Broadcast the conversation name to confirm.
-      conversation.broadcastConversationName();
+   private static void handleConversationJoin(Connection connection, Message message) {
+      // Verify sourceID.
+      ClientRecord client = validateClientMessage(connection, message);
+      if (client == null) return;
+
+      // Validate conversation.
+      Conversation conversation = validateConversation(connection, message);
+
+      // Send the conversation name to the client.
+      connection.send(conversation.getNameUpdateMessage());
+
+      // Add client to the conversation as a member.
+      conversation.addMember(client);
    }
 
 
@@ -215,5 +225,14 @@ public class Server {
       }
       // TODO Check if connection object matches client record.
       return clientMap.get(sourceID);
+   }
+
+   private static Conversation validateConversation(Connection connection, Message message) {
+      Conversation conversation = conversationMap.get(message.conversationID);
+      if (conversation == null) {
+         Message reply = new Message(MessageType.REFUSE, 0, client.clientID, Message.INVALID_CONVERSATION);
+         connection.send(reply);
+      }
+      return conversation;
    }
 }

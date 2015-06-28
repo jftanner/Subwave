@@ -69,8 +69,11 @@ public class Conversation {
    }
 
    public void broadcastConversationName() {
-      Message message = new Message(MessageType.NAME_UPDATE, conversationID, 0, name);
-      broadcastToConversation(message);
+      broadcastToConversation(getNameUpdateMessage();
+   }
+
+   public Message getNameUpdateMessage() {
+      return new Message(MessageType.NAME_UPDATE, conversationID, 0, name);
    }
 
    public boolean hasMembers() {
