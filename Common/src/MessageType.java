@@ -5,10 +5,11 @@ package com.tanndev.subwave.common;
  */
 public enum MessageType {
    CHAT_MESSAGE("MSG"),
+   CHAT_EMOTE("EMOTE"),
    CONVERSATION_INVITE("INVITE"),
    CONVERSATION_JOIN("JOIN"),
    CONVERSATION_QUIT("LEAVE"),
-   NICKNAME_UPDATE("NAME"),
+   NAME_UPDATE("NAME"),
    ACKNOWLEDGE("ACK"),
    REFUSE("REFUSE"),
    NETWORK_CONNECT("CONNECT"),

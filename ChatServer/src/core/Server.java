@@ -79,7 +79,7 @@ public class Server {
          case CONVERSATION_INVITE:
          case CONVERSATION_JOIN:
          case CONVERSATION_QUIT:
-         case NICKNAME_UPDATE:
+         case NAME_UPDATE:
          case ACKNOWLEDGE:
          case REFUSE:
          case NETWORK_CONNECT:
