@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="subwave" default="all">
+
+
+    <property file="build.properties"/>
+    <!-- Uncomment the following property if no tests compilation is needed -->
+    <!--
+    <property name="skip.tests" value="true"/>
+     -->
+
+    <!-- Compiler options -->
+
+    <property name="compiler.debug" value="on"/>
+    <property name="compiler.generate.no.warnings" value="off"/>
+    <property name="compiler.args" value=""/>
+    <property name="compiler.max.memory" value="700m"/>
+    <patternset id="ignored.files">
+        <exclude name="**/*.hprof/**"/>
+        <exclude name="**/*.pyc/**"/>
+        <exclude name="**/*.pyo/**"/>
+        <exclude name="**/*.rbc/**"/>
+        <exclude name="**/*~/**"/>
+        <exclude name="**/.DS_Store/**"/>
+        <exclude name="**/.bundle/**"/>
+        <exclude name="**/.git/**"/>
+        <exclude name="**/.hg/**"/>
+        <exclude name="**/.svn/**"/>
+        <exclude name="**/.tox/**"/>
+        <exclude name="**/CVS/**"/>
+        <exclude name="**/RCS/**"/>
+        <exclude name="**/SCCS/**"/>
+        <exclude name="**/__pycache__/**"/>
+        <exclude name="**/_svn/**"/>
+        <exclude name="**/rcs/**"/>
+        <exclude name="**/vssver.scc/**"/>
+        <exclude name="**/vssver2.scc/**"/>
+    </patternset>
+    <patternset id="library.patterns">
+        <include name="*.zip"/>
+        <include name="*.apk"/>
+        <include name="*.war"/>
+        <include name="*.egg"/>
+        <include name="*.ear"/>
+        <include name="*.ane"/>
+        <include name="*.swc"/>
+        <include name="*.jar"/>
+    </patternset>
+    <patternset id="compiler.resources">
+        <exclude name="**/?*.java"/>
+        <exclude name="**/?*.form"/>
+        <exclude name="**/?*.class"/>
+        <exclude name="**/?*.groovy"/>
+        <exclude name="**/?*.scala"/>
+        <exclude name="**/?*.flex"/>
+        <exclude name="**/?*.kt"/>
+        <exclude name="**/?*.clj"/>
+        <exclude name="**/?*.aj"/>
+    </patternset>
+
+    <!-- JDK definitions -->
+
+    <property name="jdk.bin.1.8" value="${jdk.home.1.8}/bin"/>
+    <path id="jdk.classpath.1.8">
+        <fileset dir="${jdk.home.1.8}">
+            <include name="jre/lib/charsets.jar"/>
+            <include name="jre/lib/deploy.jar"/>
+            <include name="jre/lib/javaws.jar"/>
+            <include name="jre/lib/jce.jar"/>
+            <include name="jre/lib/jfr.jar"/>
+            <include name="jre/lib/jfxswt.jar"/>
+            <include name="jre/lib/jsse.jar"/>
+            <include name="jre/lib/management-agent.jar"/>
+            <include name="jre/lib/plugin.jar"/>
+            <include name="jre/lib/resources.jar"/>
+            <include name="jre/lib/rt.jar"/>
+            <include name="jre/lib/ext/access-bridge-64.jar"/>
+            <include name="jre/lib/ext/cldrdata.jar"/>
+            <include name="jre/lib/ext/dnsns.jar"/>
+            <include name="jre/lib/ext/jaccess.jar"/>
+            <include name="jre/lib/ext/jfxrt.jar"/>
+            <include name="jre/lib/ext/localedata.jar"/>
+            <include name="jre/lib/ext/nashorn.jar"/>
+            <include name="jre/lib/ext/sunec.jar"/>
+            <include name="jre/lib/ext/sunjce_provider.jar"/>
+            <include name="jre/lib/ext/sunmscapi.jar"/>
+            <include name="jre/lib/ext/sunpkcs11.jar"/>
+            <include name="jre/lib/ext/zipfs.jar"/>
+        </fileset>
+    </path>
+
+    <property name="project.jdk.home" value="${jdk.home.1.8}"/>
+    <property name="project.jdk.bin" value="${jdk.bin.1.8}"/>
+    <property name="project.jdk.classpath" value="jdk.classpath.1.8"/>
+    <!-- Register Custom Compiler Taskdefs -->
+    <property name="javac2.home" value="${idea.home}/lib"/>
+    <path id="javac2.classpath">
+        <pathelement location="${javac2.home}/javac2.jar"/>
+        <pathelement location="${javac2.home}/jdom.jar"/>
+        <pathelement location="${javac2.home}/asm-all.jar"/>
+        <pathelement location="${javac2.home}/jgoodies-forms.jar"/>
+    </path>
+    <target name="register.custom.compilers">
+        <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+        <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions"
+                 classpathref="javac2.classpath"/>
+    </target>
+
+    <!-- Modules -->
+
+
+    <!-- Module Common -->
+
+    <dirname property="module.common.basedir" file="${ant.file}"/>
+
+
+    <property name="module.jdk.home.common" value="${project.jdk.home}"/>
+    <property name="module.jdk.bin.common" value="${project.jdk.bin}"/>
+    <property name="module.jdk.classpath.common" value="${project.jdk.classpath}"/>
+
+    <property name="compiler.args.common" value="-encoding windows-1252 -source 1.6 ${compiler.args}"/>
+
+    <property name="common.output.dir" value="${module.common.basedir}/out/production/Common"/>
+    <property name="common.testoutput.dir" value="${module.common.basedir}/out/test/Common"/>
+
+    <path id="common.module.bootclasspath">
+        <!-- Paths to be included in compilation bootclasspath -->
+    </path>
+
+    <path id="common.module.production.classpath">
+        <path refid="${module.jdk.classpath.common}"/>
+    </path>
+
+    <path id="common.runtime.production.module.classpath">
+        <pathelement location="${common.output.dir}"/>
+    </path>
+
+    <path id="common.module.classpath">
+        <path refid="${module.jdk.classpath.common}"/>
+        <pathelement location="${common.output.dir}"/>
+    </path>
+
+    <path id="common.runtime.module.classpath">
+        <pathelement location="${common.testoutput.dir}"/>
+        <pathelement location="${common.output.dir}"/>
+    </path>
+
+
+    <patternset id="excluded.from.module.common">
+        <patternset refid="ignored.files"/>
+    </patternset>
+
+    <patternset id="excluded.from.compilation.common">
+        <patternset refid="excluded.from.module.common"/>
+    </patternset>
+
+    <path id="common.module.sourcepath">
+        <dirset dir="${module.common.basedir}/Common">
+            <include name="src"/>
+        </dirset>
+    </path>
+
+
+    <target name="compile.module.common" depends="compile.module.common.production,compile.module.common.tests"
+            description="Compile module Common"/>
+
+    <target name="compile.module.common.production" depends="register.custom.compilers"
+            description="Compile module Common; production classes">
+        <mkdir dir="${common.output.dir}"/>
+        <javac2 destdir="${common.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
+                memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.common}/javac">
+            <compilerarg line="${compiler.args.common}"/>
+            <bootclasspath refid="common.module.bootclasspath"/>
+            <classpath refid="common.module.production.classpath"/>
+            <src refid="common.module.sourcepath"/>
+            <patternset refid="excluded.from.compilation.common"/>
+        </javac2>
+
+        <copy todir="${common.output.dir}">
+            <fileset dir="${module.common.basedir}/Common/src">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="compile.module.common.tests" depends="register.custom.compilers,compile.module.common.production"
+            description="compile module Common; test classes" unless="skip.tests"/>
+
+    <target name="clean.module.common" description="cleanup module">
+        <delete dir="${common.output.dir}"/>
+        <delete dir="${common.testoutput.dir}"/>
+    </target>
+
+
+    <!-- Module Subwave -->
+
+    <dirname property="module.subwave.basedir" file="${ant.file}"/>
+
+
+    <property name="module.jdk.home.subwave" value="${project.jdk.home}"/>
+    <property name="module.jdk.bin.subwave" value="${project.jdk.bin}"/>
+    <property name="module.jdk.classpath.subwave" value="${project.jdk.classpath}"/>
+
+    <property name="compiler.args.subwave" value="-encoding windows-1252 -source 1.6 ${compiler.args}"/>
+
+    <property name="subwave.output.dir" value="${module.subwave.basedir}/out/production/Subwave"/>
+    <property name="subwave.testoutput.dir" value="${module.subwave.basedir}/out/test/Subwave"/>
+
+    <path id="subwave.module.bootclasspath">
+        <!-- Paths to be included in compilation bootclasspath -->
+    </path>
+
+    <path id="subwave.module.production.classpath">
+        <path refid="${module.jdk.classpath.subwave}"/>
+    </path>
+
+    <path id="subwave.runtime.production.module.classpath">
+        <pathelement location="${subwave.output.dir}"/>
+    </path>
+
+    <path id="subwave.module.classpath">
+        <path refid="${module.jdk.classpath.subwave}"/>
+        <pathelement location="${subwave.output.dir}"/>
+    </path>
+
+    <path id="subwave.runtime.module.classpath">
+        <pathelement location="${subwave.testoutput.dir}"/>
+        <pathelement location="${subwave.output.dir}"/>
+    </path>
+
+
+    <patternset id="excluded.from.module.subwave">
+        <patternset refid="ignored.files"/>
+    </patternset>
+
+    <patternset id="excluded.from.compilation.subwave">
+        <patternset refid="excluded.from.module.subwave"/>
+    </patternset>
+
+
+    <target name="compile.module.subwave" depends="compile.module.subwave.production,compile.module.subwave.tests"
+            description="Compile module Subwave"/>
+
+    <target name="compile.module.subwave.production" depends="register.custom.compilers"
+            description="Compile module Subwave; production classes"/>
+
+    <target name="compile.module.subwave.tests" depends="register.custom.compilers,compile.module.subwave.production"
+            description="compile module Subwave; test classes" unless="skip.tests"/>
+
+    <target name="clean.module.subwave" description="cleanup module">
+        <delete dir="${subwave.output.dir}"/>
+        <delete dir="${subwave.testoutput.dir}"/>
+    </target>
+
+
+    <!-- Module ChatClient -->
+
+    <dirname property="module.chatclient.basedir" file="${ant.file}"/>
+
+
+    <property name="module.jdk.home.chatclient" value="${project.jdk.home}"/>
+    <property name="module.jdk.bin.chatclient" value="${project.jdk.bin}"/>
+    <property name="module.jdk.classpath.chatclient" value="${project.jdk.classpath}"/>
+
+    <property name="compiler.args.chatclient" value="-encoding windows-1252 -source 1.6 ${compiler.args}"/>
+
+    <property name="chatclient.output.dir" value="${module.chatclient.basedir}/out/production/ChatClient"/>
+    <property name="chatclient.testoutput.dir" value="${module.chatclient.basedir}/out/test/ChatClient"/>
+
+    <path id="chatclient.module.bootclasspath">
+        <!-- Paths to be included in compilation bootclasspath -->
+    </path>
+
+    <path id="chatclient.module.production.classpath">
+        <path refid="${module.jdk.classpath.chatclient}"/>
+        <pathelement location="${common.output.dir}"/>
+    </path>
+
+    <path id="chatclient.runtime.production.module.classpath">
+        <pathelement location="${chatclient.output.dir}"/>
+        <path refid="common.runtime.production.module.classpath"/>
+    </path>
+
+    <path id="chatclient.module.classpath">
+        <path refid="${module.jdk.classpath.chatclient}"/>
+        <pathelement location="${chatclient.output.dir}"/>
+        <pathelement location="${common.testoutput.dir}"/>
+        <pathelement location="${common.output.dir}"/>
+    </path>
+
+    <path id="chatclient.runtime.module.classpath">
+        <pathelement location="${chatclient.testoutput.dir}"/>
+        <pathelement location="${chatclient.output.dir}"/>
+        <path refid="common.runtime.module.classpath"/>
+    </path>
+
+
+    <patternset id="excluded.from.module.chatclient">
+        <patternset refid="ignored.files"/>
+    </patternset>
+
+    <patternset id="excluded.from.compilation.chatclient">
+        <patternset refid="excluded.from.module.chatclient"/>
+    </patternset>
+
+    <path id="chatclient.module.sourcepath">
+        <dirset dir="${module.chatclient.basedir}/ChatClient">
+            <include name="src"/>
+        </dirset>
+    </path>
+
+
+    <target name="compile.module.chatclient"
+            depends="compile.module.chatclient.production,compile.module.chatclient.tests"
+            description="Compile module ChatClient"/>
+
+    <target name="compile.module.chatclient.production" depends="register.custom.compilers,compile.module.common"
+            description="Compile module ChatClient; production classes">
+        <mkdir dir="${chatclient.output.dir}"/>
+        <javac2 destdir="${chatclient.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
+                memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.chatclient}/javac">
+            <compilerarg line="${compiler.args.chatclient}"/>
+            <bootclasspath refid="chatclient.module.bootclasspath"/>
+            <classpath refid="chatclient.module.production.classpath"/>
+            <src refid="chatclient.module.sourcepath"/>
+            <patternset refid="excluded.from.compilation.chatclient"/>
+        </javac2>
+
+        <copy todir="${chatclient.output.dir}">
+            <fileset dir="${module.chatclient.basedir}/ChatClient/src">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="compile.module.chatclient.tests"
+            depends="register.custom.compilers,compile.module.chatclient.production"
+            description="compile module ChatClient; test classes" unless="skip.tests"/>
+
+    <target name="clean.module.chatclient" description="cleanup module">
+        <delete dir="${chatclient.output.dir}"/>
+        <delete dir="${chatclient.testoutput.dir}"/>
+    </target>
+
+
+    <!-- Module ChatServer -->
+
+    <dirname property="module.chatserver.basedir" file="${ant.file}"/>
+
+
+    <property name="module.jdk.home.chatserver" value="${project.jdk.home}"/>
+    <property name="module.jdk.bin.chatserver" value="${project.jdk.bin}"/>
+    <property name="module.jdk.classpath.chatserver" value="${project.jdk.classpath}"/>
+
+    <property name="compiler.args.chatserver" value="-encoding windows-1252 -source 1.6 ${compiler.args}"/>
+
+    <property name="chatserver.output.dir" value="${module.chatserver.basedir}/out/production/ChatServer"/>
+    <property name="chatserver.testoutput.dir" value="${module.chatserver.basedir}/out/test/ChatServer"/>
+
+    <path id="chatserver.module.bootclasspath">
+        <!-- Paths to be included in compilation bootclasspath -->
+    </path>
+
+    <path id="chatserver.module.production.classpath">
+        <path refid="${module.jdk.classpath.chatserver}"/>
+        <pathelement location="${common.output.dir}"/>
+    </path>
+
+    <path id="chatserver.runtime.production.module.classpath">
+        <pathelement location="${chatserver.output.dir}"/>
+        <path refid="common.runtime.production.module.classpath"/>
+    </path>
+
+    <path id="chatserver.module.classpath">
+        <path refid="${module.jdk.classpath.chatserver}"/>
+        <pathelement location="${chatserver.output.dir}"/>
+        <pathelement location="${common.testoutput.dir}"/>
+        <pathelement location="${common.output.dir}"/>
+    </path>
+
+    <path id="chatserver.runtime.module.classpath">
+        <pathelement location="${chatserver.testoutput.dir}"/>
+        <pathelement location="${chatserver.output.dir}"/>
+        <path refid="common.runtime.module.classpath"/>
+    </path>
+
+
+    <patternset id="excluded.from.module.chatserver">
+        <patternset refid="ignored.files"/>
+    </patternset>
+
+    <patternset id="excluded.from.compilation.chatserver">
+        <patternset refid="excluded.from.module.chatserver"/>
+    </patternset>
+
+    <path id="chatserver.module.sourcepath">
+        <dirset dir="${module.chatserver.basedir}/ChatServer">
+            <include name="src"/>
+        </dirset>
+    </path>
+
+
+    <target name="compile.module.chatserver"
+            depends="compile.module.chatserver.production,compile.module.chatserver.tests"
+            description="Compile module ChatServer"/>
+
+    <target name="compile.module.chatserver.production" depends="register.custom.compilers,compile.module.common"
+            description="Compile module ChatServer; production classes">
+        <mkdir dir="${chatserver.output.dir}"/>
+        <javac2 destdir="${chatserver.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
+                memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.chatserver}/javac">
+            <compilerarg line="${compiler.args.chatserver}"/>
+            <bootclasspath refid="chatserver.module.bootclasspath"/>
+            <classpath refid="chatserver.module.production.classpath"/>
+            <src refid="chatserver.module.sourcepath"/>
+            <patternset refid="excluded.from.compilation.chatserver"/>
+        </javac2>
+
+        <copy todir="${chatserver.output.dir}">
+            <fileset dir="${module.chatserver.basedir}/ChatServer/src">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="compile.module.chatserver.tests"
+            depends="register.custom.compilers,compile.module.chatserver.production"
+            description="compile module ChatServer; test classes" unless="skip.tests"/>
+
+    <target name="clean.module.chatserver" description="cleanup module">
+        <delete dir="${chatserver.output.dir}"/>
+        <delete dir="${chatserver.testoutput.dir}"/>
+    </target>
+
+    <target name="init" description="Build initialization">
+        <!-- Perform any build initialization in this target -->
+    </target>
+
+    <target name="clean"
+            depends="clean.module.common, clean.module.subwave, clean.module.chatclient, clean.module.chatserver"
+            description="cleanup all"/>
+
+    <target name="build.modules"
+            depends="init, clean, compile.module.common, compile.module.subwave, compile.module.chatclient, compile.module.chatserver"
+            description="build all modules"/>
+
+    <target name="all" depends="build.modules" description="build all"/>
+</project>
