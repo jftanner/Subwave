@@ -24,6 +24,10 @@ public class ClientTUI extends ClientUIFramework {
          System.err.println("No server connection for TUI to use.");
          System.exit(0);
       }
+
+      // Switch off the local connection message printing.
+      serverConnection.setPrintMessages(false);
+      System.out.println("Hiding TX/RX messages.");
    }
 
    public void run() {
@@ -54,46 +58,66 @@ public class ClientTUI extends ClientUIFramework {
          switch (command) {
             case MESSAGE:
                // TODO new message.
+               messageType = MessageType.CHAT_MESSAGE;
                break;
+
             case EMOTE:
-               messageType = MessageType.CHAT_EMOTE;
                // TODO emote.
+               messageType = MessageType.CHAT_EMOTE;
                break;
+
             case REPLY:
                messageType = MessageType.CHAT_MESSAGE;
+               break;
 
             case CONVERSATION_NEW:
-               // TODO start new conversation.
+               messageType = MessageType.CONVERSATION_NEW;
                break;
 
             case CONVERSATION_INVITE:
                // TODO conversation invite.
+               messageType = MessageType.CONVERSATION_INVITE;
                break;
+
             case CONVERSATION_JOIN:
                // TODO conversation join.
+               messageType = MessageType.CONVERSATION_JOIN;
                break;
+
             case CONVERSATION_LEAVE:
                // TODO conversation leave.
+               messageType = MessageType.CONVERSATION_LEAVE;
                break;
+
             case NAME_UPDATE:
                // TODO name update.
+               messageType = MessageType.NAME_UPDATE;
                break;
+
             case ACKNOWLEDGE:
                // TODO acknowledge.
+               messageType = MessageType.ACKNOWLEDGE;
                break;
+
             case REFUSE:
                // TODO refuse.
+               messageType = MessageType.REFUSE;
                break;
+
             case DEBUG_MESSAGE:
                // TODO debug
                break;
+
             case QUIT:
                shutdown();
                break;
+
             default:
                System.err.println("Unrecognised command token: " + tokens[0]);
                return;
          }
+         // Trim command off sending message.
+         messageText = messageText.substring(messageStartIndex);
       } else {
          // TODO properly handle non-command input.
       }
@@ -114,7 +138,8 @@ public class ClientTUI extends ClientUIFramework {
    }
 
    protected void handleServerInput(Message message) {
-      System.out.println(message.toString());
+      // TODO switch on server input.
+      System.out.println("RECEIVED > " + message.toString());
    }
 
 }

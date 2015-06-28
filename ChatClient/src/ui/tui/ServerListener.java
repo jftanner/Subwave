@@ -15,6 +15,6 @@ class ServerListener extends Thread {
 
    public void run() {
       Connection serverConnection = parentUI.serverConnection;
-      while (serverConnection.isClosed()) parentUI.handleServerInput(serverConnection.receive());
+      while (!serverConnection.isClosed()) parentUI.handleServerInput(serverConnection.receive());
    }
 }

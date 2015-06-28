@@ -45,7 +45,7 @@ public class Conversation {
          if (client.clientConnection.isClosed()) {
             iterator.remove();
             Message notification =
-                  new Message(MessageType.CONVERSATION_QUIT, conversationID, client.clientID, Message.DISCONNECT_UNEXPECTED);
+                  new Message(MessageType.CONVERSATION_LEAVE, conversationID, client.clientID, Message.DISCONNECT_UNEXPECTED);
             broadcastToConversation(notification);
          }
       }

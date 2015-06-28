@@ -90,36 +90,43 @@ public class Server {
       if (message == null) return;
       switch (message.messageType) {
          case CHAT_MESSAGE: // Client sending a message to an existing chat.
-            // TODO add Emote feature.
+         case CHAT_EMOTE: // Client is sending an emote to an existing chat.
             handleChatMessage(connection, message);
+            break;
 
-         case CONVERSATION_NEW:
-            // TODO Create new conversation.
-            replyToUnhandledMessage(connection, message);
+         case CONVERSATION_NEW: // Client wants a new conversation.
+            handleConversationNew(connection, message);
+            break;
 
          case CONVERSATION_INVITE:
             // TODO Invite user to conversation.
             replyToUnhandledMessage(connection, message);
+            break;
 
          case CONVERSATION_JOIN:
             // TODO Add user to conversation.
             replyToUnhandledMessage(connection, message);
+            break;
 
-         case CONVERSATION_QUIT:
+         case CONVERSATION_LEAVE:
             // TODO Remove user from conversation
             replyToUnhandledMessage(connection, message);
+            break;
 
          case NAME_UPDATE:
             // TODO Change name of user or conversation.
             replyToUnhandledMessage(connection, message);
+            break;
 
          case ACKNOWLEDGE:
             // TODO Respond to ACK
             replyToUnhandledMessage(connection, message);
+            break;
 
          case REFUSE:
             // TODO Respond to refusal.
             replyToUnhandledMessage(connection, message);
+            break;
 
          case NETWORK_CONNECT:
             // TODO Handle network connect message.

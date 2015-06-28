@@ -13,6 +13,7 @@ public class Connection {
    private InputStream rawInStream;
    private ObjectOutputStream objOutStream;
    private ObjectInputStream objInStream;
+   private boolean printMessages = Settings.DEFAULT_CONNECTION_PRINT_MESSAGES;
 
    public Connection(Socket socket) {
       this.socket = socket;
@@ -30,11 +31,15 @@ public class Connection {
       }
    }
 
+   public void setPrintMessages(boolean printMessages) {
+      this.printMessages = printMessages;
+   }
+
    public boolean send(Message message) {
       if (isClosed()) return false;
       try {
          objOutStream.writeObject(message);
-         System.out.println("TX - " + message.toString());
+         if (printMessages) System.out.println("TX - " + message.toString());
          return true;
 
       } catch (IOException e) {
@@ -50,7 +55,7 @@ public class Connection {
       if (isClosed()) return null;
       try {
          Message message = (Message) objInStream.readObject();
-         System.out.println("RX - " + message.toString());
+         if (printMessages) System.out.println("RX - " + message.toString());
          return message;
 
       } catch (IOException e) {
