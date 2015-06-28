@@ -206,7 +206,7 @@
   </path>
   
   <path id="chatclient.runtime.production.module.classpath">
-    <path refid="common.runtime.production.module.classpath"/>
+    <pathelement location="${common.output.dir}"/>
     <pathelement location="${chatclient.output.dir}"/>
   </path>
   
@@ -217,7 +217,8 @@
   </path>
   
   <path id="chatclient.runtime.module.classpath">
-    <path refid="common.runtime.module.classpath"/>
+    <pathelement location="${common.testoutput.dir}"/>
+    <pathelement location="${common.output.dir}"/>
     <pathelement location="${chatclient.testoutput.dir}"/>
     <pathelement location="${chatclient.output.dir}"/>
   </path>
@@ -234,12 +235,6 @@
   <path id="chatclient.module.sourcepath">
     <dirset dir="${module.chatclient.basedir}/ChatClient">
       <include name="src"/>
-    </dirset>
-  </path>
-  
-  <path id="chatclient.module.test.sourcepath">
-    <dirset dir="${module.chatclient.basedir}/ChatClient">
-      <include name="test"/>
     </dirset>
   </path>
   
@@ -263,24 +258,9 @@
       </fileset>
     </copy>
   </target>
-  
-  <target name="compile.module.chatclient.tests" depends="compile.module.chatclient.production" description="compile module ChatClient; test classes" unless="skip.tests">
-    <mkdir dir="${chatclient.testoutput.dir}"/>
-    <javac destdir="${chatclient.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
-      <compilerarg line="${compiler.args.chatclient}"/>
-      <bootclasspath refid="chatclient.module.bootclasspath"/>
-      <classpath refid="chatclient.module.classpath"/>
-      <src refid="chatclient.module.test.sourcepath"/>
-      <patternset refid="excluded.from.compilation.chatclient"/>
-    </javac>
-    
-    <copy todir="${chatclient.testoutput.dir}">
-      <fileset dir="${module.chatclient.basedir}/ChatClient/test">
-        <patternset refid="compiler.resources"/>
-        <type type="file"/>
-      </fileset>
-    </copy>
-  </target>
+
+  <target name="compile.module.chatclient.tests" depends="compile.module.chatclient.production"
+          description="compile module ChatClient; test classes" unless="skip.tests"/>
   
   <target name="clean.module.chatclient" description="cleanup module">
     <delete dir="${chatclient.output.dir}"/>
@@ -308,7 +288,7 @@
   </path>
   
   <path id="chatserver.runtime.production.module.classpath">
-    <path refid="common.runtime.production.module.classpath"/>
+    <pathelement location="${common.output.dir}"/>
     <pathelement location="${chatserver.output.dir}"/>
   </path>
   
@@ -322,7 +302,8 @@
   </path>
   
   <path id="chatserver.runtime.module.classpath">
-    <path refid="common.runtime.module.classpath"/>
+    <pathelement location="${common.testoutput.dir}"/>
+    <pathelement location="${common.output.dir}"/>
     <pathelement location="${chatserver.testoutput.dir}"/>
     <pathelement location="${chatserver.output.dir}"/>
     <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
