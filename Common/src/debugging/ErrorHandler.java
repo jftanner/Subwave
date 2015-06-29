@@ -11,10 +11,9 @@ public class ErrorHandler {
 
     // TODO Create and store error log.
 
-    /** Setting: print error messages to System.err */
+    /** Setting: Print error messages to System.err */
     private static boolean printToStandardErr = true;
-
-    /** Setting: print stack traces with error. */
+    /** Setting: Print stack traces with error. */
     private static boolean verboseMode = true;
 
     /**
@@ -44,5 +43,23 @@ public class ErrorHandler {
         }
 
         // TODO Save to error log.
+    }
+
+    /**
+     * Set the {@link #printToStandardErr} flag.
+     *
+     * @param printToStandardErr value to set the flag
+     */
+    public static void setPrintToStandardErr(boolean printToStandardErr) {
+        ErrorHandler.printToStandardErr = printToStandardErr;
+    }
+
+    /**
+     * Set the {@link #verboseMode} flag.
+     *
+     * @param verboseMode value to set the flag
+     */
+    public static void setVerboseMode(boolean verboseMode) {
+        ErrorHandler.verboseMode = verboseMode;
     }
 }
