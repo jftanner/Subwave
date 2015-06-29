@@ -154,6 +154,7 @@ public class Server {
 
       // Validate conversation.
       Conversation conversation = validateConversation(connection, message);
+      if (conversation == null) return;
 
       // Send the message.
       conversation.broadcastToConversation(message);
