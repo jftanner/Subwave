@@ -28,7 +28,7 @@ public class Server {
 
       // Load arguments
       // TODO Handle arguments more elegantly.
-      int port = Settings.DEFAULT_PORT;
+      int port = Settings.DEFAULT_SERVER_PORT;
       if (args.length > 0) port = Integer.parseInt(args[0]);
 
       // Start the core.SocketListener thread to listen for incoming connections.

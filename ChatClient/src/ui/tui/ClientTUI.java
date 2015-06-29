@@ -19,7 +19,7 @@ public class ClientTUI extends ClientUIFramework {
    private int lastConversationID = 0;
 
    public ClientTUI() {
-      serverConnection = openConnection(Settings.DEFAULT_ADDRESS, Settings.DEFAULT_PORT, null);
+      serverConnection = openConnection(Settings.DEFAULT_SERVER_ADDRESS, Settings.DEFAULT_SERVER_PORT, null);
       if (serverConnection == null) {
          System.err.println("No server connection for TUI to use.");
          System.exit(0);
