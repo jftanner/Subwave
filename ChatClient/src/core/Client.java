@@ -115,10 +115,19 @@ public class Client {
      */
     public static Connection connectToServer() { return connectToServer(null, 0, null); }
 
+    /**
+     * Attempts to disconnect gracefully from the provided connection.
+     * <p/>
+     * The connection is closed regardless of whether or not the disconnect message is sent successfully.
+     *
+     * @param connection connection to disconnect and close
+     */
     public static void disconnectFromServer(Connection connection) {
-        // Shut down.
+        // Attempt to send graceful disconnect message.
         Message disconnectNotice = new Message(MessageType.NETWORK_DISCONNECT, 0, connection.getClientID(), Message.DISCONNECT_INTENT);
         connection.send(disconnectNotice);
+
+        // Close the connection.
         connection.close();
     }
 }
