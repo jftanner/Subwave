@@ -123,6 +123,9 @@ public class Client {
      * @param connection connection to disconnect and close
      */
     public static void disconnectFromServer(Connection connection) {
+        // Avoid possible null pointer exception.
+        if (connection == null) return;
+
         // Attempt to send graceful disconnect message.
         Message disconnectNotice = new Message(MessageType.NETWORK_DISCONNECT, 0, connection.getClientID(), Message.DISCONNECT_INTENT);
         connection.send(disconnectNotice);
