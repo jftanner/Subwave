@@ -1,7 +1,7 @@
 package com.tanndev.subwave.client.core;
 
-import com.tanndev.subwave.client.ui.ClientTUI;
 import com.tanndev.subwave.client.ui.ClientUIFramework;
+import com.tanndev.subwave.client.ui.tui.ClientTUI;
 import com.tanndev.subwave.common.Connection;
 import com.tanndev.subwave.common.Message;
 import com.tanndev.subwave.common.MessageType;
@@ -15,8 +15,6 @@ import java.net.Socket;
  */
 public class Client {
 
-   private static final String DISCONNECT_MESSAGE = "Goodbye";
-
    private static ClientUIFramework ui;
 
    public static void main(String[] args) {
@@ -27,11 +25,6 @@ public class Client {
       // TODO Add GUI option.
       ui = new ClientTUI();
       ui.start();
-
-      // TODO exchange messages with server.
-
-      // Disconnect gracefully before exiting.
-      ui.shutdown();
    }
 
    public static Connection connectToServer(String serverAddress, int port, String nickname) {
@@ -69,7 +62,7 @@ public class Client {
    public static void disconnectFromServer(Connection connection) {
       // Shut down.
       Message disconnectNotice =
-            new Message(MessageType.NETWORK_DISCONNECT, 0, connection.getClientID(), DISCONNECT_MESSAGE);
+            new Message(MessageType.NETWORK_DISCONNECT, 0, connection.getClientID(), Message.DISCONNECT_INTENT);
       connection.send(disconnectNotice);
       connection.close();
    }

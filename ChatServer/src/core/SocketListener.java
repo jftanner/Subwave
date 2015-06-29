@@ -11,15 +11,12 @@ import java.net.Socket;
 /**
  * Created by jtanner on 6/27/2015.
  */
-public class ServerListener extends Thread {
-
-   private static final String CONNECTION_GREETING_ACK = "Connection request received";
-   private static final String CONNECTION_FINAL_ACK = "Connection accepted";
+public class SocketListener extends Thread {
 
    private static ServerSocket serverSocket;
 
 
-   public ServerListener(int port) {
+   public SocketListener(int port) {
       // Create the socket.
       try {
          serverSocket = new ServerSocket(port);
@@ -44,7 +41,7 @@ public class ServerListener extends Thread {
 
             // Get a new client ID and send greeting.
             int clientID = Server.getUniqueID();
-            Message serverACK = new Message(MessageType.NETWORK_CONNECT, 0, clientID, CONNECTION_GREETING_ACK);
+            Message serverACK = new Message(MessageType.NETWORK_CONNECT, 0, clientID, Message.CONNECTION_START_ACK);
             connection.send(serverACK);
 
             // Wait for connection ack from client.
@@ -62,12 +59,8 @@ public class ServerListener extends Thread {
             new ConnectionListener(connection).start();
 
             // Send final ack to enable client.
-            Message finalACK = new Message(MessageType.NETWORK_CONNECT, 0, clientID, CONNECTION_FINAL_ACK);
+            Message finalACK = new Message(MessageType.NETWORK_CONNECT, 0, clientID, Message.CONNECTION_FINAL_ACK);
             connection.send(finalACK);
-
-            // TODO Remove debug code
-            Message debugConnect = new Message(MessageType.DEBUG_MESSAGE, 0, clientID, "New client: " + nickname);
-            Server.broadcastToAll(debugConnect);
 
          } catch (IOException e) {
             System.err.println("IO exception thrown by SeverListener.");

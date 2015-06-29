@@ -11,7 +11,7 @@ public enum MessageType {
    NICKNAME_UPDATE("NAME"),
    ACKNOWLEDGE("ACK"),
    NETWORK_CONNECT("CONNECT"),
-   NETWORK_DISCONNECT("DISCONNECT"),
+   NETWORK_DISCONNECT("DISCONNECT_INTENT"),
    DEBUG_MESSAGE("DEBUG");
 
    private final String value;
@@ -20,7 +20,7 @@ public enum MessageType {
       this.value = value;
    }
 
-   public String toString() {
+   public String value() {
       return value;
    }
 }

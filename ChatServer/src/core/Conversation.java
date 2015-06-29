@@ -11,8 +11,6 @@ import java.util.Iterator;
  */
 public class Conversation {
 
-   private static final String DISCONNECTED_NOTIFICATION = "Disconnected";
-
    public final int conversationID;
    private HashSet<ClientRecord> members = new HashSet<ClientRecord>();
 
@@ -35,7 +33,7 @@ public class Conversation {
          if (client.clientConnection.isClosed()) {
             iterator.remove();
             Message notification =
-                  new Message(MessageType.CONVERSATION_QUIT, conversationID, client.clientID, DISCONNECTED_NOTIFICATION);
+                  new Message(MessageType.CONVERSATION_QUIT, conversationID, client.clientID, Message.DISCONNECT_UNEXPECTED);
             broadcastToConversation(notification);
          }
       }

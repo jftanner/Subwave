@@ -6,6 +6,14 @@ import java.io.Serializable;
  * Created by jtanner on 6/28/2015.
  */
 public class Message implements Serializable {
+
+   // Default Messages:
+   public static final String CONNECTION_START_ACK = "Connection request received";
+   public static final String CONNECTION_FINAL_ACK = "Connection accepted";
+   public static final String DISCONNECT_INTENT = "Goodbye";
+   public static final String DISCONNECT_UNEXPECTED = "Disconnected";
+   public static final String UNHANDLED_MSG = "Not configured to process that message type";
+
    public final MessageType messageType;
    public final int conversationID;
    public final int clientID;
@@ -20,6 +28,6 @@ public class Message implements Serializable {
 
 
    public String toString() {
-      return messageType.toString() + ": " + conversationID + "," + clientID + " | " + messageBody;
+      return messageType.value() + ": " + conversationID + "," + clientID + " | " + messageBody;
    }
 }

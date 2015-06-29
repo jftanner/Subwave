@@ -1,26 +1,26 @@
-package com.tanndev.subwave.client.ui;
+package com.tanndev.subwave.client.ui.tui;
 
+import com.tanndev.subwave.client.ui.ClientUIFramework;
 import com.tanndev.subwave.common.Connection;
 import com.tanndev.subwave.common.Message;
 import com.tanndev.subwave.common.MessageType;
 import com.tanndev.subwave.common.Settings;
-
-import java.util.Scanner;
 
 /**
  * Created by jtanner on 6/28/2015.
  */
 public class ClientTUI extends ClientUIFramework {
 
-   private Connection serverConnection;
+   protected Connection serverConnection;
 
    public ClientTUI() {
       serverConnection = openConnection(Settings.DEFAULT_ADDRESS, Settings.DEFAULT_PORT, null);
    }
 
    public void run() {
-      // Start a new input listener.
-      new InputListener().start();
+      // Start a new input listeners.
+      new UserListener(this).start();
+      new ServerListener(this).start();
    }
 
    @Override
@@ -28,7 +28,7 @@ public class ClientTUI extends ClientUIFramework {
       closeConnection(serverConnection);
    }
 
-   private void handleInput(String input) {
+   protected void handleUserInput(String input) {
       if (input.equalsIgnoreCase("quit")) {
          closeConnection(serverConnection);
       } else {
@@ -38,11 +38,8 @@ public class ClientTUI extends ClientUIFramework {
       }
    }
 
-   private class InputListener extends Thread {
-      public void run() {
-         Scanner in = new Scanner(System.in);
-         while (!serverConnection.isClosed()) handleInput(in.next());
-         in.close();
-      }
+   protected void handleServerInput(Message message) {
+      System.out.println(message.toString());
    }
+
 }

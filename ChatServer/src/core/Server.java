@@ -2,6 +2,7 @@ package com.tanndev.subwave.server.core;
 
 import com.tanndev.subwave.common.Connection;
 import com.tanndev.subwave.common.Message;
+import com.tanndev.subwave.common.MessageType;
 import com.tanndev.subwave.common.Settings;
 
 import java.util.TreeMap;
@@ -19,7 +20,7 @@ public class Server {
    /**
     * Launcher for the Subwave server.
     * <p/>
-    * Performs various setup tasks and starts the core.ServerListener to wait for incoming connections.
+    * Performs various setup tasks and starts the core.SocketListener to wait for incoming connections.
     *
     * @param args Application arguments.
     */
@@ -30,8 +31,8 @@ public class Server {
       int port = Settings.DEFAULT_PORT;
       if (args.length > 0) port = Integer.parseInt(args[0]);
 
-      // Start the core.ServerListener thread to listen for incoming connections.
-      new ServerListener(port).start();
+      // Start the core.SocketListener thread to listen for incoming connections.
+      new SocketListener(port).start();
    }
 
    public synchronized static ClientRecord addNewClient(int clientID, Connection clientConnection, String nickname) {
@@ -59,6 +60,30 @@ public class Server {
    public synchronized static void broadcastToAll(Message message) {
       for (ClientRecord client : clientMap.values()) {
          client.clientConnection.send(message);
+      }
+   }
+
+   private void handleClientMessage(Connection connection, Message message) {
+      if (message == null) return;
+      switch (message.messageType) {
+         case CHAT_MESSAGE:
+         case CONVERSATION_INVITE:
+         case CONVERSATION_JOIN:
+         case CONVERSATION_QUIT:
+         case NICKNAME_UPDATE:
+         case ACKNOWLEDGE:
+         case NETWORK_CONNECT:
+            Message reply = new Message(MessageType.ACKNOWLEDGE, 0, message.clientID, Message.UNHANDLED_MSG);
+            connection.send(reply);
+            break;
+         case NETWORK_DISCONNECT:
+            connection.close();
+            break;
+         case DEBUG_MESSAGE:
+            System.err.println(message.toString());
+            break;
+         default:
+            System.err.println("Unhandled message type received: " + message.messageType);
       }
    }
 }
