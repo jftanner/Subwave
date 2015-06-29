@@ -4,172 +4,269 @@ import com.tanndev.subwave.client.ui.ClientUIFramework;
 import com.tanndev.subwave.common.Connection;
 import com.tanndev.subwave.common.Message;
 import com.tanndev.subwave.common.MessageType;
-import com.tanndev.subwave.common.Settings;
+import com.tanndev.subwave.common.debugging.ErrorHandler;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * Created by James Tanner on 6/28/2015.
+ * Provides a text-based user interface (TUI) for the Subwave chat client.
+ *
+ * @author James Tanner
+ * @version 0.0.1
+ * @see com.tanndev.subwave.client.ui.ClientUIFramework
+ * @see com.tanndev.subwave.client.core.Client
  */
 public class ClientTUI extends ClientUIFramework {
 
-   protected Connection serverConnection;
+    /** Connection to the server. Only one connection may be open at a time. May be open or closed. */
+    protected Connection serverConnection;
 
-   private int lastConversationID = 0;
+    /** conversationID of the last conversation message received; for use with replies. */
+    private int lastConversationID = 0;
 
-   public ClientTUI() {
-      serverConnection = openConnection(Settings.DEFAULT_SERVER_ADDRESS, Settings.DEFAULT_SERVER_PORT, null);
-      if (serverConnection == null) {
-         System.err.println("No server connection for TUI to use.");
-         System.exit(0);
-      }
+    /**
+     * Constructor
+     * <p/>
+     * Attempts to open a new connection using default settings. Terminates the application on fail.
+     * <p/>
+     * After the connection is made, the standard output from the {@link com.tanndev.subwave.common.Connection} object
+     * is disabled to avoid confusing user interacting.
+     *
+     * @see com.tanndev.subwave.common.Connection
+     * @see com.tanndev.subwave.common.Connection#setPrintMessages(boolean)
+     */
+    public ClientTUI() {
+        // Attempt to open the connection.
+        serverConnection = openConnection(null, 0, null);
+        if (serverConnection == null) {
+            ErrorHandler.logError("No server connection for TUI to use.");
+            System.exit(0);
+        }
 
-      // Switch off the local connection message printing.
-      serverConnection.setPrintMessages(false);
-      System.out.println("Hiding TX/RX messages.");
-   }
+        // Switch off the local connection message printing.
+        serverConnection.setPrintMessages(false);
+        System.out.println("Hiding TX/RX messages.");
+    }
 
-   public static void displayHelp(Command command) {
-      // TODO display a help file.
-      System.out.println("Malformed command.");
-   }
+    /**
+     * Displays general help information or specific help information for the provided command.
+     * <p/>
+     * <b>Not currently implemented.</b>
+     *
+     * @param command {@link com.tanndev.subwave.client.ui.tui.Command} to display help for, or null for general help.
+     */
+    public static void displayHelp(Command command) {
+        // TODO Implement displayHelp()
+        System.out.println("Malformed command.");
+    }
 
-   public void run() {
-      // Start a new input listeners.
-      new UserListener(this).start();
-      new ServerListener(this).start();
-   }
+    /**
+     * Called when the UI is started. Creates and starts the UserListener and ServerListener threads.
+     *
+     * @see com.tanndev.subwave.client.ui.tui.UserListener
+     * @see com.tanndev.subwave.client.ui.tui.ServerListener
+     */
+    @Override
+    public void run() {
+        // Start new input listeners.
+        new UserListener(this).start();
+        new ServerListener(this).start();
+    }
 
-   public void shutdown() {
-      closeConnection(serverConnection);
-      System.exit(0);
-   }
+    /**
+     * Closes the connection, if it's open, and terminates the application.
+     */
+    @Override
+    public void shutdown() {
+        if (serverConnection != null) closeConnection(serverConnection);
+        System.exit(0);
+    }
 
-   protected void handleUserInput(String input) {
-      if (input == null || input.length() < 1) return;
+    /**
+     * Handles all input from the user, as provided by a {@link com.tanndev.subwave.client.ui.tui.UserListener} thread.
+     * Commands are parsed and matched to a {@link com.tanndev.subwave.client.ui.tui.Command} type to be executed.
+     *
+     * @param input single-line string from the user, provided by a UserListener thread
+     */
+    protected void handleUserInput(String input) {
+        // Ignore null or empty input.
+        if (input == null || input.length() < 1) return;
 
-      MessageType messageType = MessageType.DEBUG_MESSAGE;
-      int conversationID = 0;
-      int clientID = serverConnection.getClientID();
-      String messageText = input;
+        /*
+        Set default message parameters.
+        By default, input is assumed to be:
+        ~ a debug message (messageType = DEBUG_MESSAGE),
+        ~ to the server (conversationID = 0)
+        ~ using the local client's ID
+        ~ with the input text as the message body.
+        */
+        MessageType messageType = MessageType.DEBUG_MESSAGE;
+        int conversationID = 0;
+        int clientID = serverConnection.getClientID();
+        String messageText = input;
 
-      if (isCommand(input)) {
-         String[] tokens = tokenizeCommand(input);
-         String commandToken = tokens[0];
-         Command command = Command.parseCommandToken(commandToken);
-         int messageStartIndex = commandToken.length();
+        // If the input is a command...
+        if (isCommand(input)) {
+            // Tokenize the input for parsing.
+            String[] tokens = tokenizeCommand(input);
 
-         switch (command) {
-            case MESSAGE:
-               messageType = MessageType.CHAT_MESSAGE;
-               if (tokens.length < 3) {
-                  displayHelp(Command.MESSAGE);
-                  return;
-               }
-               messageText = recombineTokensAfter(tokens, input, 2);
-               break;
+            // Parse the command token.
+            String commandToken = tokens[0];
+            Command command = Command.parseCommandToken(commandToken);
 
-            case EMOTE:
-               messageType = MessageType.CHAT_EMOTE;
-               if (tokens.length < 3) {
-                  displayHelp(Command.MESSAGE);
-                  return;
-               }
-               messageText = recombineTokensAfter(tokens, input, 2);
-               break;
+            // Handle the command.
+            switch (command) {
+                case MESSAGE: // Chat message.
+                    messageType = MessageType.CHAT_MESSAGE;
+                    if (tokens.length < 3) {
+                        displayHelp(Command.MESSAGE);
+                        return;
+                    }
+                    // TODO select conversation
+                    messageText = recombineTokensAfter(tokens, input, 2);
+                    break;
 
-            case REPLY:
-               conversationID = lastConversationID;
-               messageType = MessageType.CHAT_MESSAGE;
-               break;
+                case EMOTE: // Emote chat message.
+                    messageType = MessageType.CHAT_EMOTE;
+                    if (tokens.length < 3) {
+                        displayHelp(Command.MESSAGE);
+                        return;
+                    }
+                    // TODO select conversation
+                    messageText = recombineTokensAfter(tokens, input, 2);
+                    break;
 
-            case CONVERSATION_NEW:
-               messageType = MessageType.CONVERSATION_NEW;
-               break;
+                case REPLY: // Reply to last conversation.
+                    conversationID = lastConversationID;
+                    messageType = MessageType.CHAT_MESSAGE;
+                    break;
 
-            case CONVERSATION_INVITE:
-               // TODO conversation invite.
-               messageType = MessageType.CONVERSATION_INVITE;
-               break;
+                case CONVERSATION_NEW: // Create a new conversation.
+                    messageType = MessageType.CONVERSATION_NEW;
+                    break;
 
-            case CONVERSATION_JOIN:
-               // TODO conversation join.
-               messageType = MessageType.CONVERSATION_JOIN;
-               break;
+                case CONVERSATION_INVITE: // Invite another client to a conversation.
+                    // TODO conversation invite.
+                    messageType = MessageType.CONVERSATION_INVITE;
+                    break;
 
-            case CONVERSATION_LEAVE:
-               // TODO conversation leave.
-               messageType = MessageType.CONVERSATION_LEAVE;
-               break;
+                case CONVERSATION_JOIN: // Join a conversation.
+                    // TODO conversation join.
+                    messageType = MessageType.CONVERSATION_JOIN;
+                    break;
 
-            case NAME_UPDATE:
-               // TODO name update.
-               messageType = MessageType.NAME_UPDATE;
-               break;
+                case CONVERSATION_LEAVE: // Leave a conversation.
+                    // TODO conversation leave.
+                    messageType = MessageType.CONVERSATION_LEAVE;
+                    break;
 
-            case ACKNOWLEDGE:
-               // TODO acknowledge.
-               messageType = MessageType.ACKNOWLEDGE;
-               break;
+                case NAME_UPDATE: // Change the name a conversation or client.
+                    // TODO name update.
+                    messageType = MessageType.NAME_UPDATE;
+                    break;
 
-            case REFUSE:
-               // TODO refuse.
-               messageType = MessageType.REFUSE;
-               break;
+                case ACKNOWLEDGE: // Acknowledge a request
+                    // TODO acknowledge.
+                    messageType = MessageType.ACKNOWLEDGE;
+                    break;
 
-            case DEBUG_MESSAGE:
-               // TODO debug
-               break;
+                case REFUSE: // Refuse a request
+                    // TODO refuse.
+                    messageType = MessageType.REFUSE;
+                    break;
 
-            case QUIT:
-               shutdown();
-               break;
+                case DEBUG_MESSAGE: // Send a debug message.
+                    // TODO debug
+                    break;
 
-            default:
-               System.err.println("Unrecognised command token: " + tokens[0]);
-               return;
-         }
-         // Trim command off sending message.
-         messageText = messageText.substring(messageStartIndex);
+                case QUIT: // Terminate the application.
+                    shutdown();
+                    break;
 
-      } else {
-         // No command. If there is an ongoing conversation, assume this is a reply. Otherwise, show help.
-         if (lastConversationID > 0) {
-            messageType = MessageType.CHAT_MESSAGE;
-            conversationID = lastConversationID;
-         } else displayHelp(null);
-      }
+                default: // A command without a case in the switch statement.
+                    ErrorHandler.logError("Unrecognised command token: " + tokens[0]);
+                    return;
+            }
 
-      Message message = new Message(messageType, conversationID, clientID, messageText);
-      serverConnection.send(message);
-   }
+        } else {
+            /*
+            Input is not a command. If there is an ongoing conversation, assume this is a reply.
+            Otherwise, show help. (Default settings will still send the input as a debug message.)
+            */
+            if (lastConversationID > 0) {
+                messageType = MessageType.CHAT_MESSAGE;
+                conversationID = lastConversationID;
+            } else displayHelp(null);
+        }
 
-   private boolean isCommand(String input) {
-      return input.startsWith("\\");
-   }
+        // Send the constructed message to the server.
+        Message message = new Message(messageType, conversationID, clientID, messageText);
+        serverConnection.send(message);
+    }
 
-   private String[] tokenizeCommand(String input) {
-      Scanner tokenizer = new Scanner(input);
-      ArrayList<String> tokens = new ArrayList<String>();
-      while (tokenizer.hasNext()) tokens.add(tokenizer.next());
-      return tokens.toArray(new String[tokens.size()]);
-   }
+    /**
+     * Handles all input from the server, as provided by a {@link com.tanndev.subwave.client.ui.tui.ServerListener}
+     * thread.
+     * <p/>
+     * <b>Current version only prints raw message to output and updates {@link #lastConversationID}.</b>
+     *
+     * @param message message received from the server, provided by a ServerListener thread
+     */
+    protected void handleServerInput(Message message) {
+        if (message == null) return;
 
-   private String recombineTokensAfter(String[] tokens, String original, int lastUsedIndex) {
-      if (lastUsedIndex > tokens.length) return null;
-      return original.substring(original.indexOf(tokens[lastUsedIndex]));
-   }
+        // TODO switch on server input.
+        System.out.println("RECEIVED > " + message.toString());
 
-   protected void handleServerInput(Message message) {
-      if (message == null) return;
+        // Set reply conversation, for messages tagged with a conversation.
+        int conversationID = message.conversationID;
+        if (conversationID > 0) lastConversationID = conversationID;
+    }
 
-      // TODO switch on server input.
-      System.out.println("RECEIVED > " + message.toString());
+    /**
+     * Determines whether or not the provided input should be parsed as a command.
+     *
+     * @param input user input to be checked
+     *
+     * @return true if the input should be parsed as a command, otherwise false
+     */
+    private boolean isCommand(String input) {
+        // Commands start with the '\' character.
+        // TODO tokenize in a less wasteful way.
+        return input.startsWith("\\");
+    }
 
-      // Set reply conversation, for messages tagged with a conversation.
-      int conversationID = message.conversationID;
-      if (conversationID > 0) lastConversationID = conversationID;
-   }
+    /**
+     * Tokenizes the provided input string.
+     *
+     * @param input user input to be tokenized
+     *
+     * @return new String array containing the input tokens
+     */
+    private String[] tokenizeCommand(String input) {
+        // Create a new scanner on the input.
+        Scanner tokenizer = new Scanner(input);
+        ArrayList<String> tokens = new ArrayList<String>();
+        while (tokenizer.hasNext()) tokens.add(tokenizer.next());
+        return tokens.toArray(new String[tokens.size()]);
+    }
+
+    /**
+     * Returns a string containing the unused tokens with the original whitespace intact.
+     * <p/>
+     * <b>This assumes that the first unused token is not a duplicate of a previous token and therefore does not
+     * guarantee the correct substring is returned.</b> This should be corrected in a later version.
+     *
+     * @param tokens        tokenized strings from user input
+     * @param original      original user input string
+     * @param lastUsedIndex index of the last token used in the tokens array.
+     *
+     * @return original input string without the used tokens
+     */
+    private String recombineTokensAfter(String[] tokens, String original, int lastUsedIndex) {
+        if (lastUsedIndex > tokens.length) return null;
+        return original.substring(original.indexOf(tokens[lastUsedIndex]));
+    }
 
 }
