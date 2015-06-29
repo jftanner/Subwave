@@ -6,6 +6,7 @@ import com.tanndev.subwave.common.Connection;
 import com.tanndev.subwave.common.Message;
 import com.tanndev.subwave.common.MessageType;
 import com.tanndev.subwave.common.Settings;
+import com.tanndev.subwave.common.debugging.ErrorHandler;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -95,8 +96,11 @@ public class Client {
             return connection;
 
         } catch (IOException e) {
-            // Some exception has been thrown by the server
-            System.err.println("Could not connect to server.");
+            /*
+            Some exception has been thrown by the server.
+            Because this is expected in the event of a connection failure, no stack trace is necessary.
+            */
+            ErrorHandler.logError("Could not connect to server.");
             return null;
         }
     }
