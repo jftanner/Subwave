@@ -60,30 +60,42 @@ public class Client {
         if (port < 1) port = Settings.DEFAULT_SERVER_PORT;
         if (nickname == null) nickname = Settings.DEFAULT_NICKNAME;
 
-        // Create the socket.
+        // Catch any exceptions thrown during connection process.
         try {
+            /*
+            Create the socket and connection object.
+            The socket constructor will throw an exception if unable to connect.
+            */
             Socket socket = new Socket(serverAddress, port);
             Connection connection = new Connection(socket);
 
-            // Wait for server ack.
+            /*
+            Wait for server ack message.
+            Message must be of type NETWORK.CONNECT
+            If message returns null, or with the wrong type, throw an exception.
+            */
             Message serverACK = connection.receive();
             if (serverACK == null || serverACK.messageType != MessageType.NETWORK_CONNECT)
                 throw new IOException("Failed server ACK.");
+
+            // Retrieve clientID from server ack message and store it in the connection object.
             int clientID = serverACK.clientID;
             connection.setClientID(clientID);
 
-            // Send the reply with nickname.
+            // Send a reply with the requested nickname.
             Message clientACK = new Message(MessageType.NETWORK_CONNECT, 0, clientID, nickname);
             connection.send(clientACK);
 
-            // Wait for final ack.
+            // Wait for final ack. This, again, must be a valid NETWORK_CONNECT message.
             Message finalACK = connection.receive();
             if (finalACK == null || finalACK.messageType != MessageType.NETWORK_CONNECT)
                 throw new IOException("Failed final ACK.");
 
+            // The connection has been successfully made. Return it.
             return connection;
 
         } catch (IOException e) {
+            // Some exception has been thrown by the server
             System.err.println("Could not connect to server.");
             return null;
         }
