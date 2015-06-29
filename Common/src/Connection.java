@@ -1,3 +1,5 @@
+package com.tanndev.subwave.common;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -5,6 +7,7 @@ import java.net.Socket;
  * Created by jtanner on 6/28/2015.
  */
 public class Connection {
+   private int clientID;
    private Socket socket;
    private OutputStream rawOutStream;
    private InputStream rawInStream;
@@ -27,15 +30,20 @@ public class Connection {
       }
    }
 
-   public void send(Message message) {
+   public boolean send(Message message) {
+      if (isClosed()) return false;
       try {
          objOutStream.writeObject(message);
          System.out.println("TX - " + message.toString());
+         return true;
 
       } catch (IOException e) {
          System.err.println("IO exception thrown while sending message.");
          e.printStackTrace();
       }
+
+      // com.tanndev.subwave.common.Message failed to send.
+      return false;
    }
 
    public Message receive() {
@@ -77,5 +85,13 @@ public class Connection {
 
    public boolean isClosed() {
       return socket.isClosed();
+   }
+
+   public int getClientID() {
+      return clientID;
+   }
+
+   public void setClientID(int clientID) {
+      this.clientID = clientID;
    }
 }

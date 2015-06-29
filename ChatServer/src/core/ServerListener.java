@@ -1,3 +1,9 @@
+package com.tanndev.subwave.server.core;
+
+import com.tanndev.subwave.common.Connection;
+import com.tanndev.subwave.common.Message;
+import com.tanndev.subwave.common.MessageType;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -37,7 +43,7 @@ public class ServerListener extends Thread {
 
 
             // Get a new client ID and send greeting.
-            int clientID = Server.getNewClientID();
+            int clientID = Server.getUniqueID();
             Message serverACK = new Message(MessageType.NETWORK_CONNECT, 0, clientID, CONNECTION_GREETING_ACK);
             connection.send(serverACK);
 
@@ -61,7 +67,7 @@ public class ServerListener extends Thread {
 
             // TODO Remove debug code
             Message debugConnect = new Message(MessageType.DEBUG_MESSAGE, 0, clientID, "New client: " + nickname);
-            Server.broadcast(debugConnect);
+            Server.broadcastToAll(debugConnect);
 
          } catch (IOException e) {
             System.err.println("IO exception thrown by SeverListener.");

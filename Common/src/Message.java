@@ -1,3 +1,5 @@
+package com.tanndev.subwave.common;
+
 import java.io.Serializable;
 
 /**

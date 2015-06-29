@@ -1,3 +1,7 @@
+package com.tanndev.subwave.server.core;
+
+import com.tanndev.subwave.common.Connection;
+
 /**
  * Created by jtanner on 6/28/2015.
  */

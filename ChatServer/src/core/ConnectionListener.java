@@ -1,9 +1,15 @@
+package com.tanndev.subwave.server.core;
+
+import com.tanndev.subwave.common.Connection;
+import com.tanndev.subwave.common.Message;
+import com.tanndev.subwave.common.MessageType;
+
 /**
  * Created by jtanner on 6/28/2015.
  */
 public class ConnectionListener extends Thread {
 
-   private static final String UNHANDLED_MSG = "Server not configured for this message type";
+   private static final String UNHANDLED_MSG = "core.core not configured for this message type";
 
    private Connection connection;
 
@@ -23,6 +29,7 @@ public class ConnectionListener extends Thread {
       if (message == null) return;
       switch (message.messageType) {
          case CHAT_MESSAGE:
+         case CONVERSATION_INVITE:
          case CONVERSATION_JOIN:
          case CONVERSATION_QUIT:
          case NICKNAME_UPDATE:
