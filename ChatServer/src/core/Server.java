@@ -13,6 +13,7 @@ import java.util.TreeMap;
 public class Server {
 
 
+   private static final int SERVER_ID = 0;
    private static TreeMap<Integer, ClientRecord> clientMap = new TreeMap<Integer, ClientRecord>();
    private static TreeMap<Integer, Conversation> conversationMap = new TreeMap<Integer, Conversation>();
    private static int nextUniqueID = 1;
@@ -173,7 +174,7 @@ public class Server {
       Conversation conversation = addConversation(conversationID, conversationName);
 
       // Send the conversation name to the client.
-      connection.send(conversation.getNameUpdateMessage());
+      connection.send(conversation.getNameUpdateMessage(client.clientID));
 
       // Add client to the conversation as a member. On fail, remove the conversation.
       if (!conversation.addMember(client)) removeConversation(conversationID);
@@ -188,7 +189,7 @@ public class Server {
       Conversation conversation = validateConversation(connection, message);
 
       // Send the conversation name to the client.
-      connection.send(conversation.getNameUpdateMessage());
+      connection.send(conversation.getNameUpdateMessage(SERVER_ID));
 
       // Add client to the conversation as a member.
       conversation.addMember(client);
@@ -203,7 +204,7 @@ public class Server {
 
    private static void replyToUnhandledMessage(Connection connection, Message message) {
       System.err.println("Could not handle message: " + message.toString());
-      Message reply = new Message(MessageType.REFUSE, 0, connection.getClientID(), Message.UNHANDLED_MSG);
+      Message reply = new Message(MessageType.REFUSE, SERVER_ID, connection.getClientID(), Message.UNHANDLED_MSG);
       connection.send(reply);
    }
 
@@ -220,7 +221,7 @@ public class Server {
    private static ClientRecord validateClientMessage(Connection connection, Message message) {
       int sourceID = connection.getClientID();
       if (sourceID != message.clientID) {
-         Message reply = new Message(MessageType.REFUSE, 0, sourceID, Message.INVALID_SOURCEID);
+         Message reply = new Message(MessageType.REFUSE, SERVER_ID, sourceID, Message.INVALID_SOURCEID);
          connection.send(reply);
          return null;
       }
@@ -231,7 +232,7 @@ public class Server {
    private static Conversation validateConversation(Connection connection, Message message) {
       Conversation conversation = conversationMap.get(message.conversationID);
       if (conversation == null) {
-         Message reply = new Message(MessageType.REFUSE, 0, connection.getClientID(), Message.INVALID_CONVERSATION);
+         Message reply = new Message(MessageType.REFUSE, SERVER_ID, connection.getClientID(), Message.INVALID_CONVERSATION);
          connection.send(reply);
       }
       return conversation;
