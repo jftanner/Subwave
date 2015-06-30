@@ -2,7 +2,7 @@ package com.tanndev.subwave.server.core;
 
 import com.tanndev.subwave.common.*;
 
-import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by James Tanner on 6/28/2015.
@@ -11,8 +11,8 @@ public class Server {
 
 
    private static final int SERVER_ID = 0;
-   private static TreeMap<Integer, ClientRecord> clientMap = new TreeMap<Integer, ClientRecord>();
-   private static TreeMap<Integer, Conversation> conversationMap = new TreeMap<Integer, Conversation>();
+   private static ConcurrentHashMap<Integer, ClientRecord> clientMap = new ConcurrentHashMap<Integer, ClientRecord>();
+   private static ConcurrentHashMap<Integer, Conversation> conversationMap = new ConcurrentHashMap<Integer, Conversation>();
    private static int nextUniqueID = 1;
 
    /**
@@ -33,21 +33,16 @@ public class Server {
       new SocketListener(port).start();
    }
 
-   public synchronized static ClientRecord addClient(int clientID, Connection clientConnection, String nickname) {
+   public static ClientRecord addClient(int clientID, Connection clientConnection, String nickname) {
       ClientRecord client = new ClientRecord(clientID, clientConnection, nickname);
-      /*
-      Note: this operation could be performed atomically using putIfAbsent.
-      However, that method is only available under jdk8. This approach maintains backwards compatibility with jdk7.
-       */
-      if (clientMap.containsKey(clientID)) {
+      if (clientMap.putIfAbsent(clientID, client) != null) {
          System.err.println("Attempted to add a non-unique client ID to the client map.");
          return null;
       }
-      clientMap.put(clientID, client);
       return client;
    }
 
-   public synchronized static void removeClient(int clientID) {
+   public static void removeClient(int clientID) {
       ClientRecord clientRecord = clientMap.remove(clientID);
       if (clientRecord != null) {
          clientRecord.clientConnection.close();
@@ -55,21 +50,16 @@ public class Server {
       }
    }
 
-   public synchronized static Conversation addConversation(int conversationID, String conversationName) {
+   public static Conversation addConversation(int conversationID, String conversationName) {
       Conversation conversation = new Conversation(conversationID, conversationName);
-      /*
-       * Note: this operation could be performed atomically using putIfAbsent.
-       * However, that method is only available under jdk8. This approach maintains backwards compatibility with jdk7.
-       */
-      if (conversationMap.containsKey(conversationID)) {
+      if (conversationMap.putIfAbsent(conversationID, conversation) != null) {
          System.err.println("Attempted to add a non-unique conversationID to the conversation map.");
          return null;
       }
-      conversationMap.put(conversationID, conversation);
       return conversation;
    }
 
-   public synchronized static void removeConversation(int conversationID) {
+   public static void removeConversation(int conversationID) {
       Conversation conversation = conversationMap.remove(conversationID);
       if (conversation != null) {
          // TODO Kick existing members of the conversation.
