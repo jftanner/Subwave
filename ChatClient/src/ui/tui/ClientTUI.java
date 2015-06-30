@@ -94,12 +94,12 @@ public class ClientTUI extends ClientUIFramework {
         /*
         Set default message parameters.
         By default, input is assumed to be:
-        ~ a debug message (messageType = DEBUG_MESSAGE),
+        ~ a debug message (messageType = DEBUG),
         ~ to the server (conversationID = 0)
         ~ using the local client's ID
         ~ with the input text as the message body.
         */
-        MessageType messageType = MessageType.DEBUG_MESSAGE;
+       MessageType messageType = MessageType.DEBUG;
         int conversationID = 0;
         int clientID = serverConnection.getClientID();
         String messageText = input;
@@ -201,25 +201,6 @@ public class ClientTUI extends ClientUIFramework {
         // Send the constructed message to the server.
         Message message = new Message(messageType, conversationID, clientID, messageText);
         serverConnection.send(message);
-    }
-
-    /**
-     * Handles all input from the server, as provided by a {@link com.tanndev.subwave.client.ui.tui.ServerListener}
-     * thread.
-     * <p/>
-     * <b>Current version only prints raw message to output and updates {@link #lastConversationID}.</b>
-     *
-     * @param message message received from the server, provided by a ServerListener thread
-     */
-    protected void handleServerInput(Message message) {
-        if (message == null) return;
-
-        // TODO switch on server input.
-        System.out.println("RECEIVED > " + message.toString());
-
-        // Set reply conversation, for messages tagged with a conversation.
-        int conversationID = message.conversationID;
-        if (conversationID > 0) lastConversationID = conversationID;
     }
 
     /**

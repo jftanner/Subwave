@@ -231,7 +231,7 @@ public class ChatServer {
             handleNetworkDisconnect(connection, message);
             break;
 
-         case DEBUG_MESSAGE: // Received debug message.
+         case DEBUG: // Received debug message.
             /*
             Debug messages are sent to standard err.
             Note that this is printed directly and does not use the ErrorHandler class.

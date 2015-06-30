@@ -24,7 +24,7 @@ public enum MessageType {
    REFUSE("REFUSE"),
    NETWORK_CONNECT("CONNECT"),
    NETWORK_DISCONNECT("DISCONNECT"),
-   DEBUG_MESSAGE("DEBUG");
+   DEBUG("DEBUG");
 
    private final String value;
 

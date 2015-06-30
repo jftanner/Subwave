@@ -1,12 +1,12 @@
 package com.tanndev.subwave.client.ui;
 
 import com.tanndev.subwave.client.core.ChatClient;
-import com.tanndev.subwave.common.Connection;
-import com.tanndev.subwave.common.Message;
+import com.tanndev.subwave.common.*;
+import com.tanndev.subwave.common.debugging.ErrorHandler;
 
 /**
- * Provides the framework required to build user interfaces for {@link com.tanndev.subwave.client.core.ChatClient}. All user
- * interfaces must extend this class and should use to the provided methods to interact with the server.
+ * Provides the framework required to build user interfaces for {@link com.tanndev.subwave.client.core.ChatClient}. All
+ * user interfaces must extend this class and should use to the provided methods to interact with the server.
  * <p/>
  * See the attached methods for more information.
  *
@@ -19,83 +19,73 @@ import com.tanndev.subwave.common.Message;
  */
 public abstract class ClientUIFramework extends Thread {
 
-    /**
-     * This method must be implemented by all subclasses.
-     * <p/>
-     * Calls to this method should cause the user interface to close all open connections and shut down.
-     */
-    public abstract void shutdown();
+   /**
+    * Constructor
+    * <p/>
+    * By default, binds the client UI to the ChatClient. Subclasses that override this constructor should either use
+    * super() or bind themselves to the ChatClient using the bindUI method.
+    *
+    * @see com.tanndev.subwave.client.core.ChatClient#bindUI(ClientUIFramework)
+    */
+   public ClientUIFramework() {
+      ChatClient.bindUI(this);
+   }
 
-    /**
-     * Attempts to open a new connection using the provided settings and returns a new {@link
-     * com.tanndev.subwave.common.Connection} object representing that connection if successful.
-     * <p/>
-     * If a parameter is null or zero, the default settings will be used.
-     * <p/>
-     * See {@link com.tanndev.subwave.client.core.ChatClient#connectToServer(String, int, String)} for more details.
-     *
-     * @param serverAddress IP address or hostname of the remote server. (Uses default if null.)
-     * @param port          listening port of the remote server. (Uses default if zero.)
-     * @param nickname      client nickname to request. (Uses default if null.)
-     *
-     * @return connection to remote server. If no connection is made, returns null.
-     *
-     * @see com.tanndev.subwave.client.core.ChatClient#connectToServer(String, int, String)
-     */
-    protected final Connection openConnection(String serverAddress, int port, String nickname) {
-       return ChatClient.connectToServer(serverAddress, port, nickname);
-    }
+   /**
+    * Message Handler: default
+    * <p/>
+    * Requirements: none
+    * <p/>
+    * Any messages that cannot be parsed to another message handler should be passed here. All other message handlers,
+    * except for DEBUG, default to this method. Subclasses can choose not to override those methods if they do not wish
+    * to implement handling for that message type.
+    *
+    * @param connection connection the message was received on
+    * @param message    message received
+    */
+   private static final void replyToUnhandledMessage(Connection connection, Message message) {
+      ErrorHandler.logError("UI does not handle this message type: " + message.toString());
+      Message reply = new Message(MessageType.REFUSE, message.conversationID, connection.getClientID(), Message.UNHANDLED_MSG);
+      connection.send(reply);
+   }
 
-    /**
-     * Closes the provided connection.
-     *
-     * @param serverConnection connection to disconnect.
-     */
-    protected final void closeConnection(Connection serverConnection) {
-       ChatClient.disconnectFromServer(serverConnection);
-    }
+   /**
+    * This method must be implemented by all subclasses.
+    * <p/>
+    * Calls to this method should cause the user interface to close all open connections and shut down.
+    */
+   public abstract void shutdown();
 
-    /**
-     * Sends a message using the supplied connection.
-     *
-     * @param serverConnection connection to send message on
-     * @param message          message to send
-     *
-     * @return true, if the message is sent successfully
-     *
-     * @see com.tanndev.subwave.common.Connection#send(com.tanndev.subwave.common.Message)
-     */
-    protected final boolean sendToServer(Connection serverConnection, Message message) {
-        if (serverConnection == null || serverConnection.isClosed()) return false;
-        return serverConnection.send(message);
-    }
+   public void handleChatMessage(Connection connection, Message message) {replyToUnhandledMessage(connection, message);}
 
-    /**
-     * Receives the next message from the server on the provided connection. This method will block if no message is
-     * currently available.
-     *
-     * @param serverConnection connection to receive message from
-     *
-     * @return the {@link com.tanndev.subwave.common.Message} from the server, if successful. Returns null if the
-     * connection is closed or otherwise fails.
-     *
-     * @see #messageAvailableFromServer(com.tanndev.subwave.common.Connection)
-     */
-    protected final Message receiveFromServer(Connection serverConnection) {
-        if (serverConnection == null || serverConnection.isClosed()) return null;
-        return serverConnection.receive();
-    }
+   public void handleConversationNew(Connection connection, Message message) {replyToUnhandledMessage(connection, message);}
 
-    /**
-     * Checks the provided connection to see if a message is available.
-     *
-     * @param serverConnection connection to check for messages
-     *
-     * @return true if a message is available; false no message is available or if connection is closed or otherwise
-     * fails.
-     */
-    protected final Boolean messageAvailableFromServer(Connection serverConnection) {
-        if (serverConnection == null || serverConnection.isClosed()) return false;
-        return serverConnection.messageAvailable();
-    }
+   public void handleConversationInvite(Connection connection, Message message) {replyToUnhandledMessage(connection, message);}
+
+   public void handleConversationJoin(Connection connection, Message message) {replyToUnhandledMessage(connection, message);}
+
+   public void handleConversationLeave(Connection connection, Message message) {replyToUnhandledMessage(connection, message);}
+
+   public void handleNameUpdate(Connection connection, Message message) {replyToUnhandledMessage(connection, message);}
+
+   public void handleAcknowledge(Connection connection, Message message) {replyToUnhandledMessage(connection, message);}
+
+   public void handleRefuse(Connection connection, Message message) {replyToUnhandledMessage(connection, message);}
+
+   public void handleNetworkConnect(Connection connection, Message message) {replyToUnhandledMessage(connection, message);}
+
+   public void handleNetworkDisconnect(Connection connection, Message message) {replyToUnhandledMessage(connection, message);}
+
+   public void handleDebug(Connection connection, Message message) {
+   /*
+   By default, debug messages are sent to standard err.
+   Note that this is printed directly and does not use the ErrorHandler class.
+   This ensures that debug messages are always printed, even when the ErrorHandler is set to hide errors.
+
+   Subclasses may choose to override this default setting.
+   */
+      System.err.println(message.toString());
+   }
+
+   public void handleUnhandled(Connection connection, Message message) {replyToUnhandledMessage(connection, message);}
 }
