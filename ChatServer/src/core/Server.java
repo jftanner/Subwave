@@ -1,9 +1,6 @@
 package com.tanndev.subwave.server.core;
 
-import com.tanndev.subwave.common.Connection;
-import com.tanndev.subwave.common.Message;
-import com.tanndev.subwave.common.MessageType;
-import com.tanndev.subwave.common.Settings;
+import com.tanndev.subwave.common.*;
 
 import java.util.TreeMap;
 
@@ -38,10 +35,15 @@ public class Server {
 
    public synchronized static ClientRecord addClient(int clientID, Connection clientConnection, String nickname) {
       ClientRecord client = new ClientRecord(clientID, clientConnection, nickname);
-      if (clientMap.putIfAbsent(clientID, client) != null) {
+      /*
+      Note: this operation could be performed atomically using putIfAbsent.
+      However, that method is only available under jdk8. This approach maintains backwards compatibility with jdk7.
+       */
+      if (clientMap.containsKey(clientID)) {
          System.err.println("Attempted to add a non-unique client ID to the client map.");
          return null;
       }
+      clientMap.put(clientID, client);
       return client;
    }
 
@@ -55,10 +57,15 @@ public class Server {
 
    public synchronized static Conversation addConversation(int conversationID, String conversationName) {
       Conversation conversation = new Conversation(conversationID, conversationName);
-      if (conversationMap.putIfAbsent(conversationID, conversation) != null) {
+      /*
+       * Note: this operation could be performed atomically using putIfAbsent.
+       * However, that method is only available under jdk8. This approach maintains backwards compatibility with jdk7.
+       */
+      if (conversationMap.containsKey(conversationID)) {
          System.err.println("Attempted to add a non-unique conversationID to the conversation map.");
          return null;
       }
+      conversationMap.put(conversationID, conversation);
       return conversation;
    }
 
