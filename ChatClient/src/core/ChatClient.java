@@ -37,7 +37,7 @@ public class ChatClient {
     * @param ui
     */
    public static void bindUI(ClientUIFramework ui) {
-      this.ui = ui;
+      ChatClient.ui = ui;
    }
 
 
@@ -122,7 +122,11 @@ public class ChatClient {
       connection.close();
    }
 
-   protected static void sortServerMessage(Connection connection, Message message) {
+   public static void alertServerDisconnect(Connection connection) {
+      ui.onServerDisconnect(connection);
+   }
+
+   protected static void sortMessage(Connection connection, Message message) {
       // Fail if no UI is unbound.
       if (ui == null) {
          ErrorHandler.logError("Client UI is not bound to ChatClient.");

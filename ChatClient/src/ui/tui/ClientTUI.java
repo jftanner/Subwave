@@ -1,5 +1,6 @@
 package com.tanndev.subwave.client.ui.tui;
 
+import com.tanndev.subwave.client.core.ServerListener;
 import com.tanndev.subwave.client.ui.ClientUIFramework;
 import com.tanndev.subwave.common.*;
 import com.tanndev.subwave.common.debugging.ErrorHandler;
@@ -35,6 +36,9 @@ public class ClientTUI extends ClientUIFramework {
      * @see com.tanndev.subwave.common.Connection#setPrintMessages(boolean)
      */
     public ClientTUI() {
+       // Use the ClientUIFramework constructor to bind to the chat client.
+       super();
+
         // Attempt to open the connection.
         serverConnection = openConnection(null, 0, null);
         if (serverConnection == null) {
@@ -46,6 +50,11 @@ public class ClientTUI extends ClientUIFramework {
         serverConnection.setPrintMessages(false);
         System.out.println("Hiding TX/RX messages.");
     }
+
+   public static void main(String[] args) {
+      ClientTUI ui = new ClientTUI();
+      ui.start();
+   }
 
     /**
      * Displays general help information or specific help information for the provided command.
@@ -63,7 +72,7 @@ public class ClientTUI extends ClientUIFramework {
      * Called when the UI is started. Creates and starts the UserListener and ServerListener threads.
      *
      * @see com.tanndev.subwave.client.ui.tui.UserListener
-     * @see com.tanndev.subwave.client.ui.tui.ServerListener
+     * @see com.tanndev.subwave.client.core.ServerListener
      */
     @Override
     public void run() {

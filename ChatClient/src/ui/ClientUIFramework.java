@@ -6,16 +6,10 @@ import com.tanndev.subwave.common.debugging.ErrorHandler;
 
 /**
  * Provides the framework required to build user interfaces for {@link com.tanndev.subwave.client.core.ChatClient}. All
- * user interfaces must extend this class and should use to the provided methods to interact with the server.
- * <p/>
- * See the attached methods for more information.
+ * user interfaces must extend this class and must override the message handler methods in order to process messages
+ * delivered from the server.
  *
  * @author James Tanner
- * @see #shutdown()
- * @see #openConnection(java.lang.String, int, java.lang.String)
- * @see #closeConnection(com.tanndev.subwave.common.Connection)
- * @see #sendToServer(com.tanndev.subwave.common.Connection, com.tanndev.subwave.common.Message)
- * @see #receiveFromServer(com.tanndev.subwave.common.Connection)
  */
 public abstract class ClientUIFramework extends Thread {
 
@@ -88,4 +82,6 @@ public abstract class ClientUIFramework extends Thread {
    }
 
    public void handleUnhandled(Connection connection, Message message) {replyToUnhandledMessage(connection, message);}
+
+   public void onServerDisconnect(Connection connection) {ErrorHandler.logError("Remote server disconnected.");}
 }
