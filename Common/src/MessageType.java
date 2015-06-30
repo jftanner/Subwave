@@ -1,7 +1,16 @@
 package com.tanndev.subwave.common;
 
 /**
- * Created by James Tanner on 6/28/2015.
+ * Defines the types of {@link com.tanndev.subwave.common.Message} objects that can be used between the client and
+ * server. Each type represents a specific intent and defines the meaning of the other fields within the Message
+ * instance.
+ * <p/>
+ * Message types are overloaded and have different meanings depending on their source and destination. See the
+ * documentation for the server and client for more information.
+ *
+ * The {@link #toString()} method can be used to print a user-readable name for the message type.
+ *
+ * @author James Tanner
  */
 public enum MessageType {
    CHAT_MESSAGE("MSG"),
@@ -23,7 +32,12 @@ public enum MessageType {
       this.value = value;
    }
 
-   public String value() {
+   /**
+    * Returns a user-readable string representing the message type.
+    *
+    * @return user-readable string
+    */
+   public String toString() {
       return value;
    }
 }

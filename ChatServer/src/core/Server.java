@@ -32,7 +32,7 @@ public class Server {
 
       // Load arguments
       // TODO Handle arguments more elegantly.
-      int port = Settings.DEFAULT_SERVER_PORT;
+      int port = Defaults.DEFAULT_SERVER_PORT;
       if (args.length > 0) port = Integer.parseInt(args[0]);
 
       // Start the core.SocketListener thread to listen for incoming connections.
@@ -297,7 +297,7 @@ public class Server {
       int conversationID = getUniqueID();
       String conversationName = message.messageBody;
       if (conversationName == null || conversationName.trim().length() < 1)
-         conversationName = Settings.DEFAULT_CONVERSATION_NAME;
+         conversationName = Defaults.DEFAULT_CONVERSATION_NAME;
       Conversation conversation = addConversation(conversationID, conversationName);
 
       // Send the conversation name to the client.

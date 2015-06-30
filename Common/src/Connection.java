@@ -26,7 +26,7 @@ public class Connection {
    private ObjectInputStream objInStream;
 
    /** Setting to print RX/TX messages. */
-   private boolean printMessages = Settings.DEFAULT_CONNECTION_PRINT_MESSAGES;
+   private boolean printMessages = Defaults.DEFAULT_CONNECTION_PRINT_MESSAGES;
 
    /**
     * Constructor

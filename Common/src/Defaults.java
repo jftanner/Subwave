@@ -1,9 +1,11 @@
 package com.tanndev.subwave.common;
 
 /**
- * Created by James Tanner on 6/28/2015.
+ * Stores default values for various settings. All fields are public, static constants provided for convenience.
+ *
+ * @author James Tanner
  */
-public class Settings {
+public class Defaults {
    public static final int DEFAULT_SERVER_PORT = 4444;
 
    public static final String DEFAULT_SERVER_ADDRESS = "localhost";

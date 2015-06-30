@@ -71,6 +71,6 @@ public class Message implements Serializable {
     */
    @Override
    public String toString() {
-      return messageType.value() + ": " + conversationID + "," + clientID + " | " + messageBody;
+      return messageType.toString() + ": " + conversationID + "," + clientID + " | " + messageBody;
    }
 }

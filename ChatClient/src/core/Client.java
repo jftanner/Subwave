@@ -2,10 +2,7 @@ package com.tanndev.subwave.client.core;
 
 import com.tanndev.subwave.client.ui.ClientUIFramework;
 import com.tanndev.subwave.client.ui.tui.ClientTUI;
-import com.tanndev.subwave.common.Connection;
-import com.tanndev.subwave.common.Message;
-import com.tanndev.subwave.common.MessageType;
-import com.tanndev.subwave.common.Settings;
+import com.tanndev.subwave.common.*;
 import com.tanndev.subwave.common.debugging.ErrorHandler;
 
 import java.io.IOException;
@@ -48,18 +45,18 @@ public class Client {
      * com.tanndev.subwave.common.Connection Connection} object is returned for that connection.
      *
      * @param serverAddress network address of the remote server. (If null, defaults to "{@value
-     *                      com.tanndev.subwave.common.Settings#DEFAULT_SERVER_ADDRESS}".)
+     *                      com.tanndev.subwave.common.Defaults#DEFAULT_SERVER_ADDRESS}".)
      * @param port          listening port of the remote server (If zero, defaults to {@value
-     *                      com.tanndev.subwave.common.Settings#DEFAULT_SERVER_PORT}.)
-     * @param nickname      the nickname to request. (If null, defaults to "{@value com.tanndev.subwave.common.Settings#DEFAULT_NICKNAME}".)
+     *                      com.tanndev.subwave.common.Defaults#DEFAULT_SERVER_PORT}.)
+     * @param nickname      the nickname to request. (If null, defaults to "{@value com.tanndev.subwave.common.Defaults#DEFAULT_NICKNAME}".)
      *
      * @return connection object representing the open link to the server. Returns null if connection fails.
      */
     public static Connection connectToServer(String serverAddress, int port, String nickname) {
         // Check parameters and assign defaults if necessary.
-        if (serverAddress == null) serverAddress = Settings.DEFAULT_SERVER_ADDRESS;
-        if (port < 1) port = Settings.DEFAULT_SERVER_PORT;
-        if (nickname == null) nickname = Settings.DEFAULT_NICKNAME;
+       if (serverAddress == null) serverAddress = Defaults.DEFAULT_SERVER_ADDRESS;
+       if (port < 1) port = Defaults.DEFAULT_SERVER_PORT;
+       if (nickname == null) nickname = Defaults.DEFAULT_NICKNAME;
 
         // Catch any exceptions thrown during connection process.
         try {
