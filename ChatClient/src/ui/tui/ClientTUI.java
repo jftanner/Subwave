@@ -88,10 +88,11 @@ public class ClientTUI extends ClientUIFramework {
     }
 
     /**
-     * Handles all input from the user, as provided by a {@link com.tanndev.subwave.client.ui.tui.UserListener} thread.
+     * Handles all input from the user in the UI thread.
+     *
      * Commands are parsed and matched to a {@link com.tanndev.subwave.client.ui.tui.Command} type to be executed.
      *
-     * @param input single-line string from the user, provided by a UserListener thread
+     * @param input single-line string from the user
      */
     protected void handleUserInput(String input) {
         // Ignore null or empty input.

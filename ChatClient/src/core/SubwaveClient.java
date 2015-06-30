@@ -90,7 +90,11 @@ public class SubwaveClient {
          if (finalACK == null || finalACK.messageType != MessageType.NETWORK_CONNECT)
             throw new IOException("Failed final ACK.");
 
-         // The connection has been successfully made. Return it.
+         // Start a server listener on the connection.
+         new ServerListener(connection).start();
+
+         // Return the connection to the UI.
+         // TODO Don't expose the connection to the UI directly. Instead require a connectionID.
          return connection;
 
       } catch (IOException e) {
