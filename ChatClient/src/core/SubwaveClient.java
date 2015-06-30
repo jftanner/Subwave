@@ -22,7 +22,7 @@ import java.net.Socket;
  * @version 0.0.1
  * @see com.tanndev.subwave.client.ui.ClientUIFramework
  */
-public class ChatClient {
+public class SubwaveClient {
 
 
    private static ClientUIFramework ui;
@@ -32,12 +32,12 @@ public class ChatClient {
     * <p/>
     * Without binding, the UI can still request and close connections, send messages, etc. However, incoming messages
     * cannot be delivered to the UI for processing, For proper function, this method should be called using
-    * <blockquote>ChatClient.bindUI(this);</blockquote> at the start of the run method of the UI class.
+    * <blockquote>SubwaveClient.bindUI(this);</blockquote> at the start of the run method of the UI class.
     *
     * @param ui
     */
    public static void bindUI(ClientUIFramework ui) {
-      ChatClient.ui = ui;
+      SubwaveClient.ui = ui;
    }
 
 
@@ -129,7 +129,7 @@ public class ChatClient {
    protected static void sortMessage(Connection connection, Message message) {
       // Fail if no UI is unbound.
       if (ui == null) {
-         ErrorHandler.logError("Client UI is not bound to ChatClient.");
+         ErrorHandler.logError("Client UI is not bound to SubwaveClient.");
          Message reply = new Message(MessageType.REFUSE, message.conversationID, connection.getClientID(), Message.CRITICAL_ERROR);
          connection.send(reply);
          return;

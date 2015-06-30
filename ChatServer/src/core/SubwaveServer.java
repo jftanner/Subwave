@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author James Tanner
  */
-public class ChatServer {
+public class SubwaveServer {
 
 
    private static final int SERVER_ID = 0;

@@ -1,11 +1,11 @@
 package com.tanndev.subwave.client.ui;
 
-import com.tanndev.subwave.client.core.ChatClient;
+import com.tanndev.subwave.client.core.SubwaveClient;
 import com.tanndev.subwave.common.*;
 import com.tanndev.subwave.common.debugging.ErrorHandler;
 
 /**
- * Provides the framework required to build user interfaces for {@link com.tanndev.subwave.client.core.ChatClient}. All
+ * Provides the framework required to build user interfaces for {@link com.tanndev.subwave.client.core.SubwaveClient}. All
  * user interfaces must extend this class and must override the message handler methods in order to process messages
  * delivered from the server.
  *
@@ -16,13 +16,13 @@ public abstract class ClientUIFramework extends Thread {
    /**
     * Constructor
     * <p/>
-    * By default, binds the client UI to the ChatClient. Subclasses that override this constructor should either use
-    * super() or bind themselves to the ChatClient using the bindUI method.
+    * By default, binds the client UI to the SubwaveClient. Subclasses that override this constructor should either use
+    * super() or bind themselves to the SubwaveClient using the bindUI method.
     *
-    * @see com.tanndev.subwave.client.core.ChatClient#bindUI(ClientUIFramework)
+    * @see com.tanndev.subwave.client.core.SubwaveClient#bindUI(ClientUIFramework)
     */
    public ClientUIFramework() {
-      ChatClient.bindUI(this);
+      SubwaveClient.bindUI(this);
    }
 
    /**

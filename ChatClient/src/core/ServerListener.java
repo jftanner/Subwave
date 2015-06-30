@@ -6,7 +6,7 @@ import com.tanndev.subwave.common.Connection;
 /**
  * Thread class that listens for messages from the remote server.
  *
- * Messages are delivered to ChatClient for sorting.
+ * Messages are delivered to SubwaveClient for sorting.
  *
  * @author James Tanner
  */
@@ -28,7 +28,7 @@ class ServerListener extends Thread {
      * Executes on thread start.
      * <p/>
      * Listens for messages from the server so long as the connection remains open. When messages are received, they are
-     * processed using the sortMessages() method of ChatClient.
+     * processed using the sortMessages() method of SubwaveClient.
      * <p/>
      * Once the connection is closed, the parentUI is shut down.
      *
@@ -37,7 +37,7 @@ class ServerListener extends Thread {
      */
     @Override
     public void run() {
-       while (!connection.isClosed()) ChatClient.sortMessage(connection, connection.receive());
-       ChatClient.alertServerDisconnect(connection);
+       while (!connection.isClosed()) SubwaveClient.sortMessage(connection, connection.receive());
+       SubwaveClient.alertServerDisconnect(connection);
     }
 }
