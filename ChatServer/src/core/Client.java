@@ -8,7 +8,7 @@ import com.tanndev.subwave.common.Connection;
  *
  * @author James Tanner
  */
-public class ClientRecord implements Comparable<ClientRecord> {
+public class Client implements Comparable<Client> {
 
     /** Unique ID of the connected client. */
     public final int clientID;
@@ -27,7 +27,7 @@ public class ClientRecord implements Comparable<ClientRecord> {
      * @param clientConnection connection to be used for this client
      * @param nickname         friendly name to be displayed to users
      */
-    public ClientRecord(int clientID, Connection clientConnection, String nickname) {
+    public Client(int clientID, Connection clientConnection, String nickname) {
         this.clientID = clientID;
         this.clientConnection = clientConnection;
         this.nickname = nickname;
@@ -54,14 +54,14 @@ public class ClientRecord implements Comparable<ClientRecord> {
     /**
      * Compares to another client record, using clientIDs.
      *
-     * @param o other ClientRecord to compare against.
+     * @param o other Client to compare against.
      *
      * @return comparison between clientIDs.
      *
      * @see java.lang.Comparable#compareTo(Object)
      */
     @Override
-    public int compareTo(ClientRecord o) {
+    public int compareTo(Client o) {
         if (o == null) return 1;
         return this.clientID - o.clientID;
     }

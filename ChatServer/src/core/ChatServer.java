@@ -17,7 +17,7 @@ public class ChatServer {
 
 
    private static final int SERVER_ID = 0;
-   private static ConcurrentHashMap<Integer, ClientRecord> clientMap = new ConcurrentHashMap<Integer, ClientRecord>();
+   private static ConcurrentHashMap<Integer, Client> clientMap = new ConcurrentHashMap<Integer, Client>();
    private static ConcurrentHashMap<Integer, Conversation> conversationMap = new ConcurrentHashMap<Integer, Conversation>();
    private static int nextUniqueID = 1;
 
@@ -40,7 +40,7 @@ public class ChatServer {
    }
 
    /**
-    * Generates a ClientRecord representing a new client and attempts to add it to the client list.
+    * Generates a Client object representing a new client and attempts to add it to the client list.
     * <p/>
     * If the clientID already exists in the {@link #clientMap} the new client will not be added and this method will
     * return null.
@@ -51,14 +51,14 @@ public class ChatServer {
     * @param clientConnection connection used to communicate with the client
     * @param nickname         friendly name to display to users
     *
-    * @return generated ClientRecord, if successful. Otherwise null.
+    * @return generated Client, if successful. Otherwise null.
     *
     * @see #getUniqueID()
-    * @see com.tanndev.subwave.server.core.ClientRecord
+    * @see Client
     * @see com.tanndev.subwave.common.Connection
     */
-   public static ClientRecord addClient(int clientID, Connection clientConnection, String nickname) {
-      ClientRecord client = new ClientRecord(clientID, clientConnection, nickname);
+   public static Client addClient(int clientID, Connection clientConnection, String nickname) {
+      Client client = new Client(clientID, clientConnection, nickname);
       if (clientMap.putIfAbsent(clientID, client) != null) {
          System.err.println("Attempted to add a non-unique client ID to the client map.");
          return null;
@@ -69,7 +69,7 @@ public class ChatServer {
    /**
     * Removes a client from the {@link #clientMap}.
     * <p/>
-    * If a ClientRecord matching the provided clientIDis in the clientMap, it will be removed. In addition, the client's
+    * If a Client matching the provided clientIDis in the clientMap, it will be removed. In addition, the client's
     * connection will be forcefully closed. When possible, the client should disconnected gracefully through other means
     * before calling this method.
     * <p/>
@@ -78,12 +78,12 @@ public class ChatServer {
     * @param clientID unique ID of the client to remove
     *
     * @see #getUniqueID()
-    * @see com.tanndev.subwave.server.core.ClientRecord
+    * @see Client
     */
    public static void removeClient(int clientID) {
-      ClientRecord clientRecord = clientMap.remove(clientID);
-      if (clientRecord != null) {
-         clientRecord.clientConnection.close();
+      Client client = clientMap.remove(clientID);
+      if (client != null) {
+         client.clientConnection.close();
          System.out.println("DC - ClientID: " + clientID);
       }
    }
@@ -165,7 +165,7 @@ public class ChatServer {
     * @param message message to broadcast to all clients
     */
    public static void broadcastToAll(Message message) {
-      for (ClientRecord client : clientMap.values()) {
+      for (Client client : clientMap.values()) {
          client.clientConnection.send(message);
       }
    }
@@ -265,7 +265,7 @@ public class ChatServer {
     */
    private static void handleChatMessage(Connection connection, Message message) {
       // Validate client.
-      ClientRecord client = validateClientMessage(connection, message);
+      Client client = validateClientMessage(connection, message);
       if (client == null) return;
 
       // Validate conversation.
@@ -290,7 +290,7 @@ public class ChatServer {
     */
    private static void handleConversationNew(Connection connection, Message message) {
       // Verify sourceID.
-      ClientRecord client = validateClientMessage(connection, message);
+      Client client = validateClientMessage(connection, message);
       if (client == null) return;
 
       // Create a new conversation.
@@ -322,7 +322,7 @@ public class ChatServer {
     */
    private static void handleConversationJoin(Connection connection, Message message) {
       // Verify sourceID.
-      ClientRecord client = validateClientMessage(connection, message);
+      Client client = validateClientMessage(connection, message);
       if (client == null) return;
 
       // Validate conversation.
@@ -349,7 +349,7 @@ public class ChatServer {
     * @see #validateClientMessage(com.tanndev.subwave.common.Connection, com.tanndev.subwave.common.Message)
     */
    private static void handleNetworkDisconnect(Connection connection, Message message) {
-      ClientRecord client = validateClientMessage(connection, message);
+      Client client = validateClientMessage(connection, message);
       if (client == null) return;
       removeClient(client.clientID);
    }
@@ -374,15 +374,15 @@ public class ChatServer {
    /**
     * Validates a message to ensure the clientID matches the connection on which the message was received.
     * <p/>
-    * Returns the ClientRecord matching the clientID if validation succeeds. Otherwise, automatically sends a refusal
+    * Returns the Client matching the clientID if validation succeeds. Otherwise, automatically sends a refusal
     * message and returns null.
     *
     * @param connection Connection the message was received from.
     * @param message    Message received.
     *
-    * @return ClientRecord matching the connection and message if validated. Otherwise null.
+    * @return Client matching the connection and message if validated. Otherwise null.
     */
-   private static ClientRecord validateClientMessage(Connection connection, Message message) {
+   private static Client validateClientMessage(Connection connection, Message message) {
       int sourceID = connection.getClientID();
       if (sourceID != message.clientID) {
          Message reply = new Message(MessageType.REFUSE, SERVER_ID, sourceID, Message.INVALID_SOURCE_ID);

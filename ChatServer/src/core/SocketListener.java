@@ -71,7 +71,7 @@ public class SocketListener extends Thread {
 
                 // Create and add client record.
                 String nickname = clientACK.messageBody;
-               ClientRecord client = ChatServer.addClient(clientID, connection, nickname);
+               Client client = ChatServer.addClient(clientID, connection, nickname);
 
                 // Start message listener.
                 new ConnectionListener(connection).start();

@@ -32,7 +32,7 @@ public class Conversation {
    /**
     * Set of all clients participating in the conversation.
     */
-   private HashSet<ClientRecord> members;
+   private HashSet<Client> members;
 
    /**
     * Constructor
@@ -43,7 +43,7 @@ public class Conversation {
    public Conversation(int conversationID, String name) {
       this.conversationID = conversationID;
       this.name = name;
-      members = new HashSet<ClientRecord>();
+      members = new HashSet<Client>();
    }
 
    /**
@@ -55,7 +55,7 @@ public class Conversation {
     * @param client new member to add to the conversation
     * @return true if the client is added, otherwise false
     */
-   public synchronized boolean addMember(ClientRecord client) {
+   public synchronized boolean addMember(Client client) {
       boolean result = members.add(client);
 
       // Announce to all members if the add succeeded.
@@ -75,7 +75,7 @@ public class Conversation {
     * @param client new member to add to the conversation
     * @return true if the client is added, otherwise false
     */
-   public synchronized boolean removeMember(ClientRecord client) {
+   public synchronized boolean removeMember(Client client) {
       boolean result = members.remove(client);
       if (!hasMembers()) ChatServer.removeConversation(conversationID);
       else {
@@ -104,11 +104,11 @@ public class Conversation {
       }
 
       // Get an iterator on the set
-      Iterator<ClientRecord> iterator = members.iterator();
+      Iterator<Client> iterator = members.iterator();
 
       // Iterate through all members
       while (iterator.hasNext()) {
-         ClientRecord client = iterator.next();
+         Client client = iterator.next();
 
          // Attempt to send to client.
          if (!client.clientConnection.send(message)) {
