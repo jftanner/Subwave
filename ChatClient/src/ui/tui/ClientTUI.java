@@ -1,6 +1,6 @@
 package com.tanndev.subwave.client.ui.tui;
 
-import com.tanndev.subwave.client.core.ServerListener;
+import com.tanndev.subwave.client.core.ChatClient;
 import com.tanndev.subwave.client.ui.ClientUIFramework;
 import com.tanndev.subwave.common.*;
 import com.tanndev.subwave.common.debugging.ErrorHandler;
@@ -40,7 +40,7 @@ public class ClientTUI extends ClientUIFramework {
        super();
 
         // Attempt to open the connection.
-        serverConnection = openConnection(null, 0, null);
+       serverConnection = ChatClient.connectToServer(null, 0, null);
         if (serverConnection == null) {
             ErrorHandler.logError("No server connection for TUI to use.");
             System.exit(0);
@@ -69,16 +69,13 @@ public class ClientTUI extends ClientUIFramework {
     }
 
     /**
-     * Called when the UI is started. Creates and starts the UserListener and ServerListener threads.
-     *
-     * @see com.tanndev.subwave.client.ui.tui.UserListener
-     * @see com.tanndev.subwave.client.core.ServerListener
+     * Called when the UI is started. Listens for user input.
      */
     @Override
     public void run() {
-        // Start new input listeners.
-        new UserListener(this).start();
-        new ServerListener(this).start();
+       // Listen for user input.
+       Scanner in = new Scanner(System.in);
+       while (true) handleUserInput(in.nextLine());
     }
 
     /**
@@ -86,7 +83,7 @@ public class ClientTUI extends ClientUIFramework {
      */
     @Override
     public void shutdown() {
-        if (serverConnection != null) closeConnection(serverConnection);
+       if (serverConnection != null) ChatClient.disconnectFromServer(serverConnection);
         System.exit(0);
     }
 
