@@ -385,7 +385,7 @@ public class Server {
    private static ClientRecord validateClientMessage(Connection connection, Message message) {
       int sourceID = connection.getClientID();
       if (sourceID != message.clientID) {
-         Message reply = new Message(MessageType.REFUSE, SERVER_ID, sourceID, Message.INVALID_SOURCEID);
+         Message reply = new Message(MessageType.REFUSE, SERVER_ID, sourceID, Message.INVALID_SOURCE_ID);
          connection.send(reply);
          return null;
       }
