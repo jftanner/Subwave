@@ -199,8 +199,7 @@ public class ChatServer {
             break;
 
          case CONVERSATION_JOIN: // Client wants to join a conversation
-            // TODO Add user to conversation.
-            replyToUnhandledMessage(connection, message);
+            handleConversationJoin(connection, message);
             break;
 
          case CONVERSATION_LEAVE: // Client wants to leave a conversation
