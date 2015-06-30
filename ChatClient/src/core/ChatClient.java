@@ -23,7 +23,7 @@ import java.net.Socket;
  * @version 0.0.1
  * @see com.tanndev.subwave.client.ui.ClientUIFramework
  */
-public class Client {
+public class ChatClient {
 
     /**
      * Handles any command-line arguments before selecting a user interface and launching it.

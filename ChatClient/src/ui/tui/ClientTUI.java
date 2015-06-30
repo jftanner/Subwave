@@ -1,9 +1,7 @@
 package com.tanndev.subwave.client.ui.tui;
 
 import com.tanndev.subwave.client.ui.ClientUIFramework;
-import com.tanndev.subwave.common.Connection;
-import com.tanndev.subwave.common.Message;
-import com.tanndev.subwave.common.MessageType;
+import com.tanndev.subwave.common.*;
 import com.tanndev.subwave.common.debugging.ErrorHandler;
 
 import java.util.ArrayList;
@@ -15,7 +13,7 @@ import java.util.Scanner;
  * @author James Tanner
  * @version 0.0.1
  * @see com.tanndev.subwave.client.ui.ClientUIFramework
- * @see com.tanndev.subwave.client.core.Client
+ * @see com.tanndev.subwave.client.core.ChatClient
  */
 public class ClientTUI extends ClientUIFramework {
 

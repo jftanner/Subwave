@@ -16,7 +16,7 @@ import java.util.Iterator;
 public class Conversation {
 
    /**
-    * Unique ID of the conversation This MUST be unique and should be generated using {@link Server#getUniqueID()}
+    * Unique ID of the conversation This MUST be unique and should be generated using {@link ChatServer#getUniqueID()}
     */
    public final int conversationID;
 
@@ -77,7 +77,7 @@ public class Conversation {
     */
    public synchronized boolean removeMember(ClientRecord client) {
       boolean result = members.remove(client);
-      if (!hasMembers()) Server.removeConversation(conversationID);
+      if (!hasMembers()) ChatServer.removeConversation(conversationID);
       else {
          // Notify all members that the member left.
          Message notification = new Message(MessageType.CONVERSATION_LEAVE, conversationID, client.clientID, Message.DISCONNECT_UNEXPECTED);

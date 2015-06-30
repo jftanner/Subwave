@@ -26,20 +26,20 @@ public class ConnectionListener extends Thread {
      * Executes on thread start.
      * <p/>
      * Listens for messages on the connection so long as the connection remains open. When messages are received, they
-     * are processed {@link com.tanndev.subwave.server.core.Server} class.
+     * are processed {@link ChatServer} class.
      * <p/>
      * Once the connection is closed, the associated client is shut down.
      *
-     * @see com.tanndev.subwave.server.core.Server#sortClientMessage(com.tanndev.subwave.common.Connection, com.tanndev.subwave.common.Message)
-     * @see com.tanndev.subwave.server.core.Server#removeClient(int)
+     * @see ChatServer#sortClientMessage(com.tanndev.subwave.common.Connection, com.tanndev.subwave.common.Message)
+     * @see ChatServer#removeClient(int)
      */
     @Override
     public void run() {
         while (!connection.isClosed()) {
             Message message = connection.receive();
             if (message == null) continue;
-            Server.sortClientMessage(connection, message);
+           ChatServer.sortClientMessage(connection, message);
         }
-        Server.removeClient(connection.getClientID());
+       ChatServer.removeClient(connection.getClientID());
     }
 }

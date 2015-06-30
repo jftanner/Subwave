@@ -1,11 +1,11 @@
 package com.tanndev.subwave.client.ui;
 
-import com.tanndev.subwave.client.core.Client;
+import com.tanndev.subwave.client.core.ChatClient;
 import com.tanndev.subwave.common.Connection;
 import com.tanndev.subwave.common.Message;
 
 /**
- * Provides the framework required to build user interfaces for {@link com.tanndev.subwave.client.core.Client}. All user
+ * Provides the framework required to build user interfaces for {@link com.tanndev.subwave.client.core.ChatClient}. All user
  * interfaces must extend this class and should use to the provided methods to interact with the server.
  * <p/>
  * See the attached methods for more information.
@@ -32,7 +32,7 @@ public abstract class ClientUIFramework extends Thread {
      * <p/>
      * If a parameter is null or zero, the default settings will be used.
      * <p/>
-     * See {@link com.tanndev.subwave.client.core.Client#connectToServer(String, int, String)} for more details.
+     * See {@link com.tanndev.subwave.client.core.ChatClient#connectToServer(String, int, String)} for more details.
      *
      * @param serverAddress IP address or hostname of the remote server. (Uses default if null.)
      * @param port          listening port of the remote server. (Uses default if zero.)
@@ -40,10 +40,10 @@ public abstract class ClientUIFramework extends Thread {
      *
      * @return connection to remote server. If no connection is made, returns null.
      *
-     * @see com.tanndev.subwave.client.core.Client#connectToServer(String, int, String)
+     * @see com.tanndev.subwave.client.core.ChatClient#connectToServer(String, int, String)
      */
     protected final Connection openConnection(String serverAddress, int port, String nickname) {
-        return Client.connectToServer(serverAddress, port, nickname);
+       return ChatClient.connectToServer(serverAddress, port, nickname);
     }
 
     /**
@@ -52,7 +52,7 @@ public abstract class ClientUIFramework extends Thread {
      * @param serverConnection connection to disconnect.
      */
     protected final void closeConnection(Connection serverConnection) {
-        Client.disconnectFromServer(serverConnection);
+       ChatClient.disconnectFromServer(serverConnection);
     }
 
     /**
