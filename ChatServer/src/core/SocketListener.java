@@ -1,8 +1,6 @@
 package com.tanndev.subwave.server.core;
 
-import com.tanndev.subwave.common.Connection;
-import com.tanndev.subwave.common.Message;
-import com.tanndev.subwave.common.MessageType;
+import com.tanndev.subwave.common.*;
 import com.tanndev.subwave.common.debugging.ErrorHandler;
 
 import java.io.IOException;
@@ -57,7 +55,7 @@ public class SocketListener extends Thread {
 
 
                 // Get a new client ID and send greeting.
-                int clientID = Server.getUniqueID();
+               int clientID = ChatServer.getUniqueID();
                 connection.setClientID(clientID);
                 System.out.println("NC - ClientID: " + clientID);
                 Message serverACK = new Message(MessageType.NETWORK_CONNECT, 0, clientID, Message.CONNECTION_START_ACK);
@@ -73,7 +71,7 @@ public class SocketListener extends Thread {
 
                 // Create and add client record.
                 String nickname = clientACK.messageBody;
-                ClientRecord client = Server.addClient(clientID, connection, nickname);
+               Client client = ChatServer.addClient(clientID, connection, nickname);
 
                 // Start message listener.
                 new ConnectionListener(connection).start();
