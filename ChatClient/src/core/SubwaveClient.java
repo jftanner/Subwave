@@ -126,6 +126,13 @@ public class SubwaveClient {
       connection.close();
    }
 
+   public static void sendRefuseMessage(Connection connection) {
+      ErrorHandler.logError("UI refused a message.");
+      // TODO return proper conversation ID.
+      Message reply = new Message(MessageType.REFUSE, 0, connection.getClientID(), Message.UNHANDLED_MSG);
+      connection.send(reply);
+   }
+
    public static void alertServerDisconnect(Connection connection) {
       ui.onServerDisconnect(connection);
    }

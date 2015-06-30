@@ -50,7 +50,8 @@ public abstract class ClientUIFramework extends Thread {
     */
    public abstract void shutdown();
 
-   public void handleChatMessage(Connection connection, Message message) {replyToUnhandledMessage(connection, message);}
+   // TODO update all handlers to avoid exposing connections.
+   public void handleChatMessage(Connection connection, Message message) {SubwaveClient.sendRefuseMessage(connection);}
 
    public void handleConversationNew(Connection connection, Message message) {replyToUnhandledMessage(connection, message);}
 
