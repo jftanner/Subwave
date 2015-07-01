@@ -6,6 +6,7 @@ import com.tanndev.subwave.common.debugging.ErrorHandler;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -25,11 +26,14 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SubwaveClient {
 
+   // TODO document data members
 
    private static ClientUIFramework ui;
 
    private static ConcurrentHashMap<Integer, Connection> connectionMap = new ConcurrentHashMap<Integer, Connection>();
    private static int nextConnectionID = 1;
+
+   private static ConcurrentHashMap<Integer, Map<Integer, String>> nameMaps = new ConcurrentHashMap<Integer, Map<Integer, String>>();
 
    /**
     * The user interface MUST call this function in order to bind to the chat client.
@@ -96,6 +100,11 @@ public class SubwaveClient {
          // Add the connection to the connection map.
          int connectionID = addConnectionToMap(connection);
          // TODO Test for invalid connectionID
+
+         // Create a name map for the connection.
+         Map nameMap = new ConcurrentHashMap<Integer, String>();
+         nameMap.put(clientID, nickname);
+         nameMaps.put(connectionID, nameMap);
 
          // Start a server listener on the connection.
          new ServerListener(connectionID, connection).start();
@@ -269,6 +278,53 @@ public class SubwaveClient {
    private synchronized static void removeConnectionFromMap(int connectionID) {
       // Remove the connection from the map.
       connectionMap.remove(connectionID);
+   }
+
+   /**
+    * Sets the friendly name associated with a given unique ID.
+    * <p/>
+    * This is used for both conversations and other clients, as the server assigns IDs uniquely to both.
+    *
+    * @param connectionID ID of the connection being used
+    * @param uniqueID     ID to associate a name with
+    * @param name         friendly name to associate with the ID
+    */
+   private static void setName(int connectionID, int uniqueID, String name) {
+      // Get name map for the connection.
+      Map nameMap = nameMaps.get(connectionID);
+      if (nameMap == null) {
+         ErrorHandler.logError("No name map for that connection");
+         return;
+      }
+
+      // Set the name
+      nameMap.put(uniqueID, name);
+   }
+
+   /**
+    * Returns the friendly name associated with the given unique ID for the given connection.
+    * <p/>
+    * This is used for both conversations and other clients, as the server assigns IDs uniquely to both.
+    *
+    * @param connectionID ID of the connection being used
+    * @param uniqueID     ID of the object the name is associated with.
+    *
+    * @return the friendly name associated with those IDs, if available.
+    */
+   private static String getName(int connectionID, int uniqueID) {
+      // Get name map for the connection.
+      Map nameMap = nameMaps.get(connectionID);
+      if (nameMap == null) {
+         ErrorHandler.logError("No name map for that connection");
+         return;
+      }
+
+      // Get the name
+      String friendlyName = nameMap.get(uniqueID);
+
+      // Return the name if available, otherwise return "Unnamed"
+      if (friendlyName != null) return friendlyName;
+      return "Unnamed";
    }
 
    // TODO document message senders.
