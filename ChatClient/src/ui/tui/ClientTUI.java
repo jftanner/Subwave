@@ -67,6 +67,19 @@ public class ClientTUI extends ClientUIFramework {
    }
 
    /**
+    * Determines whether or not the provided input should be parsed as a command.
+    *
+    * @param input user input to be checked
+    *
+    * @return true if the input should be parsed as a command, otherwise false
+    */
+   private static boolean isCommand(String input) {
+      // Commands start with the '\' character.
+      // TODO tokenize in a less wasteful way.
+      return input.startsWith("\\");
+   }
+
+   /**
     * Called when the UI is started. Listens for user input.
     */
    @Override
@@ -175,7 +188,7 @@ public class ClientTUI extends ClientUIFramework {
       int conversationID = tokenizer.nextInt();
 
 
-      // If the next token is invalid, or doesn't exist, display help.
+      // If there is not a message body, display help.
       if (!tokenizer.hasNextLine()) {
          displayHelp(Command.MESSAGE);
          return;
@@ -188,21 +201,17 @@ public class ClientTUI extends ClientUIFramework {
       SubwaveClient.sendChatMessage(serverConnectionID, conversationID, messageBody);
    }
 
-   private void handleCommandMessage(Scanner tokenizer) {
+   private void handleCommandEmote(Scanner tokenizer) {
 
-      // If the next token is invalid, or doesn't exist, display help.
+      // If the next token is an integer, assume that it is the conversation ID. Otherwise, reply to the last message.
+      int conversationID = lastConversationID;
       if (!tokenizer.hasNextInt()) {
-         displayHelp(Command.MESSAGE);
-         return;
+         conversationID = tokenizer.nextInt();
       }
 
-      // Get the destination conversation id.
-      int conversationID = tokenizer.nextInt();
-
-
-      // If the next token is invalid, or doesn't exist, display help.
+      // If there is not a message body, display help.
       if (!tokenizer.hasNextLine()) {
-         displayHelp(Command.MESSAGE);
+         displayHelp(Command.EMOTE);
          return;
       }
 
@@ -211,19 +220,6 @@ public class ClientTUI extends ClientUIFramework {
 
       // Send the message
       SubwaveClient.sendChatMessage(serverConnectionID, conversationID, messageBody);
-   }
-
-   /**
-    * Determines whether or not the provided input should be parsed as a command.
-    *
-    * @param input user input to be checked
-    *
-    * @return true if the input should be parsed as a command, otherwise false
-    */
-   private static boolean isCommand(String input) {
-      // Commands start with the '\' character.
-      // TODO tokenize in a less wasteful way.
-      return input.startsWith("\\");
    }
 
 }
