@@ -37,25 +37,21 @@ public abstract class ClientUIFramework extends Thread {
 
    public void handleChatEmote(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 
-   public void handleConversationNew(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
+   public void handleConversationNew(int connectionID, int conversationID, int sourceClientID, String conversationName) {handleUnhandled(connectionID, conversationID, sourceClientID, conversationName);}
 
-   public void handleConversationInvite(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
+   public void handleConversationInvite(int connectionID, int conversationID, int sourceClientID, String converationName) {handleUnhandled(connectionID, conversationID, sourceClientID, converationName);}
 
    public void handleConversationJoin(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 
    public void handleConversationLeave(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 
-   public void handleNameUpdate(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
+   public void handleNameUpdate(int connectionID, int conversationID, int sourceClientID, String friendlyName) {handleUnhandled(connectionID, conversationID, sourceClientID, friendlyName);}
 
    public void handleAcknowledge(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 
    public void handleRefuse(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 
-   public void handleNetworkConnect(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
-
-   public void handleNetworkDisconnect(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
-
-   public void handleDebug(int connectionID, int conversationID, int sourceClientID, String message) {
+   public void handleDebug(int connectionID, int conversationID, int clientID, String message) {
    /*
    By default, debug messages are sent to standard err.
    Note that this is printed directly and does not use the ErrorHandler class.
@@ -63,7 +59,7 @@ public abstract class ClientUIFramework extends Thread {
 
    Subclasses may choose to override this default setting.
    */
-      System.err.println(message);
+      System.err.println("DEBUG | " + connectionID + ", " + conversationID + ", " + clientID + "> " + message);
    }
 
    public void handleUnhandled(int connectionID, int conversationID, int sourceClientID, String message) {SubwaveClient.sendRefuse(connectionID, conversationID, Message.UNHANDLED_MSG);}
