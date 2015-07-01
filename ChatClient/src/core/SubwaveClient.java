@@ -280,7 +280,7 @@ public class SubwaveClient {
    }
 
    // TODO document message senders.
-   public void sendChatMessage(int connectionID, int conversationID, String message) {
+   public static void sendChatMessage(int connectionID, int conversationID, String message) {
       // Get the connection from the connectionID
       Connection connection = connectionMap.get(connectionID);
       if (connection == null) {ErrorHandler.logError("Invalid connectionID");}
@@ -290,7 +290,7 @@ public class SubwaveClient {
       connection.send(reply);
    }
 
-   public void sendChatEmote(int connectionID, int conversationID, String message) {
+   public static void sendChatEmote(int connectionID, int conversationID, String message) {
       // Get the connection from the connectionID
       Connection connection = connectionMap.get(connectionID);
       if (connection == null) {ErrorHandler.logError("Invalid connectionID");}
@@ -300,7 +300,7 @@ public class SubwaveClient {
       connection.send(reply);
    }
 
-   public void sendConversationNew(int connectionID, String requestedName) {
+   public static void sendConversationNew(int connectionID, String requestedName) {
       // Get the connection from the connectionID
       Connection connection = connectionMap.get(connectionID);
       if (connection == null) {ErrorHandler.logError("Invalid connectionID");}
@@ -310,7 +310,7 @@ public class SubwaveClient {
       connection.send(reply);
    }
 
-   public void sendConversationInvite(int connectionID, int conversationID, int targetClient, String message) {
+   public static void sendConversationInvite(int connectionID, int conversationID, int targetClient, String message) {
       // Get the connection from the connectionID
       Connection connection = connectionMap.get(connectionID);
       if (connection == null) {ErrorHandler.logError("Invalid connectionID");}
@@ -320,7 +320,7 @@ public class SubwaveClient {
       connection.send(reply);
    }
 
-   public void sendConversationJoin(int connectionID, int conversationID, String message) {
+   public static void sendConversationJoin(int connectionID, int conversationID, String message) {
       // Get the connection from the connectionID
       Connection connection = connectionMap.get(connectionID);
       if (connection == null) {ErrorHandler.logError("Invalid connectionID");}
@@ -330,7 +330,7 @@ public class SubwaveClient {
       connection.send(reply);
    }
 
-   public void sendConversationLeave(int connectionID, int conversationID, String message) {
+   public static void sendConversationLeave(int connectionID, int conversationID, String message) {
       // Get the connection from the connectionID
       Connection connection = connectionMap.get(connectionID);
       if (connection == null) {ErrorHandler.logError("Invalid connectionID");}
@@ -340,7 +340,7 @@ public class SubwaveClient {
       connection.send(reply);
    }
 
-   public void sendNameUpdate(int connectionID, int conversationID, String requestedName) {
+   public static void sendNameUpdate(int connectionID, int conversationID, String requestedName) {
       // Get the connection from the connectionID
       Connection connection = connectionMap.get(connectionID);
       if (connection == null) {ErrorHandler.logError("Invalid connectionID");}
@@ -350,7 +350,7 @@ public class SubwaveClient {
       connection.send(reply);
    }
 
-   public void sendAcknowledge(int connectionID, int conversationID, String message) {
+   public static void sendAcknowledge(int connectionID, int conversationID, String message) {
       // Get the connection from the connectionID
       Connection connection = connectionMap.get(connectionID);
       if (connection == null) {ErrorHandler.logError("Invalid connectionID");}
@@ -360,7 +360,7 @@ public class SubwaveClient {
       connection.send(reply);
    }
 
-   public void sendRefuse(int connectionID, int conversationID, String message) {
+   public static void sendRefuse(int connectionID, int conversationID, String message) {
       // Log the refusal.
       ErrorHandler.logError("UI refused a message.");
 
@@ -373,7 +373,7 @@ public class SubwaveClient {
       connection.send(reply);
    }
 
-   public void sendDebug(int connectionID, int conversationID, String message) {
+   public static void sendDebug(int connectionID, int conversationID, String message) {
       // Get the connection from the connectionID
       Connection connection = connectionMap.get(connectionID);
       if (connection == null) {ErrorHandler.logError("Invalid connectionID");}
