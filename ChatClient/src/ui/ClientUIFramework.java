@@ -1,7 +1,6 @@
 package com.tanndev.subwave.client.ui;
 
 import com.tanndev.subwave.client.core.SubwaveClient;
-import com.tanndev.subwave.common.*;
 import com.tanndev.subwave.common.debugging.ErrorHandler;
 
 /**
@@ -24,25 +23,6 @@ public abstract class ClientUIFramework extends Thread {
    public ClientUIFramework() {
       SubwaveClient.bindUI(this);
    }
-
-   /**
-    * Message Handler: default
-    * <p/>
-    * Requirements: none
-    * <p/>
-    * Any messages that cannot be parsed to another message handler should be passed here. All other message handlers,
-    * except for DEBUG, default to this method. Subclasses can choose not to override those methods if they do not wish
-    * to implement handling for that message type.
-    *
-    * @param connection connection the message was received on
-    * @param message    message received
-    */
-   private static final void replyToUnhandledMessage(Connection connection, Message message) {
-      ErrorHandler.logError("UI does not handle this message type: " + message.toString());
-      Message reply = new Message(MessageType.REFUSE, message.conversationID, connection.getClientID(), Message.UNHANDLED_MSG);
-      connection.send(reply);
-   }
-
    /**
     * This method must be implemented by all subclasses.
     * <p/>
@@ -51,27 +31,27 @@ public abstract class ClientUIFramework extends Thread {
    public abstract void shutdown();
 
    // TODO update all handlers to avoid exposing connections.
-   public void handleChatMessage(Connection connection, Message message) {SubwaveClient.sendRefuseMessage(connection);}
+   public void handleChatMessage(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 
-   public void handleConversationNew(Connection connection, Message message) {replyToUnhandledMessage(connection, message);}
+   public void handleConversationNew(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 
-   public void handleConversationInvite(Connection connection, Message message) {replyToUnhandledMessage(connection, message);}
+   public void handleConversationInvite(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 
-   public void handleConversationJoin(Connection connection, Message message) {replyToUnhandledMessage(connection, message);}
+   public void handleConversationJoin(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 
-   public void handleConversationLeave(Connection connection, Message message) {replyToUnhandledMessage(connection, message);}
+   public void handleConversationLeave(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 
-   public void handleNameUpdate(Connection connection, Message message) {replyToUnhandledMessage(connection, message);}
+   public void handleNameUpdate(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 
-   public void handleAcknowledge(Connection connection, Message message) {replyToUnhandledMessage(connection, message);}
+   public void handleAcknowledge(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 
-   public void handleRefuse(Connection connection, Message message) {replyToUnhandledMessage(connection, message);}
+   public void handleRefuse(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 
-   public void handleNetworkConnect(Connection connection, Message message) {replyToUnhandledMessage(connection, message);}
+   public void handleNetworkConnect(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 
-   public void handleNetworkDisconnect(Connection connection, Message message) {replyToUnhandledMessage(connection, message);}
+   public void handleNetworkDisconnect(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 
-   public void handleDebug(Connection connection, Message message) {
+   public void handleDebug(int connectionID, int conversationID, int sourceClientID, String message) {
    /*
    By default, debug messages are sent to standard err.
    Note that this is printed directly and does not use the ErrorHandler class.
@@ -82,7 +62,7 @@ public abstract class ClientUIFramework extends Thread {
       System.err.println(message.toString());
    }
 
-   public void handleUnhandled(Connection connection, Message message) {replyToUnhandledMessage(connection, message);}
+   public void handleUnhandled(int connectionID, int conversationID, int sourceClientID, String message) {SubwaveClient.refuseMessage(connectionID, conversationID, sourceClientID, message);}
 
-   public void onServerDisconnect(Connection connection) {ErrorHandler.logError("Remote server disconnected.");}
+   public void onServerDisconnect(int connectionID) {ErrorHandler.logError("Remote server disconnected: " + connectionID);}
 }

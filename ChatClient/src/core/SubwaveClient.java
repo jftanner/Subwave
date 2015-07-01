@@ -139,7 +139,7 @@ public class SubwaveClient {
       removeConnectionFromMap(connectionID);
    }
 
-   public static void sendRefuseMessage(int connectionID) {
+   public static void refuseMessage(int connectionID, int conversationID, int sourceClientID, String message) {
       // Log the refusal.
       ErrorHandler.logError("UI refused a message.");
 
@@ -151,7 +151,7 @@ public class SubwaveClient {
 
       // Send refusal.
       // TODO return proper conversation ID.
-      Message reply = new Message(MessageType.REFUSE, 0, connection.getClientID(), Message.UNHANDLED_MSG);
+      Message reply = new Message(MessageType.REFUSE, conversationID, connection.getClientID(), Message.UNHANDLED_MSG);
       connection.send(reply);
    }
 
