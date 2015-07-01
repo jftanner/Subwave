@@ -1,6 +1,7 @@
 package com.tanndev.subwave.client.ui;
 
 import com.tanndev.subwave.client.core.SubwaveClient;
+import com.tanndev.subwave.common.Message;
 import com.tanndev.subwave.common.debugging.ErrorHandler;
 
 /**
@@ -65,7 +66,7 @@ public abstract class ClientUIFramework extends Thread {
       System.err.println(message.toString());
    }
 
-   public void handleUnhandled(int connectionID, int conversationID, int sourceClientID, String message) {SubwaveClient.refuseMessage(connectionID, conversationID, sourceClientID, message);}
+   public void handleUnhandled(int connectionID, int conversationID, int sourceClientID, String message) {SubwaveClient.sendRefuse(connectionID, conversationID, Message.UNHANDLED_MSG);}
 
    public void onServerDisconnect(int connectionID) {ErrorHandler.logError("Remote server disconnected: " + connectionID);}
 }

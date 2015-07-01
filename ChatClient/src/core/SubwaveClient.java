@@ -155,22 +155,6 @@ public class SubwaveClient {
       connection.setPrintMessages(setting);
    }
 
-   public static void refuseMessage(int connectionID, int conversationID, int sourceClientID, String message) {
-      // Log the refusal.
-      ErrorHandler.logError("UI refused a message.");
-
-      // Get the connection from the connectionID
-      Connection connection = connectionMap.get(connectionID);
-
-      // Avoid possible null pointer exception.
-      if (connection == null) return;
-
-      // Send refusal.
-      // TODO return proper conversation ID.
-      Message reply = new Message(MessageType.REFUSE, conversationID, connection.getClientID(), Message.UNHANDLED_MSG);
-      connection.send(reply);
-   }
-
    public static void alertServerDisconnect(int connectionID) {
       ui.onServerDisconnect(connectionID);
    }
@@ -293,5 +277,109 @@ public class SubwaveClient {
    private synchronized static void removeConnectionFromMap(int connectionID) {
       // Remove the connection from the map.
       connectionMap.remove(connectionID);
+   }
+
+   // TODO document message senders.
+   public void sendChatMessage(int connectionID, int conversationID, String message) {
+      // Get the connection from the connectionID
+      Connection connection = connectionMap.get(connectionID);
+      if (connection == null) {ErrorHandler.logError("Invalid connectionID");}
+
+      // Send refusal.
+      Message reply = new Message(MessageType.CHAT_MESSAGE, conversationID, connection.getClientID(), message);
+      connection.send(reply);
+   }
+
+   public void sendChatEmote(int connectionID, int conversationID, String message) {
+      // Get the connection from the connectionID
+      Connection connection = connectionMap.get(connectionID);
+      if (connection == null) {ErrorHandler.logError("Invalid connectionID");}
+
+      // Send refusal.
+      Message reply = new Message(MessageType.CHAT_EMOTE, conversationID, connection.getClientID(), message);
+      connection.send(reply);
+   }
+
+   public void sendConversationNew(int connectionID, String requestedName) {
+      // Get the connection from the connectionID
+      Connection connection = connectionMap.get(connectionID);
+      if (connection == null) {ErrorHandler.logError("Invalid connectionID");}
+
+      // Send refusal.
+      Message reply = new Message(MessageType.CONVERSATION_NEW, 0, connection.getClientID(), requestedName);
+      connection.send(reply);
+   }
+
+   public void sendConversationInvite(int connectionID, int conversationID, int targetClient, String message) {
+      // Get the connection from the connectionID
+      Connection connection = connectionMap.get(connectionID);
+      if (connection == null) {ErrorHandler.logError("Invalid connectionID");}
+
+      // Send refusal.
+      Message reply = new Message(MessageType.CONVERSATION_INVITE, conversationID, targetClient, message);
+      connection.send(reply);
+   }
+
+   public void sendConversationJoin(int connectionID, int conversationID, String message) {
+      // Get the connection from the connectionID
+      Connection connection = connectionMap.get(connectionID);
+      if (connection == null) {ErrorHandler.logError("Invalid connectionID");}
+
+      // Send refusal.
+      Message reply = new Message(MessageType.CONVERSATION_JOIN, conversationID, connection.getClientID(), message);
+      connection.send(reply);
+   }
+
+   public void sendConversationLeave(int connectionID, int conversationID, String message) {
+      // Get the connection from the connectionID
+      Connection connection = connectionMap.get(connectionID);
+      if (connection == null) {ErrorHandler.logError("Invalid connectionID");}
+
+      // Send refusal.
+      Message reply = new Message(MessageType.CONVERSATION_LEAVE, conversationID, connection.getClientID(), message);
+      connection.send(reply);
+   }
+
+   public void sendNameUpdate(int connectionID, int conversationID, String requestedName) {
+      // Get the connection from the connectionID
+      Connection connection = connectionMap.get(connectionID);
+      if (connection == null) {ErrorHandler.logError("Invalid connectionID");}
+
+      // Send refusal.
+      Message reply = new Message(MessageType.NAME_UPDATE, conversationID, connection.getClientID(), requestedName);
+      connection.send(reply);
+   }
+
+   public void sendAcknowledge(int connectionID, int conversationID, String message) {
+      // Get the connection from the connectionID
+      Connection connection = connectionMap.get(connectionID);
+      if (connection == null) {ErrorHandler.logError("Invalid connectionID");}
+
+      // Send refusal.
+      Message reply = new Message(MessageType.ACKNOWLEDGE, conversationID, connection.getClientID(), message);
+      connection.send(reply);
+   }
+
+   public void sendRefuse(int connectionID, int conversationID, String message) {
+      // Log the refusal.
+      ErrorHandler.logError("UI refused a message.");
+
+      // Get the connection from the connectionID
+      Connection connection = connectionMap.get(connectionID);
+      if (connection == null) {ErrorHandler.logError("Invalid connectionID");}
+
+      // Send refusal.
+      Message reply = new Message(MessageType.REFUSE, conversationID, connection.getClientID(), message);
+      connection.send(reply);
+   }
+
+   public void sendDebug(int connectionID, int conversationID, String message) {
+      // Get the connection from the connectionID
+      Connection connection = connectionMap.get(connectionID);
+      if (connection == null) {ErrorHandler.logError("Invalid connectionID");}
+
+      // Send refusal.
+      Message reply = new Message(MessageType.DEBUG, conversationID, connection.getClientID(), message);
+      connection.send(reply);
    }
 }

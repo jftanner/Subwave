@@ -80,7 +80,7 @@ public class ClientTUI extends ClientUIFramework {
    }
 
    /**
-    * Closes the connection, if it's open, and terminates the application.
+    * Closes the connection and terminates the application.
     */
    @Override
    public void shutdown() {
@@ -91,7 +91,7 @@ public class ClientTUI extends ClientUIFramework {
    /**
     * Handles all input from the user in the UI thread.
     * <p/>
-    * Commands are parsed and matched to a {@link com.tanndev.subwave.client.ui.tui.Command} type to be executed.
+    * Commands are parsed and matched to a {@link Command} type to be executed.
     *
     * @param input single-line string from the user
     */
