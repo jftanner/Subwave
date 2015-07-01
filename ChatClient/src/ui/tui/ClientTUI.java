@@ -222,7 +222,7 @@ public class ClientTUI extends ClientUIFramework {
       String messageBody = tokenizer.nextLine();
 
       // Send the message
-      SubwaveClient.sendChatMessage(serverConnectionID, conversationID, messageBody);
+      SubwaveClient.sendChatEmote(serverConnectionID, conversationID, messageBody);
    }
 
    private void handleCommandReply(Scanner tokenizer) {
