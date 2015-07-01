@@ -321,4 +321,40 @@ public class ClientTUI extends ClientUIFramework {
       SubwaveClient.sendConversationJoin(serverConnectionID, conversationID);
    }
 
+   public void handleChatMessage(int connectionID, int conversationID, int sourceClientID, String message) {
+      // Get names.
+      String conversationName = SubwaveClient.getName(connectionID, conversationID);
+      String clientName = SubwaveClient.getName(connectionID, sourceClientID);
+
+      // Alert user
+      System.out.println(conversationName + " | " + clientName + " says " + message);
+
+      // Set last conversation ID
+      lastConversationID = conversationID;
+   }
+
+   public void handleChatEmote(int connectionID, int conversationID, int sourceClientID, String message) {
+      // Get names.
+      String conversationName = SubwaveClient.getName(connectionID, conversationID);
+      String clientName = SubwaveClient.getName(connectionID, sourceClientID);
+
+      // Alert user
+      System.out.println(conversationName + " | " + clientName + " " + message);
+
+      // Set last conversation ID
+      lastConversationID = conversationID;
+   }
+
+   public void handleConversationJoin(int connectionID, int conversationID, int sourceClientID, String message) {
+      // Get names.
+      String conversationName = SubwaveClient.getName(connectionID, conversationID);
+      String clientName = SubwaveClient.getName(connectionID, sourceClientID);
+
+      // Alert user
+      System.out.println("\"" + clientName + "\" has joined the conversation \"" + conversationName + "\"");
+
+      // Set last conversation ID
+      lastConversationID = conversationID;
+   }
+
 }
