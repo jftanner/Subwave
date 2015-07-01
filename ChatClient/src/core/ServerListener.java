@@ -11,15 +11,20 @@ import com.tanndev.subwave.common.Connection;
  */
 class ServerListener extends Thread {
 
-   /** ClientTUI instance that will handle server messages */
-   private Connection connection;
+   /** Unique ID to identify the connection to the SubwaveClient */
+   private final int connectionID;
+
+   /** Connection to listen for messages on */
+   private final Connection connection;
 
    /**
     * Constructor
     *
+    * @param connectionID unique ID to use for identifying the connection to the SubwaveClient
     * @param connection connection to listen for messages on
     */
-   ServerListener(Connection connection) {
+   ServerListener(int connectionID, Connection connection) {
+      this.connectionID = connectionID;
       this.connection = connection;
    }
 
@@ -33,7 +38,7 @@ class ServerListener extends Thread {
     */
    @Override
    public void run() {
-      while (!connection.isClosed()) SubwaveClient.sortMessage(connection, connection.receive());
+      while (!connection.isClosed()) SubwaveClient.sortMessage(connectionID, connection.receive());
       SubwaveClient.alertServerDisconnect(connection);
    }
 }

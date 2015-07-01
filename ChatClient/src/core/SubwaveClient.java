@@ -6,6 +6,7 @@ import com.tanndev.subwave.common.debugging.ErrorHandler;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Client for the Subwave chat system. This client provides a connection to a remote server to create/join conversations
@@ -26,6 +27,9 @@ public class SubwaveClient {
 
 
    private static ClientUIFramework ui;
+
+   private static ConcurrentHashMap<Integer, Connection> connectionMap = new ConcurrentHashMap<Integer, Connection>();
+   private static int nextConnectionID = 1;
 
    /**
     * The user interface MUST call this function in order to bind to the chat client.
@@ -53,7 +57,7 @@ public class SubwaveClient {
     *
     * @return connection object representing the open link to the server. Returns null if connection fails.
     */
-   public static Connection connectToServer(String serverAddress, int port, String nickname) {
+   public static int connectToServer(String serverAddress, int port, String nickname) {
       // Check parameters and assign defaults if necessary.
       if (serverAddress == null) serverAddress = Defaults.DEFAULT_SERVER_ADDRESS;
       if (port < 1) port = Defaults.DEFAULT_SERVER_PORT;
@@ -90,12 +94,15 @@ public class SubwaveClient {
          if (finalACK == null || finalACK.messageType != MessageType.NETWORK_CONNECT)
             throw new IOException("Failed final ACK.");
 
+         // Add the connection to the connection map.
+         int connectionID = addConnectionToMap(Connection);
+         // TODO Test for invalid connectionID
+
          // Start a server listener on the connection.
-         new ServerListener(connection).start();
+         new ServerListener(connectionID, connection).start();
 
          // Return the connection to the UI.
-         // TODO Don't expose the connection to the UI directly. Instead require a connectionID.
-         return connection;
+         return connectionID;
 
       } catch (IOException e) {
             /*
@@ -114,7 +121,10 @@ public class SubwaveClient {
     *
     * @param connection connection to disconnect and close
     */
-   public static void disconnectFromServer(Connection connection) {
+   public static void disconnectFromServer(int connectionID) {
+      // Get the connection from the connectionID
+      Connection connection = connectionMap.get(connectionID);
+
       // Avoid possible null pointer exception.
       if (connection == null) return;
 
@@ -124,20 +134,32 @@ public class SubwaveClient {
 
       // Close the connection.
       connection.close();
+
+      // Remove the connection from the connectionMap
+      removeConnectionFromMap(connectionID);
    }
 
-   public static void sendRefuseMessage(Connection connection) {
+   public static void sendRefuseMessage(int connectionID) {
+      // Log the refusal.
       ErrorHandler.logError("UI refused a message.");
+
+      // Get the connection from the connectionID
+      Connection connection = connectionMap.get(connectionID);
+
+      // Avoid possible null pointer exception.
+      if (connection == null) return;
+
+      // Send refusal.
       // TODO return proper conversation ID.
       Message reply = new Message(MessageType.REFUSE, 0, connection.getClientID(), Message.UNHANDLED_MSG);
       connection.send(reply);
    }
 
-   public static void alertServerDisconnect(Connection connection) {
-      ui.onServerDisconnect(connection);
+   public static void alertServerDisconnect(int connectionID) {
+      ui.onServerDisconnect(connectionID);
    }
 
-   protected static void sortMessage(Connection connection, Message message) {
+   protected static void sortMessage(int connectionID, Message message) {
       // Fail if no UI is unbound.
       if (ui == null) {
          ErrorHandler.logError("Client UI is not bound to SubwaveClient.");
@@ -145,6 +167,9 @@ public class SubwaveClient {
          connection.send(reply);
          return;
       }
+
+      // Get the connection from the connectionID
+      Connection connection = connectionMap.get(connectionID);
 
       // Ignore null objects.
       if (connection == null || message == null) return;
@@ -211,5 +236,37 @@ public class SubwaveClient {
             */
             ui.handleUnhandled(connection, message);
       }
+   }
+
+   /**
+    * Adds the provided connection to the connection map and returns a new, unique ID.
+    *
+    * @param connection connection to add to the {@link #connectionMap}
+    *
+    * @return a new, unique connectionID
+    */
+   private synchronized static int addConnectionToMap(Connection connection) {
+      // Get a new connection ID.
+      int connectionID = nextConnectionID;
+      nextConnectionID++;
+
+      // Attempt to add the connection to the map.
+      if (connectionMap.putIfAbsent(connectionID, connection) != null) {
+         ErrorHandler.logError("Attempted to add a non-unique connectionID to the connection map.");
+         return 0;
+      }
+
+      // Connection successfully added, return the ID.
+      return connectionID;
+   }
+
+   /**
+    * Removes the connection associated with the given ID from the {@link #connectionMap}.
+    *
+    * @param connectionID ID of the connection to remove
+    */
+   private synchronized static void removeConnectionFromMap(int connectionID) {
+      // Remove the connection from the map.
+      connectionMap.remove(connectionID);
    }
 }
