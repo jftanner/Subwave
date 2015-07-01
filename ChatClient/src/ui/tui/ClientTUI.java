@@ -327,7 +327,7 @@ public class ClientTUI extends ClientUIFramework {
       String clientName = SubwaveClient.getName(connectionID, sourceClientID);
 
       // Alert user
-      System.out.println(conversationName + " | " + clientName + " says " + message);
+      System.out.println(conversationName + " | " + clientName + " says \"" + message + "\"");
 
       // Set last conversation ID
       lastConversationID = conversationID;
@@ -362,7 +362,7 @@ public class ClientTUI extends ClientUIFramework {
       String clientName = SubwaveClient.getName(connectionID, sourceClientID);
 
       // Alert user
-      System.out.println("Client " + sourceClientID + " (\"" + clientName + "\") has joined conversation " + connectionID + " (\"" + conversationName + "\")");
+      System.out.println("Client " + sourceClientID + " (\"" + clientName + "\") has joined conversation " + conversationID + " (\"" + conversationName + "\")");
 
       // Set last conversation ID
       lastConversationID = conversationID;

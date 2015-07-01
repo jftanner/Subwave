@@ -213,7 +213,10 @@ public class SubwaveClient {
             break;
 
          case CONVERSATION_JOIN: // Client wants to join a conversation
-            // TODO Handle conversation join
+            // Update client name from message
+            setName(connectionID, clientID, messageBody);
+
+            // Send to the UI for processing
             ui.handleConversationJoin(connectionID, conversationID, clientID, messageBody);
             break;
 
