@@ -109,12 +109,11 @@ public class ClientTUI extends ClientUIFramework {
       // Ignore null or empty input.
       if (input == null || input.length() < 1) return;
 
-      // TODO handle commands in ClientTUI
+      // Prepare to tokenize input string.
+      Scanner tokenizer = new Scanner(input);
 
       // If the input is a command...
       if (isCommand(input)) {
-         // Prepare to tokenize input string.
-         Scanner tokenizer = new Scanner(input);
 
          // Get the command token
          String commandToken = tokenizer.next();
@@ -127,6 +126,7 @@ public class ClientTUI extends ClientUIFramework {
                break;
 
             case EMOTE: // Emote chat message.
+               handleCommandEmote(tokenizer);
                break;
 
             case REPLY: // Reply to last conversation.
@@ -161,7 +161,7 @@ public class ClientTUI extends ClientUIFramework {
                break;
 
             default: // A command without a case in the switch statement.
-               ErrorHandler.logError("Unrecognised command token: " + tokens[0]);
+               ErrorHandler.logError("Unrecognised command token: " + commandToken);
                return;
          }
 
@@ -220,6 +220,20 @@ public class ClientTUI extends ClientUIFramework {
 
       // Send the message
       SubwaveClient.sendChatMessage(serverConnectionID, conversationID, messageBody);
+   }
+
+   private void handleCommandReply(Scanner tokenizer) {
+      // If there is not a message body, display help.
+      if (!tokenizer.hasNextLine()) {
+         displayHelp(Command.REPLY);
+         return;
+      }
+
+      // Get the message body.
+      String messageBody = tokenizer.nextLine();
+
+      // Send the message
+      SubwaveClient.sendChatMessage(serverConnectionID, lastConversationID, messageBody);
    }
 
 }

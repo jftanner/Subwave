@@ -225,15 +225,6 @@ public class SubwaveClient {
             ui.handleRefuse(connectionID, conversationID, clientID, messageBody);
             break;
 
-         case NETWORK_CONNECT: // Unused
-            // TODO Handle network connect message.
-            ui.handleNetworkConnect(connectionID, conversationID, clientID, messageBody);
-            break;
-
-         case NETWORK_DISCONNECT: // Client announces intent to sign off.
-            ui.handleNetworkDisconnect(connectionID, conversationID, clientID, messageBody);
-            break;
-
          case DEBUG: // Received debug message.
             ui.handleDebug(connectionID, conversationID, clientID, messageBody);
             break;
