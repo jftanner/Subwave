@@ -30,8 +30,11 @@ public abstract class ClientUIFramework extends Thread {
     */
    public abstract void shutdown();
 
-   // TODO update all handlers to avoid exposing connections.
+
+   // TODO Document the message handlers
    public void handleChatMessage(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
+
+   public void handleChatEmote(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 
    public void handleConversationNew(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 

@@ -46,16 +46,15 @@ public class SubwaveClient {
 
 
    /**
-    * Attempts to create a connection to the selected remote server. If successful, a {@link
-    * com.tanndev.subwave.common.Connection Connection} object is returned for that connection.
+    * Attempts to create a connection to the selected remote server.
     *
     * @param serverAddress network address of the remote server. (If null, defaults to "{@value
-    *                      com.tanndev.subwave.common.Defaults#DEFAULT_SERVER_ADDRESS}".)
+    *                      Defaults#DEFAULT_SERVER_ADDRESS}".)
     * @param port          listening port of the remote server (If zero, defaults to {@value
-    *                      com.tanndev.subwave.common.Defaults#DEFAULT_SERVER_PORT}.)
-    * @param nickname      the nickname to request. (If null, defaults to "{@value com.tanndev.subwave.common.Defaults#DEFAULT_NICKNAME}".)
+    *                      Defaults#DEFAULT_SERVER_PORT}.)
+    * @param nickname      the nickname to request. (If null, defaults to "{@value Defaults#DEFAULT_NICKNAME}".)
     *
-    * @return connection object representing the open link to the server. Returns null if connection fails.
+    * @return connectionID of the new connection. If no connection is made successfully, returns zero.
     */
    public static int connectToServer(String serverAddress, int port, String nickname) {
       // Check parameters and assign defaults if necessary.
@@ -65,18 +64,18 @@ public class SubwaveClient {
 
       // Catch any exceptions thrown during connection process.
       try {
-            /*
-            Create the socket and connection object.
-            The socket constructor will throw an exception if unable to connect.
-            */
+         /*
+         Create the socket and connection object.
+         The socket constructor will throw an exception if unable to connect.
+         */
          Socket socket = new Socket(serverAddress, port);
          Connection connection = new Connection(socket);
 
-            /*
-            Wait for server ack message.
-            Message must be of type NETWORK.CONNECT
-            If message returns null, or with the wrong type, throw an exception.
-            */
+         /*
+         Wait for server ack message.
+         Message must be of type NETWORK.CONNECT
+         If message returns null, or with the wrong type, throw an exception.
+         */
          Message serverACK = connection.receive();
          if (serverACK == null || serverACK.messageType != MessageType.NETWORK_CONNECT)
             throw new IOException("Failed server ACK.");
@@ -95,7 +94,7 @@ public class SubwaveClient {
             throw new IOException("Failed final ACK.");
 
          // Add the connection to the connection map.
-         int connectionID = addConnectionToMap(Connection);
+         int connectionID = addConnectionToMap(connection);
          // TODO Test for invalid connectionID
 
          // Start a server listener on the connection.
@@ -110,7 +109,7 @@ public class SubwaveClient {
             Because this is expected in the event of a connection failure, no stack trace is necessary.
             */
          ErrorHandler.logError("Could not connect to server.");
-         return null;
+         return 0;
       }
    }
 
@@ -139,6 +138,23 @@ public class SubwaveClient {
       removeConnectionFromMap(connectionID);
    }
 
+   /**
+    * Sets the {@link Connection#printMessages} flag.
+    *
+    * @param connectionID ID of the connection to set the flag on
+    * @param setting      value to set the flag to
+    */
+   public static void setConnectionPrinting(int connectionID, boolean setting) {
+      // Get the connection from the connectionID
+      Connection connection = connectionMap.get(connectionID);
+
+      // Avoid possible null pointer exception.
+      if (connection == null) return;
+
+      // Set the printMessages flag
+      connection.setPrintMessages(setting);
+   }
+
    public static void refuseMessage(int connectionID, int conversationID, int sourceClientID, String message) {
       // Log the refusal.
       ErrorHandler.logError("UI refused a message.");
@@ -160,6 +176,13 @@ public class SubwaveClient {
    }
 
    protected static void sortMessage(int connectionID, Message message) {
+
+      // Get the connection from the connectionID
+      Connection connection = connectionMap.get(connectionID);
+
+      // Ignore null objects.
+      if (connection == null || message == null) return;
+
       // Fail if no UI is unbound.
       if (ui == null) {
          ErrorHandler.logError("Client UI is not bound to SubwaveClient.");
@@ -168,65 +191,67 @@ public class SubwaveClient {
          return;
       }
 
-      // Get the connection from the connectionID
-      Connection connection = connectionMap.get(connectionID);
-
-      // Ignore null objects.
-      if (connection == null || message == null) return;
+      // Unpack message data
+      int conversationID = message.conversationID;
+      int clientID = message.clientID;
+      String messageBody = message.messageBody;
 
       switch (message.messageType) {
          case CHAT_MESSAGE: // Client sending a message to an existing chat.
+            ui.handleChatMessage(connectionID, conversationID, clientID, messageBody);
+            break;
+
          case CHAT_EMOTE: // Client is sending an emote to an existing chat.
             // TODO Handle chat message and emote
-            ui.handleChatMessage(connection, message);
+            ui.handleChatEmote(connectionID, conversationID, clientID, messageBody);
             break;
 
          case CONVERSATION_NEW: // Client wants a new conversation.
             // TODO Handle conversation new
-            ui.handleConversationNew(connection, message);
+            ui.handleConversationNew(connectionID, conversationID, clientID, messageBody);
             break;
 
          case CONVERSATION_INVITE: // Client wants to invite another client to a conversation
             // TODO Handle conversation invite.
-            ui.handleConversationInvite(connection, message);
+            ui.handleConversationInvite(connectionID, conversationID, clientID, messageBody);
             break;
 
          case CONVERSATION_JOIN: // Client wants to join a conversation
             // TODO Handle conversation join
-            ui.handleConversationJoin(connection, message);
+            ui.handleConversationJoin(connectionID, conversationID, clientID, messageBody);
             break;
 
          case CONVERSATION_LEAVE: // Client wants to leave a conversation
             // TODO Handle conversation leave
-            ui.handleConversationLeave(connection, message);
+            ui.handleConversationLeave(connectionID, conversationID, clientID, messageBody);
             break;
 
          case NAME_UPDATE: // Client wants to change a friendly name
             // TODO Handle name update
-            ui.handleNameUpdate(connection, message);
+            ui.handleNameUpdate(connectionID, conversationID, clientID, messageBody);
             break;
 
          case ACKNOWLEDGE: // Unused
             // TODO Respond to ACK
-            ui.handleAcknowledge(connection, message);
+            ui.handleAcknowledge(connectionID, conversationID, clientID, messageBody);
             break;
 
          case REFUSE: // Unused
             // TODO Respond to refusal.
-            ui.handleRefuse(connection, message);
+            ui.handleRefuse(connectionID, conversationID, clientID, messageBody);
             break;
 
          case NETWORK_CONNECT: // Unused
             // TODO Handle network connect message.
-            ui.handleNetworkConnect(connection, message);
+            ui.handleNetworkConnect(connectionID, conversationID, clientID, messageBody);
             break;
 
          case NETWORK_DISCONNECT: // Client announces intent to sign off.
-            ui.handleNetworkDisconnect(connection, message);
+            ui.handleNetworkDisconnect(connectionID, conversationID, clientID, messageBody);
             break;
 
          case DEBUG: // Received debug message.
-            ui.handleDebug(connection, message);
+            ui.handleDebug(connectionID, conversationID, clientID, messageBody);
             break;
 
          default: // A message type was received that is not in the switch statement.
@@ -234,7 +259,7 @@ public class SubwaveClient {
             If this error occurs, a new entry has been added to the MessageType enum
             It must be added to the switch statement above and the ClientUIFramework or handled by the UI directly.
             */
-            ui.handleUnhandled(connection, message);
+            ui.handleUnhandled(connectionID, conversationID, clientID, messageBody);
       }
    }
 

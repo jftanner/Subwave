@@ -39,6 +39,6 @@ class ServerListener extends Thread {
    @Override
    public void run() {
       while (!connection.isClosed()) SubwaveClient.sortMessage(connectionID, connection.receive());
-      SubwaveClient.alertServerDisconnect(connection);
+      SubwaveClient.alertServerDisconnect(connectionID);
    }
 }
