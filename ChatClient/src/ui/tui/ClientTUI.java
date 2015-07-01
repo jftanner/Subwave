@@ -34,7 +34,7 @@ public class ClientTUI extends ClientUIFramework {
     * @see com.tanndev.subwave.common.Connection
     * @see com.tanndev.subwave.common.Connection#setPrintMessages(boolean)
     */
-   public ClientTUI() {
+   public ClientTUI(String serverAddress, int port, String friendlyName) {
       // Use the ClientUIFramework constructor to bind to the chat client.
       super();
 
@@ -51,7 +51,25 @@ public class ClientTUI extends ClientUIFramework {
    }
 
    public static void main(String[] args) {
-      ClientTUI ui = new ClientTUI();
+      // Get server address and port from arguments, if there.
+      String serverAddress = null;
+      int serverPort = 0;
+      if (args.length > 0) serverAddress = args[0];
+      try {
+         if (args.length > 1) serverPort = Integer.parseInt(args[1]);
+      } catch (NumberFormatException e) {}
+
+      // Get login information from the user
+      Scanner scan = new Scanner(System.in);
+
+      // Get friendly name
+      System.out.println("What name would you like to use? (Leave blank for default.)");
+      String friendlyName = scan.nextLine().trim();
+      if (friendlyName.length() < 1) friendlyName = null;
+
+
+      // Start the UI
+      ClientTUI ui = new ClientTUI(serverAddress, serverPort, friendlyName);
       ui.start();
    }
 
