@@ -4,7 +4,6 @@ import com.tanndev.subwave.client.core.SubwaveClient;
 import com.tanndev.subwave.client.ui.ClientUIFramework;
 import com.tanndev.subwave.common.debugging.ErrorHandler;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -101,16 +100,17 @@ public class ClientTUI extends ClientUIFramework {
 
       // If the input is a command...
       if (isCommand(input)) {
-         // Tokenize the input for parsing.
-         String[] tokens = tokenizeCommand(input);
+         // Prepare to tokenize input string.
+         Scanner tokenizer = new Scanner(input);
 
-         // Parse the command token.
-         String commandToken = tokens[0];
+         // Get the command token
+         String commandToken = tokenizer.next();
          Command command = Command.parseCommandToken(commandToken);
 
          // Handle the command.
          switch (command) {
             case MESSAGE: // Chat message.
+               handleCommandMessage(tokenizer);
                break;
 
             case EMOTE: // Emote chat message.
@@ -163,6 +163,56 @@ public class ClientTUI extends ClientUIFramework {
       }
    }
 
+   private void handleCommandMessage(Scanner tokenizer) {
+
+      // If the next token is invalid, or doesn't exist, display help.
+      if (!tokenizer.hasNextInt()) {
+         displayHelp(Command.MESSAGE);
+         return;
+      }
+
+      // Get the destination conversation id.
+      int conversationID = tokenizer.nextInt();
+
+
+      // If the next token is invalid, or doesn't exist, display help.
+      if (!tokenizer.hasNextLine()) {
+         displayHelp(Command.MESSAGE);
+         return;
+      }
+
+      // Get the message body.
+      String messageBody = tokenizer.nextLine();
+
+      // Send the message
+      SubwaveClient.sendChatMessage(serverConnectionID, conversationID, messageBody);
+   }
+
+   private void handleCommandMessage(Scanner tokenizer) {
+
+      // If the next token is invalid, or doesn't exist, display help.
+      if (!tokenizer.hasNextInt()) {
+         displayHelp(Command.MESSAGE);
+         return;
+      }
+
+      // Get the destination conversation id.
+      int conversationID = tokenizer.nextInt();
+
+
+      // If the next token is invalid, or doesn't exist, display help.
+      if (!tokenizer.hasNextLine()) {
+         displayHelp(Command.MESSAGE);
+         return;
+      }
+
+      // Get the message body.
+      String messageBody = tokenizer.nextLine();
+
+      // Send the message
+      SubwaveClient.sendChatMessage(serverConnectionID, conversationID, messageBody);
+   }
+
    /**
     * Determines whether or not the provided input should be parsed as a command.
     *
@@ -170,42 +220,10 @@ public class ClientTUI extends ClientUIFramework {
     *
     * @return true if the input should be parsed as a command, otherwise false
     */
-   private boolean isCommand(String input) {
+   private static boolean isCommand(String input) {
       // Commands start with the '\' character.
       // TODO tokenize in a less wasteful way.
       return input.startsWith("\\");
-   }
-
-   /**
-    * Tokenizes the provided input string.
-    *
-    * @param input user input to be tokenized
-    *
-    * @return new String array containing the input tokens
-    */
-   private String[] tokenizeCommand(String input) {
-      // Create a new scanner on the input.
-      Scanner tokenizer = new Scanner(input);
-      ArrayList<String> tokens = new ArrayList<String>();
-      while (tokenizer.hasNext()) tokens.add(tokenizer.next());
-      return tokens.toArray(new String[tokens.size()]);
-   }
-
-   /**
-    * Returns a string containing the unused tokens with the original whitespace intact.
-    * <p/>
-    * <b>This assumes that the first unused token is not a duplicate of a previous token and therefore does not
-    * guarantee the correct substring is returned.</b> This should be corrected in a later version.
-    *
-    * @param tokens        tokenized strings from user input
-    * @param original      original user input string
-    * @param lastUsedIndex index of the last token used in the tokens array.
-    *
-    * @return original input string without the used tokens
-    */
-   private String recombineTokensAfter(String[] tokens, String original, int lastUsedIndex) {
-      if (lastUsedIndex > tokens.length) return null;
-      return original.substring(original.indexOf(tokens[lastUsedIndex]));
    }
 
 }
