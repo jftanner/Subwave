@@ -5,8 +5,8 @@ import com.tanndev.subwave.common.Message;
 import com.tanndev.subwave.common.debugging.ErrorHandler;
 
 /**
- * Provides the framework required to build user interfaces for {@link com.tanndev.subwave.client.core.SubwaveClient}. All
- * user interfaces must extend this class and must override the message handler methods in order to process messages
+ * Provides the framework required to build user interfaces for {@link com.tanndev.subwave.client.core.SubwaveClient}.
+ * All user interfaces must extend this class and must override the message handler methods in order to process messages
  * delivered from the server.
  *
  * @author James Tanner
@@ -24,6 +24,7 @@ public abstract class ClientUIFramework extends Thread {
    public ClientUIFramework() {
       SubwaveClient.bindUI(this);
    }
+
    /**
     * This method must be implemented by all subclasses.
     * <p/>
@@ -45,7 +46,21 @@ public abstract class ClientUIFramework extends Thread {
 
    public void handleConversationLeave(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 
-   public void handleNameUpdate(int connectionID, int conversationID, int sourceClientID, String friendlyName) {handleUnhandled(connectionID, conversationID, sourceClientID, friendlyName);}
+   /**
+    * Called whenever a name is updated.
+    * <p/>
+    * SubwaveClient automatically keeps track of incoming name changes. This method provided for the UI to alert the
+    * user, if desired. By default, this message is unhandled.
+    *
+    * @param connectionID   ID of the connection used
+    * @param conversationID ID of the conversation being renamed
+    * @param sourceClientID ID of the client that renamed the conversation or is being renamed
+    * @param friendlyName   new name
+    *
+    * @see SubwaveClient#setName(int, int, String)
+    * @see SubwaveClient#getName(int, int)
+    */
+   public void handleNameUpdate(int connectionID, int conversationID, int sourceClientID, String friendlyName) {}
 
    public void handleAcknowledge(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 

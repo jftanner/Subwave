@@ -219,7 +219,6 @@ public class SubwaveServer {
 
          case REFUSE: // Unused
             // TODO Respond to refusal.
-            replyToUnhandledMessage(connection, message);
             break;
 
          case NETWORK_CONNECT: // Unused

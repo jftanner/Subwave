@@ -226,8 +226,8 @@ public class ClientTUI extends ClientUIFramework {
    }
 
    private void handleCommandReply(Scanner tokenizer) {
-      // If there is not a message body, display help.
-      if (!tokenizer.hasNextLine()) {
+      // If there was no last conversation, or if there is not a message body, display help.
+      if (lastConversationID < 1 || !tokenizer.hasNextLine()) {
          displayHelp(Command.REPLY);
          return;
       }
@@ -248,6 +248,18 @@ public class ClientTUI extends ClientUIFramework {
 
       // Send the message
       SubwaveClient.sendConversationNew(serverConnectionID, friendlyName);
+   }
+
+   public void handleConversationJoin(int connectionID, int conversationID, int sourceClientID, String message) {
+      // Get names.
+      String conversationName = SubwaveClient.getName(connectionID, conversationID);
+      String clientName = SubwaveClient.getName(connectionID, clientName);
+
+      // Alert user
+      System.out.println("\"" + clientName + "\" has joined the conversation \"" + conversationName + "\"");
+
+      // Set last conversation ID
+      lastConversationID = conversationID;
    }
 
 }

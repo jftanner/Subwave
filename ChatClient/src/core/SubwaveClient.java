@@ -220,8 +220,15 @@ public class SubwaveClient {
             break;
 
          case NAME_UPDATE: // Client wants to change a friendly name
-            // TODO Handle name update
+            // If there is a conversation ID, set the name of that conversation
+            if (conversationID != 0) setName(connectionID, conversationID, messageBody);
+
+               // Otherwise, update the name of the client.
+            else if (clientID != 0) setName(connectionID, conversationID, messageBody);
+
+            // Send the update to the UI.
             ui.handleNameUpdate(connectionID, conversationID, clientID, messageBody);
+
             break;
 
          case ACKNOWLEDGE: // Unused
