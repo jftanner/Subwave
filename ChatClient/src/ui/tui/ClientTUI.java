@@ -198,7 +198,7 @@ public class ClientTUI extends ClientUIFramework {
       }
 
       // Get the message body.
-      String messageBody = tokenizer.nextLine();
+      String messageBody = tokenizer.nextLine().trim();
 
       // Send the message
       SubwaveClient.sendChatMessage(serverConnectionID, conversationID, messageBody);
@@ -219,7 +219,7 @@ public class ClientTUI extends ClientUIFramework {
       }
 
       // Get the message body.
-      String messageBody = tokenizer.nextLine();
+      String messageBody = tokenizer.nextLine().trim();
 
       // Send the message
       SubwaveClient.sendChatEmote(serverConnectionID, conversationID, messageBody);
@@ -233,7 +233,7 @@ public class ClientTUI extends ClientUIFramework {
       }
 
       // Get the message body.
-      String messageBody = tokenizer.nextLine();
+      String messageBody = tokenizer.nextLine().trim();
 
       // Send the message
       SubwaveClient.sendChatMessage(serverConnectionID, lastConversationID, messageBody);
@@ -243,7 +243,7 @@ public class ClientTUI extends ClientUIFramework {
       // If there isn't a name provided, use the default
       String friendlyName = Defaults.DEFAULT_CONVERSATION_NAME;
       if (tokenizer.hasNextLine()) {
-         friendlyName = tokenizer.nextLine();
+         friendlyName = tokenizer.nextLine().trim();
       }
 
       // Send the message
@@ -253,7 +253,7 @@ public class ClientTUI extends ClientUIFramework {
    public void handleConversationJoin(int connectionID, int conversationID, int sourceClientID, String message) {
       // Get names.
       String conversationName = SubwaveClient.getName(connectionID, conversationID);
-      String clientName = SubwaveClient.getName(connectionID, clientName);
+      String clientName = SubwaveClient.getName(connectionID, sourceClientID);
 
       // Alert user
       System.out.println("\"" + clientName + "\" has joined the conversation \"" + conversationName + "\"");

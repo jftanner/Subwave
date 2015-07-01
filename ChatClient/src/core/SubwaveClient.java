@@ -296,7 +296,7 @@ public class SubwaveClient {
     * @param uniqueID     ID to associate a name with
     * @param name         friendly name to associate with the ID
     */
-   private static void setName(int connectionID, int uniqueID, String name) {
+   public static void setName(int connectionID, int uniqueID, String name) {
       // Get name map for the connection.
       Map nameMap = nameMaps.get(connectionID);
       if (nameMap == null) {
@@ -318,7 +318,7 @@ public class SubwaveClient {
     *
     * @return the friendly name associated with those IDs, if available.
     */
-   private static String getName(int connectionID, int uniqueID) {
+   public static String getName(int connectionID, int uniqueID) {
       // Get name map for the connection.
       Map<Integer, String> nameMap = nameMaps.get(connectionID);
       if (nameMap == null) {
