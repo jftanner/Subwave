@@ -313,10 +313,10 @@ public class SubwaveClient {
     */
    private static String getName(int connectionID, int uniqueID) {
       // Get name map for the connection.
-      Map nameMap = nameMaps.get(connectionID);
+      Map<Integer, String> nameMap = nameMaps.get(connectionID);
       if (nameMap == null) {
          ErrorHandler.logError("No name map for that connection");
-         return;
+         return "Unnamed";
       }
 
       // Get the name
