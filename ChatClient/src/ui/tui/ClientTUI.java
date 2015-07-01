@@ -165,18 +165,28 @@ public class ClientTUI extends ClientUIFramework {
                break;
 
             case CONVERSATION_LEAVE: // Leave a conversation.
+               //TODO Handle this command
+               ErrorHandler.logError("Unhandled command.");
                break;
 
             case NAME_UPDATE: // Change the name a conversation or client.
+               //TODO Handle this command
+               ErrorHandler.logError("Unhandled command.");
                break;
 
             case ACKNOWLEDGE: // Acknowledge a request
+               //TODO Handle this command
+               ErrorHandler.logError("Unhandled command.");
                break;
 
             case REFUSE: // Refuse a request
+               //TODO Handle this command
+               ErrorHandler.logError("Unhandled command.");
                break;
 
             case DEBUG_MESSAGE: // Send a debug message.
+               //TODO Handle this command
+               ErrorHandler.logError("Unhandled command.");
                break;
 
             case QUIT: // Terminate the application.
@@ -190,12 +200,9 @@ public class ClientTUI extends ClientUIFramework {
 
       } else {
             /*
-            Input is not a command. If there is an ongoing conversation, assume this is a reply.
-            Otherwise, show help. (Default settings will still send the input as a debug message.)
+            Input is not a command. Assume it is a reply
             */
-         if (lastConversationID > 0) {
-            // TODO automatically reply
-         } else displayHelp(null);
+         handleCommandReply(tokenizer);
       }
    }
 
@@ -224,15 +231,14 @@ public class ClientTUI extends ClientUIFramework {
    }
 
    private void handleCommandEmote(Scanner tokenizer) {
-
       // If the next token is an integer, assume that it is the conversation ID. Otherwise, reply to the last message.
       int conversationID = lastConversationID;
       if (!tokenizer.hasNextInt()) {
          conversationID = tokenizer.nextInt();
       }
 
-      // If there is not a message body, display help.
-      if (!tokenizer.hasNextLine()) {
+      // If there is not a message body or valid conversation, display help.
+      if (conversationID < 1 || !tokenizer.hasNextLine()) {
          displayHelp(Command.EMOTE);
          return;
       }
@@ -295,6 +301,10 @@ public class ClientTUI extends ClientUIFramework {
 
       // Send the message
       SubwaveClient.sendConversationInvite(serverConnectionID, conversationID, targetClient);
+
+      // Report to user
+      // TODO Look up and print names
+      System.out.println("Invited user to conversation " + conversationID);
    }
 
    private void handleCommandConversationJoin(Scanner tokenizer) {
@@ -306,16 +316,6 @@ public class ClientTUI extends ClientUIFramework {
 
       // Get the destination conversation id.
       int conversationID = tokenizer.nextInt();
-
-
-      // If there is not a message body, display help.
-      if (!tokenizer.hasNextLine()) {
-         displayHelp(Command.MESSAGE);
-         return;
-      }
-
-      // Get the message body.
-      String messageBody = tokenizer.nextLine().trim();
 
       // Send the message
       SubwaveClient.sendConversationJoin(serverConnectionID, conversationID);
@@ -345,13 +345,24 @@ public class ClientTUI extends ClientUIFramework {
       lastConversationID = conversationID;
    }
 
+   public void handleConversationInvite(int connectionID, int conversationID, int sourceClientID, String conversationName) {
+      // Get name
+      String clientName = SubwaveClient.getName(connectionID, sourceClientID);
+
+      // Alert user
+      System.out.println("Client " + sourceClientID + " (\"" + clientName + "\") has invited you to conversation " + conversationID + " (\"" + conversationName + "\")");
+
+      // Set last conversation ID
+      lastConversationID = conversationID;
+   }
+
    public void handleConversationJoin(int connectionID, int conversationID, int sourceClientID, String message) {
       // Get names.
       String conversationName = SubwaveClient.getName(connectionID, conversationID);
       String clientName = SubwaveClient.getName(connectionID, sourceClientID);
 
       // Alert user
-      System.out.println("\"" + clientName + "\" has joined the conversation \"" + conversationName + "\"");
+      System.out.println("Client " + sourceClientID + " (\"" + clientName + "\") has joined conversation " + connectionID + " (\"" + conversationName + "\")");
 
       // Set last conversation ID
       lastConversationID = conversationID;

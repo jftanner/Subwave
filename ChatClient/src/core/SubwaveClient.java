@@ -205,7 +205,10 @@ public class SubwaveClient {
             break;
 
          case CONVERSATION_INVITE: // Client wants to invite another client to a conversation
-            // TODO Handle conversation invite.
+            // Update conversation name from message
+            setName(connectionID, conversationID, messageBody);
+
+            // Send to the UI for processing
             ui.handleConversationInvite(connectionID, conversationID, clientID, messageBody);
             break;
 

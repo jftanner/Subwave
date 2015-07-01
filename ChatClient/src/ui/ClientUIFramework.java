@@ -40,7 +40,7 @@ public abstract class ClientUIFramework extends Thread {
 
    public void handleConversationNew(int connectionID, int conversationID, int sourceClientID, String conversationName) {handleUnhandled(connectionID, conversationID, sourceClientID, conversationName);}
 
-   public void handleConversationInvite(int connectionID, int conversationID, int sourceClientID, String converationName) {handleUnhandled(connectionID, conversationID, sourceClientID, converationName);}
+   public void handleConversationInvite(int connectionID, int conversationID, int sourceClientID, String conversationName) {handleUnhandled(connectionID, conversationID, sourceClientID, conversationName);}
 
    public void handleConversationJoin(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 

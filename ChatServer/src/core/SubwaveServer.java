@@ -321,8 +321,8 @@ public class SubwaveServer {
       // Build the new message
       int sourceClientID = connection.getClientID();
       int conversationID = message.conversationID;
-      String friendlyName = conversation.getName();
-      Message invitation = new Message(MessageType.CONVERSATION_INVITE, conversationID, sourceClientID, friendlyName);
+      String conversationName = conversation.getName();
+      Message invitation = new Message(MessageType.CONVERSATION_INVITE, conversationID, sourceClientID, conversationName);
 
       // Send the message
       targetClient.clientConnection.send(invitation);
@@ -345,10 +345,11 @@ public class SubwaveServer {
    private static void handleConversationJoin(Connection connection, Message message) {
       // Verify sourceID.
       Client client = validateClientMessage(connection, message);
-      if (client == null) return;
+      if (client == null) return; // TODO Send reject message
 
       // Validate conversation.
       Conversation conversation = validateConversation(connection, message);
+      if (conversation == null) return; // TODO Send reject message
 
       // Send the conversation name to the client.
       connection.send(conversation.getNameUpdateMessage(SERVER_ID));
