@@ -2,6 +2,7 @@ package com.tanndev.subwave.client.ui.tui;
 
 import com.tanndev.subwave.client.core.SubwaveClient;
 import com.tanndev.subwave.client.ui.ClientUIFramework;
+import com.tanndev.subwave.common.Defaults;
 import com.tanndev.subwave.common.debugging.ErrorHandler;
 
 import java.util.Scanner;
@@ -130,9 +131,11 @@ public class ClientTUI extends ClientUIFramework {
                break;
 
             case REPLY: // Reply to last conversation.
+               handleCommandReply(tokenizer);
                break;
 
             case CONVERSATION_NEW: // Create a new conversation.
+               handleCommandConversationNew(tokenizer);
                break;
 
             case CONVERSATION_INVITE: // Invite another client to a conversation.
@@ -234,6 +237,17 @@ public class ClientTUI extends ClientUIFramework {
 
       // Send the message
       SubwaveClient.sendChatMessage(serverConnectionID, lastConversationID, messageBody);
+   }
+
+   private void handleCommandConversationNew(Scanner tokenizer) {
+      // If there isn't a name provided, use the default
+      String friendlyName = Defaults.DEFAULT_CONVERSATION_NAME;
+      if (tokenizer.hasNextLine()) {
+         friendlyName = tokenizer.nextLine();
+      }
+
+      // Send the message
+      SubwaveClient.sendConversationNew(serverConnectionID, friendlyName);
    }
 
 }

@@ -221,8 +221,9 @@ public class SubwaveClient {
             break;
 
          case REFUSE: // Unused
-            // TODO Respond to refusal.
-            ui.handleRefuse(connectionID, conversationID, clientID, messageBody);
+            // Send to debugging.
+            // TODO handle refuse properly.
+            ui.handleDebug(connectionID, conversationID, clientID, messageBody);
             break;
 
          case DEBUG: // Received debug message.
