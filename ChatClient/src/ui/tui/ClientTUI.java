@@ -2,8 +2,6 @@ package com.tanndev.subwave.client.ui.tui;
 
 import com.tanndev.subwave.client.core.SubwaveClient;
 import com.tanndev.subwave.client.ui.ClientUIFramework;
-import com.tanndev.subwave.common.Message;
-import com.tanndev.subwave.common.MessageType;
 import com.tanndev.subwave.common.debugging.ErrorHandler;
 
 import java.util.ArrayList;
@@ -99,18 +97,7 @@ public class ClientTUI extends ClientUIFramework {
       // Ignore null or empty input.
       if (input == null || input.length() < 1) return;
 
-        /*
-        Set default message parameters.
-        By default, input is assumed to be:
-        ~ a debug message (messageType = DEBUG),
-        ~ to the server (conversationID = 0)
-        ~ using the local client's ID
-        ~ with the input text as the message body.
-        */
-      MessageType messageType = MessageType.DEBUG;
-      int conversationID = 0;
-      int clientID = serverConnectionID.getClientID();
-      String messageText = input;
+      // TODO handle commands in ClientTUI
 
       // If the input is a command...
       if (isCommand(input)) {
@@ -124,66 +111,36 @@ public class ClientTUI extends ClientUIFramework {
          // Handle the command.
          switch (command) {
             case MESSAGE: // Chat message.
-               messageType = MessageType.CHAT_MESSAGE;
-               if (tokens.length < 3) {
-                  displayHelp(Command.MESSAGE);
-                  return;
-               }
-               // TODO select conversation
-               messageText = recombineTokensAfter(tokens, input, 2);
                break;
 
             case EMOTE: // Emote chat message.
-               messageType = MessageType.CHAT_EMOTE;
-               if (tokens.length < 3) {
-                  displayHelp(Command.MESSAGE);
-                  return;
-               }
-               // TODO select conversation
-               messageText = recombineTokensAfter(tokens, input, 2);
                break;
 
             case REPLY: // Reply to last conversation.
-               conversationID = lastConversationID;
-               messageType = MessageType.CHAT_MESSAGE;
                break;
 
             case CONVERSATION_NEW: // Create a new conversation.
-               messageType = MessageType.CONVERSATION_NEW;
                break;
 
             case CONVERSATION_INVITE: // Invite another client to a conversation.
-               // TODO conversation invite.
-               messageType = MessageType.CONVERSATION_INVITE;
                break;
 
             case CONVERSATION_JOIN: // Join a conversation.
-               // TODO conversation join.
-               messageType = MessageType.CONVERSATION_JOIN;
                break;
 
             case CONVERSATION_LEAVE: // Leave a conversation.
-               // TODO conversation leave.
-               messageType = MessageType.CONVERSATION_LEAVE;
                break;
 
             case NAME_UPDATE: // Change the name a conversation or client.
-               // TODO name update.
-               messageType = MessageType.NAME_UPDATE;
                break;
 
             case ACKNOWLEDGE: // Acknowledge a request
-               // TODO acknowledge.
-               messageType = MessageType.ACKNOWLEDGE;
                break;
 
             case REFUSE: // Refuse a request
-               // TODO refuse.
-               messageType = MessageType.REFUSE;
                break;
 
             case DEBUG_MESSAGE: // Send a debug message.
-               // TODO debug
                break;
 
             case QUIT: // Terminate the application.
@@ -201,14 +158,9 @@ public class ClientTUI extends ClientUIFramework {
             Otherwise, show help. (Default settings will still send the input as a debug message.)
             */
          if (lastConversationID > 0) {
-            messageType = MessageType.CHAT_MESSAGE;
-            conversationID = lastConversationID;
+            // TODO automatically reply
          } else displayHelp(null);
       }
-
-      // Send the constructed message to the server.
-      Message message = new Message(messageType, conversationID, clientID, messageText);
-      serverConnectionID.send(message);
    }
 
    /**

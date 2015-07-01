@@ -63,7 +63,7 @@ public abstract class ClientUIFramework extends Thread {
 
    Subclasses may choose to override this default setting.
    */
-      System.err.println(message.toString());
+      System.err.println(message);
    }
 
    public void handleUnhandled(int connectionID, int conversationID, int sourceClientID, String message) {SubwaveClient.sendRefuse(connectionID, conversationID, Message.UNHANDLED_MSG);}
