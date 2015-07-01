@@ -55,7 +55,7 @@ public class SocketListener extends Thread {
 
 
                 // Get a new client ID and send greeting.
-               int clientID = ChatServer.getUniqueID();
+               int clientID = SubwaveServer.getUniqueID();
                 connection.setClientID(clientID);
                 System.out.println("NC - ClientID: " + clientID);
                 Message serverACK = new Message(MessageType.NETWORK_CONNECT, 0, clientID, Message.CONNECTION_START_ACK);
@@ -71,7 +71,7 @@ public class SocketListener extends Thread {
 
                 // Create and add client record.
                 String nickname = clientACK.messageBody;
-               Client client = ChatServer.addClient(clientID, connection, nickname);
+               Client client = SubwaveServer.addClient(clientID, connection, nickname);
 
                 // Start message listener.
                 new ConnectionListener(connection).start();

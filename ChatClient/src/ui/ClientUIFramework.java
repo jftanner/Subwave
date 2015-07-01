@@ -1,101 +1,72 @@
 package com.tanndev.subwave.client.ui;
 
-import com.tanndev.subwave.client.core.ChatClient;
-import com.tanndev.subwave.common.Connection;
+import com.tanndev.subwave.client.core.SubwaveClient;
 import com.tanndev.subwave.common.Message;
+import com.tanndev.subwave.common.debugging.ErrorHandler;
 
 /**
- * Provides the framework required to build user interfaces for {@link com.tanndev.subwave.client.core.ChatClient}. All user
- * interfaces must extend this class and should use to the provided methods to interact with the server.
- * <p/>
- * See the attached methods for more information.
+ * Provides the framework required to build user interfaces for {@link com.tanndev.subwave.client.core.SubwaveClient}. All
+ * user interfaces must extend this class and must override the message handler methods in order to process messages
+ * delivered from the server.
  *
  * @author James Tanner
- * @see #shutdown()
- * @see #openConnection(java.lang.String, int, java.lang.String)
- * @see #closeConnection(com.tanndev.subwave.common.Connection)
- * @see #sendToServer(com.tanndev.subwave.common.Connection, com.tanndev.subwave.common.Message)
- * @see #receiveFromServer(com.tanndev.subwave.common.Connection)
  */
 public abstract class ClientUIFramework extends Thread {
 
-    /**
-     * This method must be implemented by all subclasses.
-     * <p/>
-     * Calls to this method should cause the user interface to close all open connections and shut down.
-     */
-    public abstract void shutdown();
+   /**
+    * Constructor
+    * <p/>
+    * By default, binds the client UI to the SubwaveClient. Subclasses that override this constructor should either use
+    * super() or bind themselves to the SubwaveClient using the bindUI method.
+    *
+    * @see com.tanndev.subwave.client.core.SubwaveClient#bindUI(ClientUIFramework)
+    */
+   public ClientUIFramework() {
+      SubwaveClient.bindUI(this);
+   }
+   /**
+    * This method must be implemented by all subclasses.
+    * <p/>
+    * Calls to this method should cause the user interface to close all open connections and shut down.
+    */
+   public abstract void shutdown();
 
-    /**
-     * Attempts to open a new connection using the provided settings and returns a new {@link
-     * com.tanndev.subwave.common.Connection} object representing that connection if successful.
-     * <p/>
-     * If a parameter is null or zero, the default settings will be used.
-     * <p/>
-     * See {@link com.tanndev.subwave.client.core.ChatClient#connectToServer(String, int, String)} for more details.
-     *
-     * @param serverAddress IP address or hostname of the remote server. (Uses default if null.)
-     * @param port          listening port of the remote server. (Uses default if zero.)
-     * @param nickname      client nickname to request. (Uses default if null.)
-     *
-     * @return connection to remote server. If no connection is made, returns null.
-     *
-     * @see com.tanndev.subwave.client.core.ChatClient#connectToServer(String, int, String)
-     */
-    protected final Connection openConnection(String serverAddress, int port, String nickname) {
-       return ChatClient.connectToServer(serverAddress, port, nickname);
-    }
 
-    /**
-     * Closes the provided connection.
-     *
-     * @param serverConnection connection to disconnect.
-     */
-    protected final void closeConnection(Connection serverConnection) {
-       ChatClient.disconnectFromServer(serverConnection);
-    }
+   // TODO Document the message handlers
+   public void handleChatMessage(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 
-    /**
-     * Sends a message using the supplied connection.
-     *
-     * @param serverConnection connection to send message on
-     * @param message          message to send
-     *
-     * @return true, if the message is sent successfully
-     *
-     * @see com.tanndev.subwave.common.Connection#send(com.tanndev.subwave.common.Message)
-     */
-    protected final boolean sendToServer(Connection serverConnection, Message message) {
-        if (serverConnection == null || serverConnection.isClosed()) return false;
-        return serverConnection.send(message);
-    }
+   public void handleChatEmote(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 
-    /**
-     * Receives the next message from the server on the provided connection. This method will block if no message is
-     * currently available.
-     *
-     * @param serverConnection connection to receive message from
-     *
-     * @return the {@link com.tanndev.subwave.common.Message} from the server, if successful. Returns null if the
-     * connection is closed or otherwise fails.
-     *
-     * @see #messageAvailableFromServer(com.tanndev.subwave.common.Connection)
-     */
-    protected final Message receiveFromServer(Connection serverConnection) {
-        if (serverConnection == null || serverConnection.isClosed()) return null;
-        return serverConnection.receive();
-    }
+   public void handleConversationNew(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 
-    /**
-     * Checks the provided connection to see if a message is available.
-     *
-     * @param serverConnection connection to check for messages
-     *
-     * @return true if a message is available; false no message is available or if connection is closed or otherwise
-     * fails.
-     */
-    protected final Boolean messageAvailableFromServer(Connection serverConnection) {
-        if (serverConnection == null || serverConnection.isClosed()) return false;
-        return serverConnection.messageAvailable();
-    }
+   public void handleConversationInvite(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
+
+   public void handleConversationJoin(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
+
+   public void handleConversationLeave(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
+
+   public void handleNameUpdate(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
+
+   public void handleAcknowledge(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
+
+   public void handleRefuse(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
+
+   public void handleNetworkConnect(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
+
+   public void handleNetworkDisconnect(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
+
+   public void handleDebug(int connectionID, int conversationID, int sourceClientID, String message) {
+   /*
+   By default, debug messages are sent to standard err.
+   Note that this is printed directly and does not use the ErrorHandler class.
+   This ensures that debug messages are always printed, even when the ErrorHandler is set to hide errors.
+
+   Subclasses may choose to override this default setting.
+   */
+      System.err.println(message);
+   }
+
+   public void handleUnhandled(int connectionID, int conversationID, int sourceClientID, String message) {SubwaveClient.sendRefuse(connectionID, conversationID, Message.UNHANDLED_MSG);}
+
+   public void onServerDisconnect(int connectionID) {ErrorHandler.logError("Remote server disconnected: " + connectionID);}
 }
