@@ -128,7 +128,7 @@ public class Conversation {
     * @return message to update the server name.
     */
    public Message getNameUpdateMessage(int nameChangeSource) {
-      return new Message(MessageType.NAME_UPDATE, conversationID, 0, name);
+      return new Message(MessageType.NAME_UPDATE, conversationID, nameChangeSource, name);
    }
 
    /**

@@ -31,6 +31,8 @@ public class Message implements Serializable {
    public static final String CRITICAL_ERROR = "A critical error has occurred. Shutting down.";
    public static final String INVALID_SOURCE_ID = "ClientID does not match ID of source.";
    public static final String INVALID_CONVERSATION = "ConversationID does not match a valid conversation.";
+   public static final String REQUEST_TO_JOIN_CONVERSATION = "Requesting to join conversation.";
+   public static final String INVITE_TO_JOIN_CONVERSATION = "Invitation to join conversation.";
 
    /** {@link com.tanndev.subwave.common.MessageType} of the message. Defines the intended purpose of the message. */
    public final MessageType messageType;

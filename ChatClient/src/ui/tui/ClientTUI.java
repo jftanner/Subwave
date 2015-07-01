@@ -39,7 +39,7 @@ public class ClientTUI extends ClientUIFramework {
       super();
 
       // Attempt to open the connection.
-      serverConnectionID = SubwaveClient.connectToServer(null, 0, null);
+      serverConnectionID = SubwaveClient.connectToServer(serverAddress, port, friendlyName);
       if (serverConnectionID == 0) {
          ErrorHandler.logError("No server connection for TUI to use.");
          System.exit(0);
@@ -157,9 +157,11 @@ public class ClientTUI extends ClientUIFramework {
                break;
 
             case CONVERSATION_INVITE: // Invite another client to a conversation.
+               handleCommandConversationInvite(tokenizer);
                break;
 
             case CONVERSATION_JOIN: // Join a conversation.
+               handleCommandConversationJoin(tokenizer);
                break;
 
             case CONVERSATION_LEAVE: // Leave a conversation.
@@ -198,7 +200,6 @@ public class ClientTUI extends ClientUIFramework {
    }
 
    private void handleCommandMessage(Scanner tokenizer) {
-
       // If the next token is invalid, or doesn't exist, display help.
       if (!tokenizer.hasNextInt()) {
          displayHelp(Command.MESSAGE);
@@ -268,16 +269,56 @@ public class ClientTUI extends ClientUIFramework {
       SubwaveClient.sendConversationNew(serverConnectionID, friendlyName);
    }
 
-   public void handleConversationJoin(int connectionID, int conversationID, int sourceClientID, String message) {
-      // Get names.
-      String conversationName = SubwaveClient.getName(connectionID, conversationID);
-      String clientName = SubwaveClient.getName(connectionID, sourceClientID);
+   private void handleCommandConversationInvite(Scanner tokenizer) {
+      // If the next token is invalid, or doesn't exist, display help.
+      if (!tokenizer.hasNextInt()) {
+         displayHelp(Command.CONVERSATION_JOIN);
+         return;
+      }
 
-      // Alert user
-      System.out.println("\"" + clientName + "\" has joined the conversation \"" + conversationName + "\"");
+      // Get the target clientID.
+      int targetClient = tokenizer.nextInt();
 
-      // Set last conversation ID
-      lastConversationID = conversationID;
+      // Default to the last conversation.
+      int conversationID = lastConversationID;
+
+      // If there is a token for the conversation ID, use that.
+      if (tokenizer.hasNextInt()) {
+         conversationID = tokenizer.nextInt();
+      }
+
+      // If there still isn't a valid conversation ID, display help.
+      if (conversationID < 1) {
+         displayHelp(Command.REPLY);
+         return;
+      }
+
+      // Send the message
+      SubwaveClient.sendConversationInvite(serverConnectionID, conversationID, targetClient);
+   }
+
+   private void handleCommandConversationJoin(Scanner tokenizer) {
+      // If the next token is invalid, or doesn't exist, display help.
+      if (!tokenizer.hasNextInt()) {
+         displayHelp(Command.CONVERSATION_JOIN);
+         return;
+      }
+
+      // Get the destination conversation id.
+      int conversationID = tokenizer.nextInt();
+
+
+      // If there is not a message body, display help.
+      if (!tokenizer.hasNextLine()) {
+         displayHelp(Command.MESSAGE);
+         return;
+      }
+
+      // Get the message body.
+      String messageBody = tokenizer.nextLine().trim();
+
+      // Send the message
+      SubwaveClient.sendConversationJoin(serverConnectionID, conversationID);
    }
 
 }

@@ -365,23 +365,23 @@ public class SubwaveClient {
       connection.send(reply);
    }
 
-   public static void sendConversationInvite(int connectionID, int conversationID, int targetClient, String message) {
+   public static void sendConversationInvite(int connectionID, int conversationID, int targetClient) {
       // Get the connection from the connectionID
       Connection connection = connectionMap.get(connectionID);
       if (connection == null) {ErrorHandler.logError("Invalid connectionID");}
 
       // Send refusal.
-      Message reply = new Message(MessageType.CONVERSATION_INVITE, conversationID, targetClient, message);
+      Message reply = new Message(MessageType.CONVERSATION_INVITE, conversationID, targetClient, Message.INVITE_TO_JOIN_CONVERSATION);
       connection.send(reply);
    }
 
-   public static void sendConversationJoin(int connectionID, int conversationID, String message) {
+   public static void sendConversationJoin(int connectionID, int conversationID) {
       // Get the connection from the connectionID
       Connection connection = connectionMap.get(connectionID);
       if (connection == null) {ErrorHandler.logError("Invalid connectionID");}
 
       // Send refusal.
-      Message reply = new Message(MessageType.CONVERSATION_JOIN, conversationID, connection.getClientID(), message);
+      Message reply = new Message(MessageType.CONVERSATION_JOIN, conversationID, connection.getClientID(), Message.REQUEST_TO_JOIN_CONVERSATION);
       connection.send(reply);
    }
 

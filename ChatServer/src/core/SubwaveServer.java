@@ -194,8 +194,7 @@ public class SubwaveServer {
             break;
 
          case CONVERSATION_INVITE: // Client wants to invite another client to a conversation
-            // TODO Invite user to conversation.
-            replyToUnhandledMessage(connection, message);
+            handleConversationInvite(connection, message);
             break;
 
          case CONVERSATION_JOIN: // Client wants to join a conversation
@@ -303,6 +302,31 @@ public class SubwaveServer {
 
       // Add client to the conversation as a member. On fail, remove the conversation.
       if (!conversation.addMember(client)) removeConversation(conversationID);
+   }
+
+   private static void handleConversationInvite(Connection connection, Message message) {
+      // TODO Verify that the client has the right to send the invite.
+
+      // Validate conversation.
+      Conversation conversation = validateConversation(connection, message);
+
+      // Validate the target.
+      int targetClientID = message.clientID;
+      Client targetClient = clientMap.get(targetClientID);
+      if (targetClient == null) {
+         // TODO send rejection
+         return;
+      }
+
+      // Build the new message
+      int sourceClientID = connection.getClientID();
+      int conversationID = message.conversationID;
+      String friendlyName = conversation.getName();
+      Message invitation = new Message(MessageType.CONVERSATION_INVITE, conversationID, sourceClientID, friendlyName);
+
+      // Send the message
+      targetClient.clientConnection.send(invitation);
+
    }
 
    /**
