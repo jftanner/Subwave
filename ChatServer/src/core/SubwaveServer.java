@@ -19,6 +19,7 @@ public class SubwaveServer {
    private static final int SERVER_ID = 0;
    private static ConcurrentHashMap<Integer, Client> clientMap = new ConcurrentHashMap<Integer, Client>();
    private static ConcurrentHashMap<Integer, Conversation> conversationMap = new ConcurrentHashMap<Integer, Conversation>();
+   private static ConcurrentHashMap<Integer, String> nameMap = new ConcurrentHashMap<Integer, String>();
    private static int nextUniqueID = 1;
 
    /**
@@ -63,6 +64,10 @@ public class SubwaveServer {
          System.err.println("Attempted to add a non-unique client ID to the client map.");
          return null;
       }
+
+      // Add the name to the name list.
+      nameMap.put(clientID, nickname);
+
       return client;
    }
 
@@ -110,6 +115,10 @@ public class SubwaveServer {
          System.err.println("Attempted to add a non-unique conversationID to the conversation map.");
          return null;
       }
+
+      // Add the conversation name to the name list.
+      nameMap.put(conversationID, conversationName);
+
       return conversation;
    }
 
@@ -168,6 +177,19 @@ public class SubwaveServer {
       for (Client client : clientMap.values()) {
          client.clientConnection.send(message);
       }
+   }
+
+   public static Message getNameUpdateMessage(int conversationID, int clientID) {
+      // Get the appropriate friendly name
+      String friendlyName = null;
+      if (conversationID == SERVER_ID) friendlyName = nameMap.get(clientID);
+      else friendlyName = nameMap.get(conversationID);
+
+      // Default if no name is stored
+      if (friendlyName == null) friendlyName = "Unnamed";
+
+      // Build and return the message
+      return new Message(MessageType.NAME_UPDATE, conversationID, clientID, friendlyName);
    }
 
    /**
@@ -297,8 +319,8 @@ public class SubwaveServer {
          conversationName = Defaults.DEFAULT_CONVERSATION_NAME;
       Conversation conversation = addConversation(conversationID, conversationName);
 
-      // Send the conversation name to the client.
-      connection.send(conversation.getNameUpdateMessage(client.clientID));
+      // Send the conversation name to the client
+      connection.send(getNameUpdateMessage(conversationID, SERVER_ID));
 
       // Add client to the conversation as a member. On fail, remove the conversation.
       if (!conversation.addMember(client)) removeConversation(conversationID);
@@ -324,7 +346,8 @@ public class SubwaveServer {
       String conversationName = conversation.getName();
       Message invitation = new Message(MessageType.CONVERSATION_INVITE, conversationID, sourceClientID, conversationName);
 
-      // Send the message
+      // Send the inviting client's name to the target client along with the invitation.
+      targetClient.clientConnection.send(getNameUpdateMessage(SERVER_ID, connection.getClientID()));
       targetClient.clientConnection.send(invitation);
 
    }
@@ -352,7 +375,13 @@ public class SubwaveServer {
       if (conversation == null) return; // TODO Send reject message
 
       // Send the conversation name to the client.
-      connection.send(conversation.getNameUpdateMessage(SERVER_ID));
+      connection.send(getNameUpdateMessage(conversation.conversationID, client.clientID));
+
+      // Get all members names.
+      Client[] conversationMembers = conversation.getMemberList();
+      for (Client member : conversationMembers) {
+         connection.send(getNameUpdateMessage(SERVER_ID, member.clientID));
+      }
 
       // Add client to the conversation as a member.
       conversation.addMember(client);
@@ -397,8 +426,8 @@ public class SubwaveServer {
    /**
     * Validates a message to ensure the clientID matches the connection on which the message was received.
     * <p/>
-    * Returns the Client matching the clientID if validation succeeds. Otherwise, automatically sends a refusal
-    * message and returns null.
+    * Returns the Client matching the clientID if validation succeeds. Otherwise, automatically sends a refusal message
+    * and returns null.
     *
     * @param connection Connection the message was received from.
     * @param message    Message received.

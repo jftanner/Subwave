@@ -230,7 +230,7 @@ public class SubwaveClient {
             if (conversationID != 0) setName(connectionID, conversationID, messageBody);
 
                // Otherwise, update the name of the client.
-            else if (clientID != 0) setName(connectionID, conversationID, messageBody);
+            else if (clientID != 0) setName(connectionID, clientID, messageBody);
 
             // Send the update to the UI.
             ui.handleNameUpdate(connectionID, conversationID, clientID, messageBody);

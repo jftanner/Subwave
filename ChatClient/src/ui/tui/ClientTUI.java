@@ -233,7 +233,7 @@ public class ClientTUI extends ClientUIFramework {
    private void handleCommandEmote(Scanner tokenizer) {
       // If the next token is an integer, assume that it is the conversation ID. Otherwise, reply to the last message.
       int conversationID = lastConversationID;
-      if (!tokenizer.hasNextInt()) {
+      if (tokenizer.hasNextInt()) {
          conversationID = tokenizer.nextInt();
       }
 
@@ -308,14 +308,19 @@ public class ClientTUI extends ClientUIFramework {
    }
 
    private void handleCommandConversationJoin(Scanner tokenizer) {
-      // If the next token is invalid, or doesn't exist, display help.
-      if (!tokenizer.hasNextInt()) {
+      // Default to the last conversation.
+      int conversationID = lastConversationID;
+
+      // If there is a token for the conversation ID, use that.
+      if (tokenizer.hasNextInt()) {
+         conversationID = tokenizer.nextInt();
+      }
+
+      // If there still isn't a valid conversation ID, display help.
+      if (conversationID < 1) {
          displayHelp(Command.CONVERSATION_JOIN);
          return;
       }
-
-      // Get the destination conversation id.
-      int conversationID = tokenizer.nextInt();
 
       // Send the message
       SubwaveClient.sendConversationJoin(serverConnectionID, conversationID);
