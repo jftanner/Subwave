@@ -1,8 +1,6 @@
 package com.tanndev.subwave.server.core;
 
-import com.tanndev.subwave.common.Message;
-import com.tanndev.subwave.common.MessageType;
-import com.tanndev.subwave.common.debugging.ErrorHandler;
+import com.tanndev.subwave.common.*;
 
 import java.util.HashSet;
 import java.util.Iterator;

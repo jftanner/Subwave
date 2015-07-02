@@ -1,19 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="module_common" default="compile.module.common">
+<project name="module_common" default="common.jar">
     <dirname property="common.basedir" file="${ant.file.module_common}"/>
 
     <property name="common.source.dir" value="${common.basedir}/src"/>
     <property name="common.lib.dir" value="${common.basedir}/lib"/>
     <property name="common.class.dir" value="${common.basedir}/../out/bin/Common"/>
     <property name="common.jar.dir" value="${common.basedir}/../out/lib"/>
-    <property name="common.jar.lib.dir" value="${common.jar.dir}/lib"/>
     <property name="common.jar.file" value="${common.jar.dir}/Common.jar"/>
 
-    <path id="common.libraries.path">
-        <fileset dir="${common.lib.dir}">
-            <include name="*.jar"/>
-        </fileset>
-    </path>
+    <property name="common.package.path" value="com/tanndev/subwave/common"/>
 
     <target name="common.clean" description="delete old build files">
         <delete dir="${common.class.dir}"/>
@@ -22,29 +17,6 @@
 
     <target name="common.build" depends="common.clean" description="build class files">
         <mkdir dir="${common.class.dir}"/>
-        <javac srcdir="${common.source.dir}" destdir="${common.class.dir}">
-            <classpath refid="common.libraries.path"/>
-        </javac>
-    </target>
-
-    <target name="common.jar" depends="common.build" description="package common into library">
-        <mkdir dir="${common.jar.dir}"/>
-        <mkdir dir="${common.jar.lib.dir}"/>
-        <copy todir="${common.jar.lib.dir}" flatten="true">
-            <path refid="common.libraries.path"/>
-        </copy>
-
-        <pathconvert property="common.manifest.classpath" pathsep=" ">
-            <path refid="common.libraries.path"/>
-            <flattenmapper/>
-        </pathconvert>
-        <tstamp/>
-
-        <jar destfile="${common.jar.file}" basedir="${common.class.dir}">
-            <manifest>
-                <attribute name="Class-Path" value="${common.manifest.classpath}"/>
-                <attribute name="Built-Date" value="${TODAY}"/>
-            </manifest>
-        </jar>
+        <javac srcdir="${common.source.dir}" destdir="${common.class.dir}"/>
     </target>
 </project>

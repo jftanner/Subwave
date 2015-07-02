@@ -7,8 +7,6 @@
 
     <import file="${basedir}/Common/module_common.xml"/>
 
-    <import file="${basedir}/module_subwave.xml"/>
-
     <import file="${basedir}/ChatClient/module_chatclient.xml"/>
 
     <import file="${basedir}/ChatServer/module_chatserver.xml"/>
@@ -18,17 +16,17 @@
     </target>
 
     <target name="clean"
-            depends="common.clean, client.clean, server.clean"
+            depends="common.clean, server.clean, client.clean"
             description="cleanup all">
         <delete dir="${subwave.class.dir}"/>
     </target>
 
     <target name="build"
-            depends="init, clean, common.build, client.build, server.build"
+            depends="init, clean, common.build, server.build, client.clean"
             description="build all modules"/>
 
     <target name="deploy"
-            depends="build, deploy.module.chatserver,deploy.module.chatclient"
+            depends="build, server.deploy, client.deploy"
             description="build deployment jars"/>
 
     <target name="all"

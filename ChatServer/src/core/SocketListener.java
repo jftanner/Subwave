@@ -1,7 +1,6 @@
 package com.tanndev.subwave.server.core;
 
 import com.tanndev.subwave.common.*;
-import com.tanndev.subwave.common.debugging.ErrorHandler;
 
 import java.io.IOException;
 import java.net.ServerSocket;
