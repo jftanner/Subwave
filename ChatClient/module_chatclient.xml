@@ -10,7 +10,7 @@
 
     <property name="chatclient.deployment.dir" value="${module.chatclient.basedir}/../deployment/"/>
     <property name="chatclient.deployment.file" value="${chatclient.deployment.dir}/SubwaveClient.jar"/>
-    <property name="chatclient.main-class" value="com.tanndev.subwave.server.core.SubwaveServer"/>
+    <property name="chatclient.main-class" value="com.tanndev.subwave.client.ui.tui.ClientTUI"/>
 
     <path id="chatclient.module.bootclasspath">
         <!-- Paths to be included in compilation bootclasspath -->
@@ -92,7 +92,7 @@
             <path refid="chatclient.module.production.classpath"/>
         </copy>
 
-        <manifestclasspath property="chatserver.manifest.classpath" jarfile="${chatclient.deployment.file}">
+        <manifestclasspath property="chatclient.manifest.classpath" jarfile="${chatclient.deployment.file}">
             <classpath refid="chatclient.module.production.classpath"/>
         </manifestclasspath>
 
