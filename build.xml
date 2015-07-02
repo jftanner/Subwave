@@ -22,7 +22,7 @@
     </target>
 
     <target name="build"
-            depends="init, clean, common.build, server.build, client.clean"
+            depends="init, clean, common.build, server.build, client.build"
             description="build all modules"/>
 
     <target name="deploy"
