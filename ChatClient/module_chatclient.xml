@@ -5,7 +5,7 @@
     <property name="client.source.dir" value="${client.basedir}/src"/>
     <property name="client.lib.dir" value="${client.basedir}/../lib"/>
     <property name="client.class.dir" value="${client.basedir}/../out/bin/client"/>
-    <property name="client.jar.dir" value="${client.basedir}/../out/deploy"/>
+    <property name="client.jar.dir" value="${client.basedir}/../deployment"/>
     <property name="client.jar.file" value="${client.jar.dir}/SubwaveClient.jar"/>
     <property name="client.main-class" value="com.tanndev.subwave.client.ui.tui.ClientTUI"/>
 

@@ -4,7 +4,7 @@
 
     <property name="common.source.dir" value="${common.basedir}/src"/>
     <property name="common.lib.dir" value="${common.basedir}/lib"/>
-    <property name="common.class.dir" value="${common.basedir}/../out/bin/Common"/>
+    <property name="common.class.dir" value="${common.basedir}/../out/bin/common"/>
     <property name="common.jar.dir" value="${common.basedir}/../out/lib"/>
     <property name="common.jar.file" value="${common.jar.dir}/Common.jar"/>
 
