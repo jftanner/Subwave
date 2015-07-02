@@ -8,6 +8,10 @@
     <property name="chatclient.output.dir" value="${module.chatclient.basedir}/../out/production/ChatClient"/>
     <property name="chatclient.testoutput.dir" value="${module.chatclient.basedir}/../out/test/ChatClient"/>
 
+    <property name="chatclient.deployment.dir" value="${module.chatclient.basedir}/../deployment/"/>
+    <property name="chatclient.deployment.file" value="${chatclient.deployment.dir}/SubwaveClient.jar"/>
+    <property name="chatclient.main-class" value="com.tanndev.subwave.server.core.SubwaveServer"/>
+
     <path id="chatclient.module.bootclasspath">
         <!-- Paths to be included in compilation bootclasspath -->
     </path>
@@ -79,5 +83,24 @@
     <target name="clean.module.chatclient" description="cleanup module">
         <delete dir="${chatclient.output.dir}"/>
         <delete dir="${chatclient.testoutput.dir}"/>
+    </target>
+
+    <target name="deploy.module.chatclient" depends="compile.module.chatclient">
+        <mkdir dir="${chatclient.deployment.dir}"/>
+        <mkdir dir="${chatclient.output.dir}/lib"/>
+        <copy todir="${chatclient.output.dir}/lib" flatten="true">
+            <path refid="chatclient.module.production.classpath"/>
+        </copy>
+
+        <manifestclasspath property="chatserver.manifest.classpath" jarfile="${chatclient.deployment.file}">
+            <classpath refid="chatclient.module.production.classpath"/>
+        </manifestclasspath>
+
+        <jar destfile="${chatclient.deployment.file}" basedir="${chatclient.output.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${chatclient.main-class}"/>
+                <attribute name="Class-Path" value="${chatclient.manifest.classpath}"/>
+            </manifest>
+        </jar>
     </target>
 </project>

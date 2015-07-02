@@ -80,7 +80,8 @@
             depends="init, clean, compile.module.common, compile.module.subwave, compile.module.chatclient, compile.module.chatserver"
             description="build all modules"/>
 
-    <target name="deploy" depends="build, deploy.module.chatserver" description="build deployment jars"/>
+    <target name="deploy" depends="build, deploy.module.chatserver,deploy.module.chatclient"
+            description="build deployment jars"/>
 
     <target name="all" depends="deploy" description="build and deploy all modules"/>
 </project>
