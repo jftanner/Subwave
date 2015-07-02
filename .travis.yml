@@ -10,5 +10,8 @@ deploy:
     secure: OqG1STMgTWuTsFZdhtDWJTVxLqcP6Bgsj6iTcUwurpTq+T4DDyT8ZxLCxMah2uZeicJ23PtR9vXjnYFypiEtwSx67gYxeYgqma22sYjci6lExJMrz567UmVIWltMpd4JW6CLA201vtP8Yl/Qc/B1NnavUxF/bS0gYwjDaexMD7FtXJTUDFOBrGz4WE7yR2NHiczS2QbJXjg3vVnaxwmOSYjtld6aeTV4N8jntNy2eICfz5FEp+a46YZVvvHaQ9ZTUBrYaq1cfR/RRUEo9qwoblcL2wBzrgbGbPbFVvcyGDWeRwyPt8a3QM9q5UG0y1DEj15OsCNRZJKWGD2E95Nmzy2wLXcTx3cLn9JLjmg7iSCFwAAGqCRXu9ahhPNKsj9BqWzZ75x8miou5Yk2z7K+rzetQAVd6Dm6yVMxLwyWmaswQ0ydcqguwUpe/0n2AFugPH/Lx9JVr62sL3ND672SEradI0medmQTOviUJQr2YxsUOH9QCnrEUEfQY7jqXd8aOqgGKK+oD/iyHTkp51k8pZpCrDCBkf1pdPyl9yX6X94bhQhbqiuVxzwek3ZxKsjQVKB6LDx2Y0ErG3s+jZJieLHxzlAHEXKuZ6K8uN7GK1cItrsXaUScncz+EamuwbDK2JeGzWVzpR9GUlxgUGlpSLvjUeTq/ev94QKrOTPMyC4=
   file: deployment/SubwaveServer.jar
   skip_cleanup: true
+  file:
+    - SubwaveClient.jar
+    - SubwaveServer.jar
   on:
     tags: true
