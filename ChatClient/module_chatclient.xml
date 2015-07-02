@@ -83,6 +83,7 @@
     <target name="clean.module.chatclient" description="cleanup module">
         <delete dir="${chatclient.output.dir}"/>
         <delete dir="${chatclient.testoutput.dir}"/>
+        <delete file="${chatclient.deployment.file}"/>
     </target>
 
     <target name="deploy.module.chatclient" depends="compile.module.chatclient">
