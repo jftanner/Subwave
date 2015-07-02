@@ -80,6 +80,4 @@
             description="build all modules"/>
 
     <target name="deploy" depends="build, deploy.module.chatserver" description="build deployment jars"/>
-
-    <target name="all" depends="deploy" description="build all"/>
 </project>
