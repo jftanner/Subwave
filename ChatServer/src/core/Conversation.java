@@ -25,7 +25,6 @@ public class Conversation {
     *
     * @see #getName()
     * @see #setName(String, int)
-    * @see #getNameUpdateMessage(int)
     */
    private String name;
 
@@ -86,6 +85,11 @@ public class Conversation {
       return result;
    }
 
+   public synchronized Client[] getMemberList() {
+      Client[] memberListArray = new Client[members.size()];
+      return members.toArray(memberListArray);
+   }
+
    /**
     * Broadcast the provided message to all members of the conversation.
     * <p/>
@@ -120,18 +124,6 @@ public class Conversation {
    }
 
    /**
-    * Returns a {@link Message} object that can be sent to update clients with the conversation's name.
-    * <p/>
-    * Can be used with {@link #broadcastToConversation(Message)} to alert all members of a name change.
-    *
-    * @param nameChangeSource
-    * @return message to update the server name.
-    */
-   public Message getNameUpdateMessage(int nameChangeSource) {
-      return new Message(MessageType.NAME_UPDATE, conversationID, 0, name);
-   }
-
-   /**
     * Checks whether this conversation has members.
     *
     * @return true if there are members listed, else false
@@ -159,7 +151,6 @@ public class Conversation {
     */
    public void setName(String name, int nameChangeSourceID) {
       this.name = name;
-      broadcastToConversation(getNameUpdateMessage(nameChangeSourceID));
    }
 
 

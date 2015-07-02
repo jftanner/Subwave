@@ -2,9 +2,9 @@ package com.tanndev.subwave.client.ui.tui;
 
 import com.tanndev.subwave.client.core.SubwaveClient;
 import com.tanndev.subwave.client.ui.ClientUIFramework;
+import com.tanndev.subwave.common.Defaults;
 import com.tanndev.subwave.common.debugging.ErrorHandler;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -34,12 +34,12 @@ public class ClientTUI extends ClientUIFramework {
     * @see com.tanndev.subwave.common.Connection
     * @see com.tanndev.subwave.common.Connection#setPrintMessages(boolean)
     */
-   public ClientTUI() {
+   public ClientTUI(String serverAddress, int port, String friendlyName) {
       // Use the ClientUIFramework constructor to bind to the chat client.
       super();
 
       // Attempt to open the connection.
-      serverConnectionID = SubwaveClient.connectToServer(null, 0, null);
+      serverConnectionID = SubwaveClient.connectToServer(serverAddress, port, friendlyName);
       if (serverConnectionID == 0) {
          ErrorHandler.logError("No server connection for TUI to use.");
          System.exit(0);
@@ -51,7 +51,25 @@ public class ClientTUI extends ClientUIFramework {
    }
 
    public static void main(String[] args) {
-      ClientTUI ui = new ClientTUI();
+      // Get server address and port from arguments, if there.
+      String serverAddress = null;
+      int serverPort = 0;
+      if (args.length > 0) serverAddress = args[0];
+      try {
+         if (args.length > 1) serverPort = Integer.parseInt(args[1]);
+      } catch (NumberFormatException e) {}
+
+      // Get login information from the user
+      Scanner scan = new Scanner(System.in);
+
+      // Get friendly name
+      System.out.println("What name would you like to use? (Leave blank for default.)");
+      String friendlyName = scan.nextLine().trim();
+      if (friendlyName.length() < 1) friendlyName = null;
+
+
+      // Start the UI
+      ClientTUI ui = new ClientTUI(serverAddress, serverPort, friendlyName);
       ui.start();
    }
 
@@ -65,6 +83,19 @@ public class ClientTUI extends ClientUIFramework {
    public static void displayHelp(Command command) {
       // TODO Implement displayHelp()
       System.out.println("Malformed command.");
+   }
+
+   /**
+    * Determines whether or not the provided input should be parsed as a command.
+    *
+    * @param input user input to be checked
+    *
+    * @return true if the input should be parsed as a command, otherwise false
+    */
+   private static boolean isCommand(String input) {
+      // Commands start with the '\' character.
+      // TODO tokenize in a less wasteful way.
+      return input.startsWith("\\");
    }
 
    /**
@@ -97,50 +128,65 @@ public class ClientTUI extends ClientUIFramework {
       // Ignore null or empty input.
       if (input == null || input.length() < 1) return;
 
-      // TODO handle commands in ClientTUI
+      // Prepare to tokenize input string.
+      Scanner tokenizer = new Scanner(input);
 
       // If the input is a command...
       if (isCommand(input)) {
-         // Tokenize the input for parsing.
-         String[] tokens = tokenizeCommand(input);
 
-         // Parse the command token.
-         String commandToken = tokens[0];
+         // Get the command token
+         String commandToken = tokenizer.next();
          Command command = Command.parseCommandToken(commandToken);
 
          // Handle the command.
          switch (command) {
             case MESSAGE: // Chat message.
+               handleCommandMessage(tokenizer);
                break;
 
             case EMOTE: // Emote chat message.
+               handleCommandEmote(tokenizer);
                break;
 
             case REPLY: // Reply to last conversation.
+               handleCommandReply(tokenizer);
                break;
 
             case CONVERSATION_NEW: // Create a new conversation.
+               handleCommandConversationNew(tokenizer);
                break;
 
             case CONVERSATION_INVITE: // Invite another client to a conversation.
+               handleCommandConversationInvite(tokenizer);
                break;
 
             case CONVERSATION_JOIN: // Join a conversation.
+               handleCommandConversationJoin(tokenizer);
                break;
 
             case CONVERSATION_LEAVE: // Leave a conversation.
+               //TODO Handle this command
+               ErrorHandler.logError("Unhandled command.");
                break;
 
             case NAME_UPDATE: // Change the name a conversation or client.
+               //TODO Handle this command
+               ErrorHandler.logError("Unhandled command.");
                break;
 
             case ACKNOWLEDGE: // Acknowledge a request
+               //TODO Handle this command
+               ErrorHandler.logError("Unhandled command.");
                break;
 
             case REFUSE: // Refuse a request
+               //TODO Handle this command
+               ErrorHandler.logError("Unhandled command.");
                break;
 
             case DEBUG_MESSAGE: // Send a debug message.
+               //TODO Handle this command
+               ErrorHandler.logError("Unhandled command.");
                break;
 
             case QUIT: // Terminate the application.
@@ -148,64 +194,183 @@ public class ClientTUI extends ClientUIFramework {
                break;
 
             default: // A command without a case in the switch statement.
-               ErrorHandler.logError("Unrecognised command token: " + tokens[0]);
+               ErrorHandler.logError("Unrecognised command token: " + commandToken);
                return;
          }
 
       } else {
             /*
-            Input is not a command. If there is an ongoing conversation, assume this is a reply.
-            Otherwise, show help. (Default settings will still send the input as a debug message.)
+            Input is not a command. Assume it is a reply
             */
-         if (lastConversationID > 0) {
-            // TODO automatically reply
-         } else displayHelp(null);
+         handleCommandReply(tokenizer);
       }
    }
 
-   /**
-    * Determines whether or not the provided input should be parsed as a command.
-    *
-    * @param input user input to be checked
-    *
-    * @return true if the input should be parsed as a command, otherwise false
-    */
-   private boolean isCommand(String input) {
-      // Commands start with the '\' character.
-      // TODO tokenize in a less wasteful way.
-      return input.startsWith("\\");
+   private void handleCommandMessage(Scanner tokenizer) {
+      // If the next token is invalid, or doesn't exist, display help.
+      if (!tokenizer.hasNextInt()) {
+         displayHelp(Command.MESSAGE);
+         return;
+      }
+
+      // Get the destination conversation id.
+      int conversationID = tokenizer.nextInt();
+
+
+      // If there is not a message body, display help.
+      if (!tokenizer.hasNextLine()) {
+         displayHelp(Command.MESSAGE);
+         return;
+      }
+
+      // Get the message body.
+      String messageBody = tokenizer.nextLine().trim();
+
+      // Send the message
+      SubwaveClient.sendChatMessage(serverConnectionID, conversationID, messageBody);
    }
 
-   /**
-    * Tokenizes the provided input string.
-    *
-    * @param input user input to be tokenized
-    *
-    * @return new String array containing the input tokens
-    */
-   private String[] tokenizeCommand(String input) {
-      // Create a new scanner on the input.
-      Scanner tokenizer = new Scanner(input);
-      ArrayList<String> tokens = new ArrayList<String>();
-      while (tokenizer.hasNext()) tokens.add(tokenizer.next());
-      return tokens.toArray(new String[tokens.size()]);
+   private void handleCommandEmote(Scanner tokenizer) {
+      // If the next token is an integer, assume that it is the conversation ID. Otherwise, reply to the last message.
+      int conversationID = lastConversationID;
+      if (tokenizer.hasNextInt()) {
+         conversationID = tokenizer.nextInt();
+      }
+
+      // If there is not a message body or valid conversation, display help.
+      if (conversationID < 1 || !tokenizer.hasNextLine()) {
+         displayHelp(Command.EMOTE);
+         return;
+      }
+
+      // Get the message body.
+      String messageBody = tokenizer.nextLine().trim();
+
+      // Send the message
+      SubwaveClient.sendChatEmote(serverConnectionID, conversationID, messageBody);
    }
 
-   /**
-    * Returns a string containing the unused tokens with the original whitespace intact.
-    * <p/>
-    * <b>This assumes that the first unused token is not a duplicate of a previous token and therefore does not
-    * guarantee the correct substring is returned.</b> This should be corrected in a later version.
-    *
-    * @param tokens        tokenized strings from user input
-    * @param original      original user input string
-    * @param lastUsedIndex index of the last token used in the tokens array.
-    *
-    * @return original input string without the used tokens
-    */
-   private String recombineTokensAfter(String[] tokens, String original, int lastUsedIndex) {
-      if (lastUsedIndex > tokens.length) return null;
-      return original.substring(original.indexOf(tokens[lastUsedIndex]));
+   private void handleCommandReply(Scanner tokenizer) {
+      // If there was no last conversation, or if there is not a message body, display help.
+      if (lastConversationID < 1 || !tokenizer.hasNextLine()) {
+         displayHelp(Command.REPLY);
+         return;
+      }
+
+      // Get the message body.
+      String messageBody = tokenizer.nextLine().trim();
+
+      // Send the message
+      SubwaveClient.sendChatMessage(serverConnectionID, lastConversationID, messageBody);
+   }
+
+   private void handleCommandConversationNew(Scanner tokenizer) {
+      // If there isn't a name provided, use the default
+      String friendlyName = Defaults.DEFAULT_CONVERSATION_NAME;
+      if (tokenizer.hasNextLine()) {
+         friendlyName = tokenizer.nextLine().trim();
+      }
+
+      // Send the message
+      SubwaveClient.sendConversationNew(serverConnectionID, friendlyName);
+   }
+
+   private void handleCommandConversationInvite(Scanner tokenizer) {
+      // If the next token is invalid, or doesn't exist, display help.
+      if (!tokenizer.hasNextInt()) {
+         displayHelp(Command.CONVERSATION_JOIN);
+         return;
+      }
+
+      // Get the target clientID.
+      int targetClient = tokenizer.nextInt();
+
+      // Default to the last conversation.
+      int conversationID = lastConversationID;
+
+      // If there is a token for the conversation ID, use that.
+      if (tokenizer.hasNextInt()) {
+         conversationID = tokenizer.nextInt();
+      }
+
+      // If there still isn't a valid conversation ID, display help.
+      if (conversationID < 1) {
+         displayHelp(Command.REPLY);
+         return;
+      }
+
+      // Send the message
+      SubwaveClient.sendConversationInvite(serverConnectionID, conversationID, targetClient);
+
+      // Report to user
+      // TODO Look up and print names
+      System.out.println("Invited user to conversation " + conversationID);
+   }
+
+   private void handleCommandConversationJoin(Scanner tokenizer) {
+      // Default to the last conversation.
+      int conversationID = lastConversationID;
+
+      // If there is a token for the conversation ID, use that.
+      if (tokenizer.hasNextInt()) {
+         conversationID = tokenizer.nextInt();
+      }
+
+      // If there still isn't a valid conversation ID, display help.
+      if (conversationID < 1) {
+         displayHelp(Command.CONVERSATION_JOIN);
+         return;
+      }
+
+      // Send the message
+      SubwaveClient.sendConversationJoin(serverConnectionID, conversationID);
+   }
+
+   public void handleChatMessage(int connectionID, int conversationID, int sourceClientID, String message) {
+      // Get names.
+      String conversationName = SubwaveClient.getName(connectionID, conversationID);
+      String clientName = SubwaveClient.getName(connectionID, sourceClientID);
+
+      // Alert user
+      System.out.println(conversationName + " | " + clientName + " says \"" + message + "\"");
+
+      // Set last conversation ID
+      lastConversationID = conversationID;
+   }
+
+   public void handleChatEmote(int connectionID, int conversationID, int sourceClientID, String message) {
+      // Get names.
+      String conversationName = SubwaveClient.getName(connectionID, conversationID);
+      String clientName = SubwaveClient.getName(connectionID, sourceClientID);
+
+      // Alert user
+      System.out.println(conversationName + " | " + clientName + " " + message);
+
+      // Set last conversation ID
+      lastConversationID = conversationID;
+   }
+
+   public void handleConversationInvite(int connectionID, int conversationID, int sourceClientID, String conversationName) {
+      // Get name
+      String clientName = SubwaveClient.getName(connectionID, sourceClientID);
+
+      // Alert user
+      System.out.println("Client " + sourceClientID + " (\"" + clientName + "\") has invited you to conversation " + conversationID + " (\"" + conversationName + "\")");
+
+      // Set last conversation ID
+      lastConversationID = conversationID;
+   }
+
+   public void handleConversationJoin(int connectionID, int conversationID, int sourceClientID, String message) {
+      // Get names.
+      String conversationName = SubwaveClient.getName(connectionID, conversationID);
+      String clientName = SubwaveClient.getName(connectionID, sourceClientID);
+
+      // Alert user
+      System.out.println("Client " + sourceClientID + " (\"" + clientName + "\") has joined conversation " + conversationID + " (\"" + conversationName + "\")");
+
+      // Set last conversation ID
+      lastConversationID = conversationID;
    }
 
 }

@@ -6,6 +6,7 @@ import com.tanndev.subwave.common.debugging.ErrorHandler;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -25,11 +26,14 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SubwaveClient {
 
+   // TODO document data members
 
    private static ClientUIFramework ui;
 
    private static ConcurrentHashMap<Integer, Connection> connectionMap = new ConcurrentHashMap<Integer, Connection>();
    private static int nextConnectionID = 1;
+
+   private static ConcurrentHashMap<Integer, Map<Integer, String>> nameMaps = new ConcurrentHashMap<Integer, Map<Integer, String>>();
 
    /**
     * The user interface MUST call this function in order to bind to the chat client.
@@ -96,6 +100,11 @@ public class SubwaveClient {
          // Add the connection to the connection map.
          int connectionID = addConnectionToMap(connection);
          // TODO Test for invalid connectionID
+
+         // Create a name map for the connection.
+         Map nameMap = new ConcurrentHashMap<Integer, String>();
+         nameMap.put(clientID, nickname);
+         nameMaps.put(connectionID, nameMap);
 
          // Start a server listener on the connection.
          new ServerListener(connectionID, connection).start();
@@ -196,12 +205,18 @@ public class SubwaveClient {
             break;
 
          case CONVERSATION_INVITE: // Client wants to invite another client to a conversation
-            // TODO Handle conversation invite.
+            // Update conversation name from message
+            setName(connectionID, conversationID, messageBody);
+
+            // Send to the UI for processing
             ui.handleConversationInvite(connectionID, conversationID, clientID, messageBody);
             break;
 
          case CONVERSATION_JOIN: // Client wants to join a conversation
-            // TODO Handle conversation join
+            // Update client name from message
+            setName(connectionID, clientID, messageBody);
+
+            // Send to the UI for processing
             ui.handleConversationJoin(connectionID, conversationID, clientID, messageBody);
             break;
 
@@ -211,8 +226,15 @@ public class SubwaveClient {
             break;
 
          case NAME_UPDATE: // Client wants to change a friendly name
-            // TODO Handle name update
+            // If there is a conversation ID, set the name of that conversation
+            if (conversationID != 0) setName(connectionID, conversationID, messageBody);
+
+               // Otherwise, update the name of the client.
+            else if (clientID != 0) setName(connectionID, clientID, messageBody);
+
+            // Send the update to the UI.
             ui.handleNameUpdate(connectionID, conversationID, clientID, messageBody);
+
             break;
 
          case ACKNOWLEDGE: // Unused
@@ -221,17 +243,9 @@ public class SubwaveClient {
             break;
 
          case REFUSE: // Unused
-            // TODO Respond to refusal.
-            ui.handleRefuse(connectionID, conversationID, clientID, messageBody);
-            break;
-
-         case NETWORK_CONNECT: // Unused
-            // TODO Handle network connect message.
-            ui.handleNetworkConnect(connectionID, conversationID, clientID, messageBody);
-            break;
-
-         case NETWORK_DISCONNECT: // Client announces intent to sign off.
-            ui.handleNetworkDisconnect(connectionID, conversationID, clientID, messageBody);
+            // Send to debugging.
+            // TODO handle refuse properly.
+            ui.handleDebug(connectionID, conversationID, clientID, messageBody);
             break;
 
          case DEBUG: // Received debug message.
@@ -279,6 +293,53 @@ public class SubwaveClient {
       connectionMap.remove(connectionID);
    }
 
+   /**
+    * Sets the friendly name associated with a given unique ID.
+    * <p/>
+    * This is used for both conversations and other clients, as the server assigns IDs uniquely to both.
+    *
+    * @param connectionID ID of the connection being used
+    * @param uniqueID     ID to associate a name with
+    * @param name         friendly name to associate with the ID
+    */
+   public static void setName(int connectionID, int uniqueID, String name) {
+      // Get name map for the connection.
+      Map nameMap = nameMaps.get(connectionID);
+      if (nameMap == null) {
+         ErrorHandler.logError("No name map for that connection");
+         return;
+      }
+
+      // Set the name
+      nameMap.put(uniqueID, name);
+   }
+
+   /**
+    * Returns the friendly name associated with the given unique ID for the given connection.
+    * <p/>
+    * This is used for both conversations and other clients, as the server assigns IDs uniquely to both.
+    *
+    * @param connectionID ID of the connection being used
+    * @param uniqueID     ID of the object the name is associated with.
+    *
+    * @return the friendly name associated with those IDs, if available.
+    */
+   public static String getName(int connectionID, int uniqueID) {
+      // Get name map for the connection.
+      Map<Integer, String> nameMap = nameMaps.get(connectionID);
+      if (nameMap == null) {
+         ErrorHandler.logError("No name map for that connection");
+         return "Unnamed";
+      }
+
+      // Get the name
+      String friendlyName = nameMap.get(uniqueID);
+
+      // Return the name if available, otherwise return "Unnamed"
+      if (friendlyName != null) return friendlyName;
+      return "Unnamed";
+   }
+
    // TODO document message senders.
    public static void sendChatMessage(int connectionID, int conversationID, String message) {
       // Get the connection from the connectionID
@@ -310,23 +371,23 @@ public class SubwaveClient {
       connection.send(reply);
    }
 
-   public static void sendConversationInvite(int connectionID, int conversationID, int targetClient, String message) {
+   public static void sendConversationInvite(int connectionID, int conversationID, int targetClient) {
       // Get the connection from the connectionID
       Connection connection = connectionMap.get(connectionID);
       if (connection == null) {ErrorHandler.logError("Invalid connectionID");}
 
       // Send refusal.
-      Message reply = new Message(MessageType.CONVERSATION_INVITE, conversationID, targetClient, message);
+      Message reply = new Message(MessageType.CONVERSATION_INVITE, conversationID, targetClient, Message.INVITE_TO_JOIN_CONVERSATION);
       connection.send(reply);
    }
 
-   public static void sendConversationJoin(int connectionID, int conversationID, String message) {
+   public static void sendConversationJoin(int connectionID, int conversationID) {
       // Get the connection from the connectionID
       Connection connection = connectionMap.get(connectionID);
       if (connection == null) {ErrorHandler.logError("Invalid connectionID");}
 
       // Send refusal.
-      Message reply = new Message(MessageType.CONVERSATION_JOIN, conversationID, connection.getClientID(), message);
+      Message reply = new Message(MessageType.CONVERSATION_JOIN, conversationID, connection.getClientID(), Message.REQUEST_TO_JOIN_CONVERSATION);
       connection.send(reply);
    }
 
