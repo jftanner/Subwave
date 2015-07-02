@@ -165,8 +165,7 @@ public class ClientTUI extends ClientUIFramework {
                break;
 
             case CONVERSATION_LEAVE: // Leave a conversation.
-               //TODO Handle this command
-               ErrorHandler.logError("Unhandled command.");
+               handleCommandConversationLeave(tokenizer);
                break;
 
             case NAME_UPDATE: // Change the name a conversation or client.
@@ -326,6 +325,35 @@ public class ClientTUI extends ClientUIFramework {
       SubwaveClient.sendConversationJoin(serverConnectionID, conversationID);
    }
 
+   private void handleCommandConversationLeave(Scanner tokenizer) {
+      // Default to the last conversation.
+      int conversationID = lastConversationID;
+
+      // If there is a token for the conversation ID, use that.
+      if (tokenizer.hasNextInt()) {
+         conversationID = tokenizer.nextInt();
+      }
+
+      // If there still isn't a valid conversation ID, display help.
+      if (conversationID < 1) {
+         displayHelp(Command.CONVERSATION_LEAVE);
+         return;
+      }
+
+      // Send the message
+      SubwaveClient.sendConversationLeave(serverConnectionID, conversationID);
+
+      // Alert the user
+      String conversationName = SubwaveClient.getName(serverConnectionID, conversationID);
+
+      // Alert user
+      System.out.println("You have left conversation " + conversationID + " (\"" + conversationName + "\")");
+
+
+      // Reset the last conversation ID
+      lastConversationID = 0;
+   }
+
    public void handleChatMessage(int connectionID, int conversationID, int sourceClientID, String message) {
       // Get names.
       String conversationName = SubwaveClient.getName(connectionID, conversationID);
@@ -368,6 +396,18 @@ public class ClientTUI extends ClientUIFramework {
 
       // Alert user
       System.out.println("Client " + sourceClientID + " (\"" + clientName + "\") has joined conversation " + conversationID + " (\"" + conversationName + "\")");
+
+      // Set last conversation ID
+      lastConversationID = conversationID;
+   }
+
+   public void handleConversationLeave(int connectionID, int conversationID, int sourceClientID, String message) {
+      // Get names.
+      String conversationName = SubwaveClient.getName(connectionID, conversationID);
+      String clientName = SubwaveClient.getName(connectionID, sourceClientID);
+
+      // Alert user
+      System.out.println("Client " + sourceClientID + " (\"" + clientName + "\") has left conversation " + conversationID + " (\"" + conversationName + "\")");
 
       // Set last conversation ID
       lastConversationID = conversationID;

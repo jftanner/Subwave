@@ -224,7 +224,7 @@ public class SubwaveServer {
 
          case CONVERSATION_LEAVE: // Client wants to leave a conversation
             // TODO Remove user from conversation
-            replyToUnhandledMessage(connection, message);
+            handleConversationLeave(connection, message);
             break;
 
          case NAME_UPDATE: // Client wants to change a friendly name
@@ -384,6 +384,19 @@ public class SubwaveServer {
 
       // Add client to the conversation as a member.
       conversation.addMember(client);
+   }
+
+   private static void handleConversationLeave(Connection connection, Message message) {
+      // Verify sourceID.
+      Client client = validateClientMessage(connection, message);
+      if (client == null) return; // TODO Send reject message
+
+      // Validate conversation.
+      Conversation conversation = validateConversation(connection, message);
+      if (conversation == null) return; // TODO Send reject message
+
+      // Remove client to the conversation as a member.
+      conversation.removeMember(client);
    }
 
 
