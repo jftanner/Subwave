@@ -11,7 +11,5 @@ deploy:
   file: deployment/SubwaveServer.jar
   skip_cleanup: true
   file:
-    - deployment/SubwaveClient.jar
-    - deployment/SubwaveServer.jar
-  on:
-    tags: true
+    - "deployment/SubwaveClient.jar"
+    - "deployment/SubwaveServer.jar"
