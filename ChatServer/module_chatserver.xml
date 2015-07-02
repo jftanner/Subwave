@@ -1,89 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="module_chatserver" default="compile.module.chatserver">
-    <dirname property="module.chatserver.basedir" file="${ant.file.module_chatserver}"/>
+<project name="module_chatserver" default="server.deploy">
+    <dirname property="server.basedir" file="${ant.file.module_chatserver}"/>
 
+    <property name="server.source.dir" value="${server.basedir}/src"/>
+    <property name="server.class.dir" value="${server.basedir}/../out/bin/server"/>
+    <property name="server.jar.dir" value="${server.basedir}/../deployment"/>
+    <property name="server.jar.file" value="${server.jar.dir}/SubwaveServer.jar"/>
+    <property name="server.main-class" value="com.tanndev.subwave.server.core.SubwaveServer"/>
 
-    <property name="compiler.args.chatserver" value="-encoding UTF-8 -source 1.6 ${compiler.args}"/>
-
-    <property name="chatserver.output.dir" value="${module.chatserver.basedir}/../out/production/ChatServer"/>
-    <property name="chatserver.testoutput.dir" value="${module.chatserver.basedir}/../out/test/ChatServer"/>
-
-    <path id="chatserver.module.bootclasspath">
-        <!-- Paths to be included in compilation bootclasspath -->
+    <path id="server.libraries.path">
+        <pathelement location="${common.class.dir}"/>
     </path>
 
-    <path id="chatserver.module.production.classpath">
-        <pathelement location="${common.output.dir}"/>
-    </path>
-
-    <path id="chatserver.runtime.production.module.classpath">
-        <path refid="common.runtime.production.module.classpath"/>
-        <pathelement location="${chatserver.output.dir}"/>
-    </path>
-
-    <path id="chatserver.module.classpath">
-        <pathelement location="${common.testoutput.dir}"/>
-        <pathelement location="${common.output.dir}"/>
-        <pathelement location="${chatserver.output.dir}"/>
-        <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
-        <pathelement location="${idea.home}/lib/hamcrest-library-1.3.jar"/>
-        <pathelement location="${idea.home}/lib/junit-4.11.jar"/>
-    </path>
-
-    <path id="chatserver.runtime.module.classpath">
-        <path refid="common.runtime.module.classpath"/>
-        <pathelement location="${chatserver.testoutput.dir}"/>
-        <pathelement location="${chatserver.output.dir}"/>
-        <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
-        <pathelement location="${idea.home}/lib/hamcrest-library-1.3.jar"/>
-        <pathelement location="${idea.home}/lib/junit-4.11.jar"/>
-    </path>
-
-
-    <patternset id="excluded.from.module.chatserver">
-        <patternset refid="ignored.files"/>
-    </patternset>
-
-    <patternset id="excluded.from.compilation.chatserver">
-        <patternset refid="excluded.from.module.chatserver"/>
-    </patternset>
-
-    <path id="chatserver.module.sourcepath">
-        <dirset dir="${module.chatserver.basedir}">
-            <include name="src"/>
-        </dirset>
-    </path>
-
-
-    <target name="compile.module.chatserver"
-            depends="compile.module.chatserver.production,compile.module.chatserver.tests"
-            description="Compile module ChatServer"/>
-
-    <target name="compile.module.chatserver.production" depends="compile.module.common"
-            description="Compile module ChatServer; production classes">
-        <mkdir dir="${chatserver.output.dir}"/>
-        <javac destdir="${chatserver.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
-               memorymaximumsize="${compiler.max.memory}" fork="true">
-            <compilerarg line="${compiler.args.chatserver}"/>
-            <bootclasspath refid="chatserver.module.bootclasspath"/>
-            <classpath refid="chatserver.module.production.classpath"/>
-            <src refid="chatserver.module.sourcepath"/>
-            <patternset refid="excluded.from.compilation.chatserver"/>
-        </javac>
-
-        <copy todir="${chatserver.output.dir}/com/tanndev/subwave/server">
-            <fileset dir="${module.chatserver.basedir}/src">
-                <patternset refid="compiler.resources"/>
-                <type type="file"/>
-            </fileset>
-        </copy>
+    <target name="server.clean" description="delete old build files">
+        <delete dir="${server.class.dir}"/>
+        <delete dir="${server.jar.dir}"/>
     </target>
 
-    <target name="compile.module.chatserver.tests" depends="compile.module.chatserver.production"
-            description="compile module ChatServer; test classes" unless="skip.tests"/>
+    <target name="server.build" depends="server.clean" description="build class files">
+        <mkdir dir="${server.class.dir}"/>
+        <javac srcdir="${server.source.dir}" destdir="${server.class.dir}">
+            <classpath refid="server.libraries.path"/>
+        </javac>
+    </target>
 
-    <target name="clean.module.chatserver" description="cleanup module">
-        <delete dir="${chatserver.output.dir}"/>
-        <delete dir="${chatserver.testoutput.dir}"/>
+    <target name="server.deploy" depends="server.build" description="package server into library">
+        <mkdir dir="${server.jar.dir}"/>
+
+        <pathconvert property="server.manifest.classpath" pathsep=" ">
+            <path refid="server.libraries.path"/>
+            <flattenmapper/>
+        </pathconvert>
+        <tstamp/>
+
+        <copy todir="${server.class.dir}">
+            <fileset dir="${common.class.dir}"/>
+        </copy>
+
+        <echo message="Class path: ${server.manifest.classpath}"/>
+
+        <jar destfile="${server.jar.file}" basedir="${server.class.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${server.main-class}"/>
+                <attribute name="Class-Path" value="${server.manifest.classpath}"/>
+                <attribute name="Built-Date" value="${TODAY}"/>
+            </manifest>
+        </jar>
     </target>
 </project>

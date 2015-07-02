@@ -3,7 +3,7 @@ package com.tanndev.subwave.client.ui.tui;
 import com.tanndev.subwave.client.core.SubwaveClient;
 import com.tanndev.subwave.client.ui.ClientUIFramework;
 import com.tanndev.subwave.common.Defaults;
-import com.tanndev.subwave.common.debugging.ErrorHandler;
+import com.tanndev.subwave.common.ErrorHandler;
 
 import java.util.Scanner;
 

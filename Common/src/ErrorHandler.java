@@ -1,4 +1,4 @@
-package com.tanndev.subwave.common.debugging;
+package com.tanndev.subwave.common;
 
 /**
  * Provides a mechanism for reporting errors and exceptions. All calls to System.err.println() should instead use {@link

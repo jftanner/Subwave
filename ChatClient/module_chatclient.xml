@@ -1,83 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="module_chatclient" default="compile.module.chatclient">
-    <dirname property="module.chatclient.basedir" file="${ant.file.module_chatclient}"/>
+<project name="module_chatclient" default="client.deploy">
+    <dirname property="client.basedir" file="${ant.file.module_chatclient}"/>
 
+    <property name="client.source.dir" value="${client.basedir}/src"/>
+    <property name="client.class.dir" value="${client.basedir}/../out/bin/client"/>
+    <property name="client.jar.dir" value="${client.basedir}/../deployment"/>
+    <property name="client.jar.file" value="${client.jar.dir}/SubwaveClient.jar"/>
+    <property name="client.main-class" value="com.tanndev.subwave.client.ui.tui.ClientTUI"/>
 
-    <property name="compiler.args.chatclient" value="-encoding UTF-8 -source 1.6 ${compiler.args}"/>
-
-    <property name="chatclient.output.dir" value="${module.chatclient.basedir}/../out/production/ChatClient"/>
-    <property name="chatclient.testoutput.dir" value="${module.chatclient.basedir}/../out/test/ChatClient"/>
-
-    <path id="chatclient.module.bootclasspath">
-        <!-- Paths to be included in compilation bootclasspath -->
+    <path id="client.libraries.path">
+        <pathelement location="${common.class.dir}"/>
     </path>
 
-    <path id="chatclient.module.production.classpath">
-        <pathelement location="${common.output.dir}"/>
-    </path>
-
-    <path id="chatclient.runtime.production.module.classpath">
-        <path refid="common.runtime.production.module.classpath"/>
-        <pathelement location="${chatclient.output.dir}"/>
-    </path>
-
-    <path id="chatclient.module.classpath">
-        <pathelement location="${common.testoutput.dir}"/>
-        <pathelement location="${common.output.dir}"/>
-        <pathelement location="${chatclient.output.dir}"/>
-    </path>
-
-    <path id="chatclient.runtime.module.classpath">
-        <path refid="common.runtime.module.classpath"/>
-        <pathelement location="${chatclient.testoutput.dir}"/>
-        <pathelement location="${chatclient.output.dir}"/>
-    </path>
-
-
-    <patternset id="excluded.from.module.chatclient">
-        <patternset refid="ignored.files"/>
-    </patternset>
-
-    <patternset id="excluded.from.compilation.chatclient">
-        <patternset refid="excluded.from.module.chatclient"/>
-    </patternset>
-
-    <path id="chatclient.module.sourcepath">
-        <dirset dir="${module.chatclient.basedir}">
-            <include name="src"/>
-        </dirset>
-    </path>
-
-
-    <target name="compile.module.chatclient"
-            depends="compile.module.chatclient.production,compile.module.chatclient.tests"
-            description="Compile module ChatClient"/>
-
-    <target name="compile.module.chatclient.production" depends="compile.module.common"
-            description="Compile module ChatClient; production classes">
-        <mkdir dir="${chatclient.output.dir}"/>
-        <javac destdir="${chatclient.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
-               memorymaximumsize="${compiler.max.memory}" fork="true">
-            <compilerarg line="${compiler.args.chatclient}"/>
-            <bootclasspath refid="chatclient.module.bootclasspath"/>
-            <classpath refid="chatclient.module.production.classpath"/>
-            <src refid="chatclient.module.sourcepath"/>
-            <patternset refid="excluded.from.compilation.chatclient"/>
-        </javac>
-
-        <copy todir="${chatclient.output.dir}/com/tanndev/subwave/client">
-            <fileset dir="${module.chatclient.basedir}/src">
-                <patternset refid="compiler.resources"/>
-                <type type="file"/>
-            </fileset>
-        </copy>
+    <target name="client.clean" description="delete old build files">
+        <delete dir="${client.class.dir}"/>
+        <delete dir="${client.jar.dir}"/>
     </target>
 
-    <target name="compile.module.chatclient.tests" depends="compile.module.chatclient.production"
-            description="compile module ChatClient; test classes" unless="skip.tests"/>
+    <target name="client.build" depends="client.clean" description="build class files">
+        <mkdir dir="${client.class.dir}"/>
+        <javac srcdir="${client.source.dir}" destdir="${client.class.dir}">
+            <classpath refid="client.libraries.path"/>
+        </javac>
+    </target>
 
-    <target name="clean.module.chatclient" description="cleanup module">
-        <delete dir="${chatclient.output.dir}"/>
-        <delete dir="${chatclient.testoutput.dir}"/>
+    <target name="client.deploy" depends="client.build" description="package client into library">
+        <mkdir dir="${client.jar.dir}"/>
+
+        <pathconvert property="client.manifest.classpath" pathsep=" ">
+            <path refid="client.libraries.path"/>
+            <flattenmapper/>
+        </pathconvert>
+        <tstamp/>
+
+        <copy todir="${client.class.dir}">
+            <fileset dir="${common.class.dir}"/>
+        </copy>
+
+        <echo message="Class path: ${client.manifest.classpath}"/>
+
+        <jar destfile="${client.jar.file}" basedir="${client.class.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${client.main-class}"/>
+                <attribute name="Class-Path" value="${client.manifest.classpath}"/>
+                <attribute name="Built-Date" value="${TODAY}"/>
+            </manifest>
+        </jar>
     </target>
 </project>

@@ -1,8 +1,8 @@
 package com.tanndev.subwave.client.ui;
 
 import com.tanndev.subwave.client.core.SubwaveClient;
+import com.tanndev.subwave.common.ErrorHandler;
 import com.tanndev.subwave.common.Message;
-import com.tanndev.subwave.common.debugging.ErrorHandler;
 
 /**
  * Provides the framework required to build user interfaces for {@link com.tanndev.subwave.client.core.SubwaveClient}.
