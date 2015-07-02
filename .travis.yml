@@ -13,3 +13,5 @@ deploy:
   file:
     - "deployment/SubwaveClient.jar"
     - "deployment/SubwaveServer.jar"
+  on:
+    tags: true
