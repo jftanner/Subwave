@@ -8,6 +8,10 @@
     <property name="chatserver.output.dir" value="${module.chatserver.basedir}/../out/production/ChatServer"/>
     <property name="chatserver.testoutput.dir" value="${module.chatserver.basedir}/../out/test/ChatServer"/>
 
+    <property name="chatserver.deployment.dir" value="${module.chatserver.basedir}/../deployment/"/>
+    <property name="chatserver.deployment.file" value="${chatserver.deployment.dir}/SubwaveServer.jar"/>
+    <property name="chatserver.main-class" value="com.tanndev.subwave.server.core.SubwaveServer"/>
+
     <path id="chatserver.module.bootclasspath">
         <!-- Paths to be included in compilation bootclasspath -->
     </path>
@@ -85,5 +89,24 @@
     <target name="clean.module.chatserver" description="cleanup module">
         <delete dir="${chatserver.output.dir}"/>
         <delete dir="${chatserver.testoutput.dir}"/>
+    </target>
+
+    <target name="deploy.module.chatserver" depends="compile.module.chatserver">
+        <mkdir dir="${chatserver.deployment.dir}"/>
+        <mkdir dir="${chatserver.output.dir}/lib"/>
+        <copy todir="${chatserver.output.dir}/lib" flatten="true">
+            <path refid="chatserver.module.production.classpath"/>
+        </copy>
+
+        <manifestclasspath property="chatserver.manifest.classpath" jarfile="${chatserver.deployment.file}">
+            <classpath refid="chatserver.module.production.classpath"/>
+        </manifestclasspath>
+
+        <jar destfile="${chatserver.deployment.file}" basedir="${chatserver.output.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${chatserver.main-class}"/>
+                <attribute name="Class-Path" value="${chatserver.manifest.classpath}"/>
+            </manifest>
+        </jar>
     </target>
 </project>

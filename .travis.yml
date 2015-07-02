@@ -1,6 +1,13 @@
 language: java
 jdk:
-  - oraclejdk8
-  - oraclejdk7
-  - openjdk6
-script: ant all
+- oraclejdk8
+- oraclejdk7
+- openjdk6
+script: ant build.modules
+deploy:
+  provider: releases
+  api_key:
+    secure: ESg1Tu4q0un0pRNY68MMJF993fiCpPjrinAF/JR0MYVMdWRTcmDWOqQZSfqo4I+4qzPfdesBgZ2M28qHssNnYBks2Hz80Y3YX4fmb0clYRO32mC/x2eeeuE20UPFXjg0Y3Cb0awlgvu9Fwi+wBOYuUUTsteZPjkuXx8iGrrnYp1jhLy3OMVQOvgEBqka/ccAxjTOQZWNLvMbHioTTS1AMQgQeF91j5gY2hI8lmkapl6q1ibMpOBj0wa1cMGl7T2DSxtCi4jMLXG+ipqcQidJn0BuIrTCZ44FNuoZKglPndjKDCSBUM8hEqjFAeTM9c/s9OaVui2iqaSIZOCRmhwL5t9yphsThKGPFPwhRn24EjZK3D9j3CpIiUcd5TeGvjwZK8tAok7hOEZQC2VTzJ9dk1ZN9bk63N2YdmrXv6hvgubK2US6c3NioJD95v9atyPCBespWHGnnF4luHEB9+Clix6u6hlCo+SLjEUO3W+N9fW4hc4xwn/E3mYqOiGk9hXmtgs2m2T2AJHz7m2IM1LUqPNtbEWK0cruQ5ph1pzdqPbEGZUkuJhGqsFYsHVOqLAACqdXPqGFIiPkpN25eIvKUMpdlbgaJaSBrZ/sid0qtFAZOucxHS2QiWgEYm54bTlOe9Y+UD6Lo715J0mjJ90xN8NtsHpFrTdRw9kgPcP4Q0w=
+  file: deployment/SubwaveServer.jar
+  on:
+    repo: tanndev/Subwave
