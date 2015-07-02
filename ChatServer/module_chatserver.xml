@@ -3,16 +3,12 @@
     <dirname property="server.basedir" file="${ant.file.module_chatserver}"/>
 
     <property name="server.source.dir" value="${server.basedir}/src"/>
-    <property name="server.lib.dir" value="${server.basedir}/../lib"/>
     <property name="server.class.dir" value="${server.basedir}/../out/bin/server"/>
     <property name="server.jar.dir" value="${server.basedir}/../deployment"/>
     <property name="server.jar.file" value="${server.jar.dir}/SubwaveServer.jar"/>
     <property name="server.main-class" value="com.tanndev.subwave.server.core.SubwaveServer"/>
 
     <path id="server.libraries.path">
-        <fileset dir="${server.lib.dir}">
-            <include name="*.jar"/>
-        </fileset>
         <pathelement location="${common.class.dir}"/>
     </path>
 
