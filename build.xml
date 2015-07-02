@@ -73,6 +73,7 @@
 
     <target name="clean"
             depends="clean.module.common, clean.module.subwave, clean.module.chatclient, clean.module.chatserver"
+
             description="cleanup all"/>
 
     <target name="build"
@@ -80,4 +81,6 @@
             description="build all modules"/>
 
     <target name="deploy" depends="build, deploy.module.chatserver" description="build deployment jars"/>
+
+    <target name="all" depends="deploy" description="build and deploy all modules"/>
 </project>
