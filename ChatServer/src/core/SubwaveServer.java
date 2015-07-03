@@ -1,6 +1,7 @@
 package com.tanndev.subwave.server.core;
 
 import com.tanndev.subwave.common.*;
+import com.tanndev.subwave.server.ui.BasicGUI;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -13,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author James Tanner
  */
 public class SubwaveServer {
-
 
    private static final int SERVER_ID = 0;
    private static ConcurrentHashMap<Integer, Client> clientMap = new ConcurrentHashMap<Integer, Client>();
@@ -29,6 +29,8 @@ public class SubwaveServer {
     * @param args Application arguments.
     */
    public static void main(String[] args) {
+      // Launch GUI
+      BasicGUI.createAndShowGUI();
 
       // Load arguments
       // TODO Handle arguments more elegantly.
