@@ -2,7 +2,6 @@ language: java
 jdk:
 - oraclejdk8
 - oraclejdk7
-- openjdk6
 script: ant all
 deploy:
   provider: releases
@@ -12,6 +11,9 @@ deploy:
   file:
     - "deployment/SubwaveClient.jar"
     - "deployment/SubwaveServer.jar"
+    - README.md
+    - RELEASE_NOTES.md
+    - "documentation"
   on:
     tags: true
     jdk: oraclejdk8

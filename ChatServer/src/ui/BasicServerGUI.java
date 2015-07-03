@@ -10,11 +10,10 @@ import java.io.PrintStream;
 /**
  * Created by James Tanner on 7/2/2015.
  */
-public class BasicGUI extends JPanel {
+public class BasicServerGUI extends JPanel {
    private static JTextArea textOutput;
-   private static boolean isReady = false;
 
-   public BasicGUI() {
+   public BasicServerGUI() {
       super(new GridBagLayout());
 
       // Create label
@@ -60,7 +59,7 @@ public class BasicGUI extends JPanel {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
             //Add contents to the window.
-            frame.add(new BasicGUI());
+            frame.add(new BasicServerGUI());
 
             //Display the window.
             frame.pack();
