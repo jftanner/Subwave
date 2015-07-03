@@ -41,6 +41,6 @@
             description="build deployment jars"/>
 
     <target name="all"
-            depends="deploy"
+            depends="doc, deploy"
             description="build and deploy all modules"/>
 </project>

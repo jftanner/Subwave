@@ -12,6 +12,7 @@ deploy:
   file:
     - "deployment/SubwaveClient.jar"
     - "deployment/SubwaveServer.jar"
+    - "documentation"
   on:
     tags: true
     jdk: oraclejdk8
