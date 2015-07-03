@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="subwave" default="all">
 
-    <property name="subwave.class.dir" value="${basedir}/out/bin"/>
+    <property name="output.dir" value="${basedir}/out"/>
+    <property name="doc.dir" value="${basedir}/documentation"/>
 
     <!-- Modules -->
 
@@ -18,7 +19,17 @@
     <target name="clean"
             depends="common.clean, server.clean, client.clean"
             description="cleanup all">
-        <delete dir="${subwave.class.dir}"/>
+        <delete dir="${output.dir}"/>
+        <delete dir="${doc.dir}"/>
+    </target>
+
+    <target name="doc" description="generate documentation">
+        <delete dir="${doc.dir}"/>
+        <javadoc destdir="${doc.dir}">
+            <fileset dir="${common.source.dir}" defaultexcludes="yes"/>
+            <fileset dir="${server.source.dir}" defaultexcludes="yes"/>
+            <fileset dir="${client.source.dir}" defaultexcludes="yes"/>
+        </javadoc>
     </target>
 
     <target name="build"
@@ -30,6 +41,6 @@
             description="build deployment jars"/>
 
     <target name="all"
-            depends="deploy"
+            depends="doc, deploy"
             description="build and deploy all modules"/>
 </project>
