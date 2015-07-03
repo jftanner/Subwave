@@ -1,7 +1,7 @@
 package com.tanndev.subwave.server.core;
 
 import com.tanndev.subwave.common.*;
-import com.tanndev.subwave.server.ui.BasicGUI;
+import com.tanndev.subwave.server.ui.BasicServerGUI;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -30,7 +30,7 @@ public class SubwaveServer {
     */
    public static void main(String[] args) {
       // Launch GUI
-      BasicGUI.createAndShowGUI();
+      BasicServerGUI.createAndShowGUI();
 
       // Load arguments
       // TODO Handle arguments more elegantly.
