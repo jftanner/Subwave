@@ -1,6 +1,7 @@
 package com.tanndev.subwave.server.core;
 
 import com.tanndev.subwave.common.*;
+import com.tanndev.subwave.server.ui.BasicGUI;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -13,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author James Tanner
  */
 public class SubwaveServer {
-
 
    private static final int SERVER_ID = 0;
    private static ConcurrentHashMap<Integer, Client> clientMap = new ConcurrentHashMap<Integer, Client>();
@@ -29,6 +29,8 @@ public class SubwaveServer {
     * @param args Application arguments.
     */
    public static void main(String[] args) {
+      // Launch GUI
+      BasicGUI.createAndShowGUI();
 
       // Load arguments
       // TODO Handle arguments more elegantly.
@@ -224,7 +226,7 @@ public class SubwaveServer {
 
          case CONVERSATION_LEAVE: // Client wants to leave a conversation
             // TODO Remove user from conversation
-            replyToUnhandledMessage(connection, message);
+            handleConversationLeave(connection, message);
             break;
 
          case NAME_UPDATE: // Client wants to change a friendly name
@@ -384,6 +386,19 @@ public class SubwaveServer {
 
       // Add client to the conversation as a member.
       conversation.addMember(client);
+   }
+
+   private static void handleConversationLeave(Connection connection, Message message) {
+      // Verify sourceID.
+      Client client = validateClientMessage(connection, message);
+      if (client == null) return; // TODO Send reject message
+
+      // Validate conversation.
+      Conversation conversation = validateConversation(connection, message);
+      if (conversation == null) return; // TODO Send reject message
+
+      // Remove client to the conversation as a member.
+      conversation.removeMember(client);
    }
 
 

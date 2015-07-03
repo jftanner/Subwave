@@ -14,7 +14,8 @@ import java.util.Iterator;
 public class Conversation {
 
    /**
-    * Unique ID of the conversation This MUST be unique and should be generated using {@link SubwaveServer#getUniqueID()}
+    * Unique ID of the conversation This MUST be unique and should be generated using {@link
+    * SubwaveServer#getUniqueID()}
     */
    public final int conversationID;
 
@@ -50,6 +51,7 @@ public class Conversation {
     * This method is synchronised to be thread-safe.
     *
     * @param client new member to add to the conversation
+    *
     * @return true if the client is added, otherwise false
     */
    public synchronized boolean addMember(Client client) {
@@ -70,6 +72,7 @@ public class Conversation {
     * This method is synchronised to be thread-safe.
     *
     * @param client new member to add to the conversation
+    *
     * @return true if the client is added, otherwise false
     */
    public synchronized boolean removeMember(Client client) {
@@ -77,7 +80,7 @@ public class Conversation {
       if (!hasMembers()) SubwaveServer.removeConversation(conversationID);
       else {
          // Notify all members that the member left.
-         Message notification = new Message(MessageType.CONVERSATION_LEAVE, conversationID, client.clientID, Message.DISCONNECT_UNEXPECTED);
+         Message notification = new Message(MessageType.CONVERSATION_LEAVE, conversationID, client.clientID, Message.LEFT_CONVERSATION);
          broadcastToConversation(notification);
       }
       return result;
@@ -96,6 +99,7 @@ public class Conversation {
     * If any connection fails to send, that member is removed from the conversation.
     *
     * @param message the {@link Message} to send to the conversation members
+    *
     * @return false if the message is rejected as mis-addressed. Otherwise true.
     */
    public synchronized boolean broadcastToConversation(Message message) {

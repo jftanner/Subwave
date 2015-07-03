@@ -390,13 +390,13 @@ public class SubwaveClient {
       connection.send(reply);
    }
 
-   public static void sendConversationLeave(int connectionID, int conversationID, String message) {
+   public static void sendConversationLeave(int connectionID, int conversationID) {
       // Get the connection from the connectionID
       Connection connection = connectionMap.get(connectionID);
       if (connection == null) {ErrorHandler.logError("Invalid connectionID");}
 
       // Send refusal.
-      Message reply = new Message(MessageType.CONVERSATION_LEAVE, conversationID, connection.getClientID(), message);
+      Message reply = new Message(MessageType.CONVERSATION_LEAVE, conversationID, connection.getClientID(), Message.DISCONNECT_INTENT);
       connection.send(reply);
    }
 
