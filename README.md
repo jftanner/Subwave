@@ -20,16 +20,16 @@ As of version 0.0.2, the client must be executed in a command line.
 - Download SubwaveClient.jar.
 - Using a terminal or command prompt, navigate to the download directory.
 - Launch the client using "java -jar SubwaveClient.jar [server address] [port]
--- Server address and port are optional. If omitted, default settings will be used. (localhost 4444)
--- A server address may be entered without a port. Default settings will be used (<server_address> 4444)
--- A port may not be entered without a server address.
+- - Server address and port are optional. If omitted, default settings will be used. (localhost 4444)
+- - A server address may be entered without a port. Default settings will be used (<server_address> 4444)
+- - A port may not be entered without a server address.
 - At the prompt, type a nickname that you'd like to use.
 - Once the connection is established, use any of the following commands: (Elements in <> are required, [] are optional)
--- \new [conversation name] - Creates a new conversation and connects to it
--- \join [conversationID] - Joins a conversation. No ID is necessary if the last message was an invitation.
--- \invite <clientID> [conversationID] - Invites another user to the conversation.
--- \m or \msg [conversationID] <Message> - Sends a chat message to the conversation.
--- \me or \emote [conversationID] <Message> - Sends an emote to the conversation.
--- \r or \reply <Message> - Replies to the last conversation sent to or recieved from.
--- \quit - Exits the program
+- - \new [conversation name] - Creates a new conversation and connects to it
+- - \join [conversationID] - Joins a conversation. No ID is necessary if the last message was an invitation.
+- - \invite <clientID> [conversationID] - Invites another user to the conversation.
+- - \m or \msg [conversationID] <Message> - Sends a chat message to the conversation.
+- - \me or \emote [conversationID] <Message> - Sends an emote to the conversation.
+- - \r or \reply <Message> - Replies to the last conversation sent to or recieved from.
+- - \quit - Exits the program
 
