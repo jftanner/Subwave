@@ -2,6 +2,7 @@ package com.tanndev.subwave.client.ui.gui;
 
 import com.tanndev.subwave.client.core.SubwaveClient;
 import com.tanndev.subwave.client.ui.ClientUIFramework;
+import com.tanndev.subwave.common.Defaults;
 import com.tanndev.subwave.common.ErrorHandler;
 
 import javax.swing.*;
@@ -73,7 +74,7 @@ public class SubwaveClientGUI extends ClientUIFramework {
 
       synchronized (task) {
          try {
-            uiRoot.wait(1000);
+            uiRoot.wait(Defaults.DEFAULT_UI_LAUNCH_WAIT);
          } catch (InterruptedException e) {
             ErrorHandler.logError("Exception thrown while waiting for UI.", e);
          }

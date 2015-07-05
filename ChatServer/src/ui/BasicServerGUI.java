@@ -1,5 +1,6 @@
 package com.tanndev.subwave.server.ui;
 
+import com.tanndev.subwave.common.Defaults;
 import com.tanndev.subwave.common.ErrorHandler;
 
 import javax.swing.*;
@@ -82,7 +83,7 @@ public class BasicServerGUI extends JPanel {
       // Wait on the task.
       try {
          synchronized (task) {
-            task.wait(1000);
+            task.wait(Defaults.DEFAULT_UI_LAUNCH_WAIT);
          }
       } catch (InterruptedException e) {
          ErrorHandler.logError("Exception thrown while waiting for UI.", e);
