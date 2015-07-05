@@ -24,9 +24,7 @@ public class Message implements Serializable {
 
    // Default Messages:
    public static final String CONNECTION_START_ACK = "Connection request received.";
-   public static final String CONNECTION_FINAL_ACK = "Connection accepted.";
    public static final String DISCONNECT_INTENT = "Goodbye.";
-   public static final String DISCONNECT_UNEXPECTED = "Disconnected.";
    public static final String UNHANDLED_MSG = "Not configured to handle that message type.";
    public static final String CRITICAL_ERROR = "A critical error has occurred. Shutting down.";
    public static final String INVALID_SOURCE_ID = "ClientID does not match ID of source.";
