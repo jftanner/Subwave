@@ -47,23 +47,36 @@ public class ChatCard extends JPanel {
 
    private JPanel createInputPanel() {
       JPanel inputPanel = new JPanel(new BorderLayout());
-      inputField = new JTextField();
+      inputField = createInputField();
+      JButton sendButton = createSendButton();
       inputPanel.add(inputField, BorderLayout.CENTER);
-      inputPanel.add(createSendButton(), BorderLayout.LINE_END);
+      inputPanel.add(sendButton, BorderLayout.LINE_END);
       return inputPanel;
+   }
+
+   private JTextField createInputField() {
+      inputField = new JTextField();
+      inputField.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) { sendMessage(); }
+      });
+      return inputField;
    }
 
    private JButton createSendButton() {
       JButton button = new JButton("Send");
       button.addActionListener(new ActionListener() {
          @Override
-         public void actionPerformed(ActionEvent e) {
-            String messageBody = inputField.getText().trim();
-            parentUI.commandMessageSend(connectionID, conversationID, messageBody);
-            inputField.setText("");
-         }
+         public void actionPerformed(ActionEvent e) { sendMessage(); }
       });
       return button;
+   }
+
+   private void sendMessage() {
+
+      String messageBody = inputField.getText().trim();
+      parentUI.commandMessageSend(connectionID, conversationID, messageBody);
+      inputField.setText("");
    }
 
    protected void postMessage(String message) {
