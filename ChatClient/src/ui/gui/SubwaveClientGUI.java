@@ -143,8 +143,11 @@ public class SubwaveClientGUI extends ClientUIFramework {
    }
 
    public void commandMessageSend(int connectionID, int conversationID, String messageBody) {
-      if (messageBody.length() > 0) SubwaveClient.sendChatMessage(connectionID, conversationID, messageBody);
-      // TODO Check for emotes and other escape commands.
+      if (messageBody == null || messageBody.length() < 1) return;
+      if (messageBody.startsWith("\\me"))
+         SubwaveClient.sendChatEmote(connectionID, conversationID, messageBody.substring(4));
+      else SubwaveClient.sendChatMessage(connectionID, conversationID, messageBody);
+      // TODO Handle emotes better.
    }
 
    @Override
@@ -174,12 +177,16 @@ public class SubwaveClientGUI extends ClientUIFramework {
 
    @Override
    public void handleConversationJoin(int connectionID, int conversationID, int sourceClientID, String message) {
-      super.handleConversationJoin(connectionID, conversationID, sourceClientID, message);
+      String senderName = SubwaveClient.getName(connectionID, sourceClientID);
+      String stringToPost = senderName + " has JOINED the conversation.";
+      chatPanel.postMessage(connectionID, conversationID, stringToPost);
    }
 
    @Override
    public void handleConversationLeave(int connectionID, int conversationID, int sourceClientID) {
-      super.handleConversationLeave(connectionID, conversationID, sourceClientID);
+      String senderName = SubwaveClient.getName(connectionID, sourceClientID);
+      String stringToPost = senderName + " has LEFT the conversation.";
+      chatPanel.postMessage(connectionID, conversationID, stringToPost);
    }
 
    @Override
