@@ -1,7 +1,5 @@
 package com.tanndev.subwave.client.ui.gui;
 
-import com.tanndev.subwave.client.ui.tui.ConversationElement;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -13,7 +11,8 @@ import java.awt.event.ActionListener;
 public class ConversationListPanel extends JPanel {
 
    ClientGUI parentUI;
-   JList<ConversationElement> conversationList;
+   DefaultListModel<ConversationElement> conversationListModel;
+
 
    public ConversationListPanel(ClientGUI parentUI) {
       super(new BorderLayout());
@@ -24,8 +23,9 @@ public class ConversationListPanel extends JPanel {
       // Create label
       JLabel labelConversations = new JLabel("Open Conversations:");
 
-      // Create text area
-      conversationList = new JList<ConversationElement>();
+      // Create the conversation list
+      conversationListModel = new DefaultListModel<ConversationElement>();
+      JList conversationList = new JList(conversationListModel);
       JScrollPane scrollPane = new JScrollPane(conversationList);
 
       // Create button panel
@@ -40,19 +40,7 @@ public class ConversationListPanel extends JPanel {
    private JPanel createButtonPanel() {
       JPanel buttonPanel = new JPanel(new GridLayout(0, 1));
       buttonPanel.add(createConversationNewButton());
-      buttonPanel.add(createShutdownButton());
       return buttonPanel;
-   }
-
-   private JButton createShutdownButton() {
-      JButton button = new JButton("Exit Subwave Client");
-      button.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            parentUI.shutdown();
-         }
-      });
-      return button;
    }
 
    private JButton createConversationNewButton() {
@@ -64,5 +52,11 @@ public class ConversationListPanel extends JPanel {
          }
       });
       return button;
+   }
+
+   protected void addConversation(ConversationElement conversation) {
+      if (conversationListModel == null || conversation == null) return;
+
+      conversationListModel.addElement(conversation);
    }
 }

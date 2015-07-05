@@ -35,9 +35,6 @@ public class ClientTUI extends ClientUIFramework {
     * @see com.tanndev.subwave.common.Connection#setPrintMessages(boolean)
     */
    public ClientTUI(String serverAddress, int port, String friendlyName) {
-      // Use the ClientUIFramework constructor to bind to the chat client.
-      super();
-
       // Attempt to open the connection.
       serverConnectionID = SubwaveClient.connectToServer(serverAddress, port, friendlyName);
       if (serverConnectionID == 0) {
@@ -48,29 +45,6 @@ public class ClientTUI extends ClientUIFramework {
       // Switch off the local connection message printing.
       SubwaveClient.setConnectionPrinting(serverConnectionID, false);
       System.out.println("Hiding TX/RX messages.");
-   }
-
-   public static void main(String[] args) {
-      // Get server address and port from arguments, if there.
-      String serverAddress = null;
-      int serverPort = 0;
-      if (args.length > 0) serverAddress = args[0];
-      try {
-         if (args.length > 1) serverPort = Integer.parseInt(args[1]);
-      } catch (NumberFormatException e) {}
-
-      // Get login information from the user
-      Scanner scan = new Scanner(System.in);
-
-      // Get friendly name
-      System.out.println("What name would you like to use? (Leave blank for default.)");
-      String friendlyName = scan.nextLine().trim();
-      if (friendlyName.length() < 1) friendlyName = null;
-
-
-      // Start the UI
-      ClientTUI ui = new ClientTUI(serverAddress, serverPort, friendlyName);
-      ui.start();
    }
 
    /**

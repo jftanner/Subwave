@@ -1,11 +1,14 @@
 package com.tanndev.subwave.client.core;
 
 import com.tanndev.subwave.client.ui.ClientUIFramework;
+import com.tanndev.subwave.client.ui.gui.ClientGUI;
+import com.tanndev.subwave.client.ui.tui.ClientTUI;
 import com.tanndev.subwave.common.*;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -34,19 +37,31 @@ public class SubwaveClient {
 
    private static ConcurrentHashMap<Integer, Map<Integer, String>> nameMaps = new ConcurrentHashMap<Integer, Map<Integer, String>>();
 
-   /**
-    * The user interface MUST call this function in order to bind to the chat client.
-    * <p/>
-    * Without binding, the UI can still request and close connections, send messages, etc. However, incoming messages
-    * cannot be delivered to the UI for processing, For proper function, this method should be called using
-    * <blockquote>SubwaveClient.bindUI(this);</blockquote> at the start of the run method of the UI class.
-    *
-    * @param ui
-    */
-   public static void bindUI(ClientUIFramework ui) {
-      SubwaveClient.ui = ui;
-   }
+   public static void main(String[] args) {
+      // TODO parse arguements
+      // Get server address and port from arguments, if there.
+//      String serverAddress = null;
+//      int serverPort = 0;
+//      if (args.length > 0) serverAddress = args[0];
+//      try {
+//         if (args.length > 1) serverPort = Integer.parseInt(args[1]);
+//      } catch (NumberFormatException e) {}
 
+      // Get login information from the user
+      Scanner scan = new Scanner(System.in);
+
+      // Get friendly name
+      System.out.println("What name would you like to use? (Leave blank for default.)");
+      String friendlyName = scan.nextLine().trim();
+      if (friendlyName.length() < 1) friendlyName = null;
+
+
+      // Start the UI
+      if (args.length > 0 && args[0].equalsIgnoreCase("-tui")) {
+         ui = new ClientTUI(null, 0, friendlyName);
+         ui.start();
+      } else ui = new ClientGUI();
+   }
 
    /**
     * Attempts to create a connection to the selected remote server.
@@ -198,11 +213,6 @@ public class SubwaveClient {
             ui.handleChatEmote(connectionID, conversationID, clientID, messageBody);
             break;
 
-         case CONVERSATION_NEW: // Client wants a new conversation.
-            // TODO Handle conversation new
-            ui.handleConversationNew(connectionID, conversationID, clientID, messageBody);
-            break;
-
          case CONVERSATION_INVITE: // Client wants to invite another client to a conversation
             // Update conversation name from message
             setName(connectionID, conversationID, messageBody);
@@ -244,7 +254,7 @@ public class SubwaveClient {
          case REFUSE: // Unused
             // Send to debugging.
             // TODO handle refuse properly.
-            ui.handleDebug(connectionID, conversationID, clientID, messageBody);
+            ui.handleRefuse(connectionID, conversationID, clientID, messageBody);
             break;
 
          case DEBUG: // Received debug message.
