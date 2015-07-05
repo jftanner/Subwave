@@ -142,6 +142,8 @@ public class SubwaveClientGUI extends ClientUIFramework {
    public void handleConversationInvite(int connectionID, int conversationID, int sourceClientID, String conversationName) {
       ConversationElement conversationElement = new ConversationElement(connectionID, conversationID, conversationName);
       conversationListPanel.addConversation(conversationElement);
+      // Join automatically
+      SubwaveClient.sendConversationJoin(connectionID, conversationID);
    }
 
    @Override

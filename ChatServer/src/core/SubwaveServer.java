@@ -366,8 +366,7 @@ public class SubwaveServer {
       String conversationName = conversation.getName();
       Message invitation = new Message(MessageType.CONVERSATION_INVITE, conversationID, sourceClientID, conversationName);
 
-      // Send the inviting client's name to the target client along with the invitation.
-      targetClient.clientConnection.send(getNameUpdateMessage(SERVER_ID, connection.getClientID()));
+      // Send the invitation.
       targetClient.clientConnection.send(invitation);
 
    }
@@ -393,15 +392,6 @@ public class SubwaveServer {
       // Validate conversation.
       Conversation conversation = validateConversation(connection, message);
       if (conversation == null) return; // TODO Send reject message
-
-      // Send the conversation name to the client.
-      connection.send(getNameUpdateMessage(conversation.conversationID, client.clientID));
-
-      // Get all members names.
-      Client[] conversationMembers = conversation.getMemberList();
-      for (Client member : conversationMembers) {
-         connection.send(getNameUpdateMessage(SERVER_ID, member.clientID));
-      }
 
       // Add client to the conversation as a member.
       conversation.addMember(client);
