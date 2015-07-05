@@ -9,7 +9,7 @@ public class ConversationElement implements  Comparable<ConversationElement>{
    public final int connectionID;
    public final int conversationID;
 
-   public ConversationElement(int connectionID, int conversationID, String conversationName) {
+   public ConversationElement(int connectionID, int conversationID) {
       this.connectionID = connectionID;
       this.conversationID = conversationID;
    }

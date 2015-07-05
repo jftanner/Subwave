@@ -18,13 +18,13 @@ public class ChatCard extends JPanel {
    private JTextArea outputArea;
    private JTextField inputField;
 
-   public ChatCard(SubwaveClientGUI parentUI, int connectionID, int conversationID) {
+   public ChatCard(SubwaveClientGUI parentUI, ConversationElement conversation) {
       super(new BorderLayout());
 
       // Save parameters
       this.parentUI = parentUI;
-      this.connectionID = connectionID;
-      this.conversationID = conversationID;
+      this.connectionID = conversation.connectionID;
+      this.conversationID = conversation.conversationID;
 
       // Create label
       String conversationName = SubwaveClient.getName(connectionID, conversationID);

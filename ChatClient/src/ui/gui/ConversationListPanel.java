@@ -1,6 +1,8 @@
 package com.tanndev.subwave.client.ui.gui;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,8 +12,9 @@ import java.awt.event.ActionListener;
  */
 public class ConversationListPanel extends JPanel {
 
-   SubwaveClientGUI parentUI;
-   DefaultListModel<ConversationElement> conversationListModel;
+   private SubwaveClientGUI parentUI;
+   private DefaultListModel<ConversationElement> conversationListModel;
+   private JList<ConversationElement> conversationList;
 
 
    public ConversationListPanel(SubwaveClientGUI parentUI) {
@@ -24,11 +27,7 @@ public class ConversationListPanel extends JPanel {
       JLabel labelConversations = new JLabel("Conversations you've joined:");
 
       // Create the conversation list
-      conversationListModel = new DefaultListModel<ConversationElement>();
-      JList conversationList = new JList(conversationListModel);
-      conversationList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-      JScrollPane scrollPane = new JScrollPane(conversationList);
-      scrollPane.setPreferredSize(new Dimension(200, 150));
+      JScrollPane scrollPane = createConversationList();
 
       // Create button panel
       JPanel buttonPanel = createButtonPanel();
@@ -37,6 +36,23 @@ public class ConversationListPanel extends JPanel {
       add(labelConversations, BorderLayout.PAGE_START);
       add(scrollPane, BorderLayout.CENTER);
       add(buttonPanel, BorderLayout.SOUTH);
+   }
+
+   private JScrollPane createConversationList() {
+      conversationListModel = new DefaultListModel<ConversationElement>();
+      conversationList = new JList<ConversationElement>(conversationListModel);
+      conversationList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+      JScrollPane scrollPane = new JScrollPane(conversationList);
+      scrollPane.setPreferredSize(new Dimension(200, 150));
+
+      conversationList.addListSelectionListener(new ListSelectionListener() {
+         @Override
+         public void valueChanged(ListSelectionEvent e) {
+            switchToSelectedConversation();
+         }
+      });
+
+      return scrollPane;
    }
 
    private JPanel createButtonPanel() {
@@ -50,15 +66,29 @@ public class ConversationListPanel extends JPanel {
       button.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            //TODO parentUI.commandConversationLeave();
+            leaveSelectedConversation();
          }
       });
       return button;
    }
 
-   protected void addConversation(ConversationElement conversation) {
-      if (conversationListModel == null || conversation == null) return;
+   private void switchToSelectedConversation() {
+      ConversationElement conversation = conversationList.getSelectedValue();
+      parentUI.switchToConversation(conversation);
+   }
 
+   private void leaveSelectedConversation() {
+      ConversationElement conversation = conversationList.getSelectedValue();
+      conversationListModel.removeElement(conversation);
+      parentUI.commandConversationLeave();
+   }
+
+   protected void addConversation(ConversationElement conversation) {
+      if (conversationListModel == null) return;
       conversationListModel.addElement(conversation);
+   }
+
+   protected void selectConversation(ConversationElement conversation) {
+      conversationList.setSelectedValue(conversation, true);
    }
 }

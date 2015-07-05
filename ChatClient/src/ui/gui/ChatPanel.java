@@ -13,7 +13,7 @@ public class ChatPanel extends JPanel {
    private SubwaveClientGUI parentUI;
    private CardLayout cardLayout;
    private ConcurrentHashMap<String, ChatCard> cardMap = new ConcurrentHashMap<String, ChatCard>();
-   private int displayedConversationID;
+   private ConversationElement displayedConversation;
 
    public ChatPanel(SubwaveClientGUI parentUI) {
       super(new CardLayout());
@@ -30,36 +30,46 @@ public class ChatPanel extends JPanel {
       add(blankCard, BLANK_CARD_NAME);
    }
 
-   public void displayConversation(int connectionID, int conversationID) {
-      cardLayout.show(this, buildCardName(connectionID, conversationID));
-      displayedConversationID = conversationID;
+   public void displayConversation(ConversationElement conversation) {
+      cardLayout.show(this, buildCardName(conversation));
+      displayedConversation = conversation;
       parentUI.repaint();
    }
 
-   public void addConversation(int connectionID, int conversationID) {
-      ChatCard chatCard = new ChatCard(parentUI, connectionID, conversationID);
-      String cardName = buildCardName(connectionID, conversationID);
+   public void addConversation(ConversationElement conversation) {
+      ChatCard chatCard = new ChatCard(parentUI, conversation);
+      String cardName = buildCardName(conversation);
       add(chatCard, cardName);
       cardMap.put(cardName, chatCard);
-      displayConversation(connectionID, conversationID);
+      displayConversation(conversation);
    }
 
-   public void postMessage(int connectionID, int conversationID, String message) {
-      ChatCard chatCard = cardMap.get(buildCardName(connectionID, conversationID));
+   public void removeConversation(ConversationElement conversation) {
+      String cardName = buildCardName(conversation);
+      ChatCard chatCard = cardMap.get(cardName);
+      if (chatCard == null) return;
+      remove(chatCard);
+      cardLayout.show(this, BLANK_CARD_NAME);
+      displayedConversation = conversation;
+      parentUI.repaint();
+   }
+
+   public void postMessage(ConversationElement conversation, String message) {
+      ChatCard chatCard = cardMap.get(buildCardName(conversation));
       if (chatCard == null) return;
 
       chatCard.postMessage(message);
 
       // Show conversation automatically
       // TODO indicate new messages and let user change instead.
-      displayConversation(connectionID, conversationID);
+      displayConversation(conversation);
    }
 
-   public int getDisplayedConversationID() {
-      return displayedConversationID;
+   public ConversationElement getDisplayedConversation() {
+      return displayedConversation;
    }
 
-   private String buildCardName(int connectionID, int conversationID) {
-      return "connection " + connectionID + ", conversation " + conversationID;
+   private String buildCardName(ConversationElement conversation) {
+      return "connection " + conversation.connectionID + ", conversation " + conversation.conversationID;
    }
 }

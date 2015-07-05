@@ -14,14 +14,13 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SubwaveClientGUI extends ClientUIFramework {
 
-   protected JFrame parentFrame;
-   protected ConversationListPanel conversationListPanel;
-   protected PeerListPanel peerListPanel;
-   protected ChatPanel chatPanel;
    protected SubwaveClientGUI uiRoot;
    protected int serverConnectionID;
    protected int myClientID;
-
+   private JFrame parentFrame;
+   private ConversationListPanel conversationListPanel;
+   private PeerListPanel peerListPanel;
+   private ChatPanel chatPanel;
    private ConcurrentHashMap<Integer, PeerElement> peerMap = new ConcurrentHashMap<Integer, PeerElement>();
    private ConcurrentHashMap<Integer, ConversationElement> conversationMap = new ConcurrentHashMap<Integer, ConversationElement>();
 
@@ -124,6 +123,10 @@ public class SubwaveClientGUI extends ClientUIFramework {
       System.exit(0);
    }
 
+   public void switchToConversation(ConversationElement conversation) {
+      chatPanel.displayConversation(conversation);
+   }
+
    public void commandConversationNew() {
       // Ask for a friendly name:
       String conversationName = Defaults.DEFAULT_CONVERSATION_NAME;
@@ -144,11 +147,23 @@ public class SubwaveClientGUI extends ClientUIFramework {
 
    public void commandConversationInvite(int targetClientID) {
       // Get the conversation
-      int conversationID = chatPanel.getDisplayedConversationID();
-      if (conversationID < 1) return;
+      ConversationElement conversation = chatPanel.getDisplayedConversation();
+      if (conversation == null) return;
 
-      // Build the message
-      SubwaveClient.sendConversationInvite(serverConnectionID, conversationID, targetClientID);
+      // Send the invitation
+      SubwaveClient.sendConversationInvite(conversation.connectionID, conversation.conversationID, targetClientID);
+   }
+
+   public void commandConversationLeave() {
+      // Get the conversation
+      ConversationElement conversation = chatPanel.getDisplayedConversation();
+      if (conversation == null) return;
+
+      // Tell the server
+      SubwaveClient.sendConversationLeave(conversation.connectionID, conversation.conversationID);
+
+
+      chatPanel.removeConversation(conversation);
    }
 
    public void commandMessageSend(int connectionID, int conversationID, String messageBody) {
@@ -163,39 +178,39 @@ public class SubwaveClientGUI extends ClientUIFramework {
    public void handleChatMessage(int connectionID, int conversationID, int sourceClientID, String message) {
       String senderName = SubwaveClient.getName(connectionID, sourceClientID);
       String stringToPost = senderName + " says \"" + message + "\"";
-      chatPanel.postMessage(connectionID, conversationID, stringToPost);
+      chatPanel.postMessage(conversationMap.get(conversationID), stringToPost);
    }
 
    @Override
    public void handleChatEmote(int connectionID, int conversationID, int sourceClientID, String message) {
       String senderName = SubwaveClient.getName(connectionID, sourceClientID);
       String stringToPost = senderName + " " + message;
-      chatPanel.postMessage(connectionID, conversationID, stringToPost);
+      chatPanel.postMessage(conversationMap.get(conversationID), stringToPost);
    }
 
    @Override
    public void handleConversationInvite(int connectionID, int conversationID, int sourceClientID, String conversationName) {
-      ConversationElement conversationElement = new ConversationElement(connectionID, conversationID, conversationName);
-      conversationListPanel.addConversation(conversationElement);
+      ConversationElement conversation = new ConversationElement(serverConnectionID, conversationID);
+      conversationListPanel.addConversation(conversation);
 
       // Join automatically
       // TODO Ask user if they'd like to join.
       SubwaveClient.sendConversationJoin(connectionID, conversationID);
-      chatPanel.addConversation(connectionID, conversationID);
+      chatPanel.addConversation(conversationMap.get(conversationID));
    }
 
    @Override
    public void handleConversationJoin(int connectionID, int conversationID, int sourceClientID, String message) {
       String senderName = SubwaveClient.getName(connectionID, sourceClientID);
       String stringToPost = senderName + " has JOINED the conversation.";
-      chatPanel.postMessage(connectionID, conversationID, stringToPost);
+      chatPanel.postMessage(conversationMap.get(conversationID), stringToPost);
    }
 
    @Override
    public void handleConversationLeave(int connectionID, int conversationID, int sourceClientID) {
       String senderName = SubwaveClient.getName(connectionID, sourceClientID);
       String stringToPost = senderName + " has LEFT the conversation.";
-      chatPanel.postMessage(connectionID, conversationID, stringToPost);
+      chatPanel.postMessage(conversationMap.get(conversationID), stringToPost);
    }
 
    @Override
