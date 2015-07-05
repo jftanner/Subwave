@@ -125,6 +125,21 @@ public class SubwaveClientGUI extends ClientUIFramework {
    }
 
    public void commandConversationNew() {
+      // Ask for a friendly name:
+      String conversationName = Defaults.DEFAULT_CONVERSATION_NAME;
+      String userAnswer = (String) JOptionPane.showInputDialog(parentFrame,
+            "What would you like to name the conversation?",
+            "New Conversation",
+            JOptionPane.PLAIN_MESSAGE,
+            null,
+            null,
+            Defaults.DEFAULT_CONVERSATION_NAME);
+      if (userAnswer != null && userAnswer.length() > 0) {
+         conversationName = userAnswer;
+      }
+      // TODO handle cancel
+
+      SubwaveClient.sendConversationNew(serverConnectionID, conversationName);
    }
 
    public void commandMessageSend(int connectionID, int conversationID, String messageBody) {

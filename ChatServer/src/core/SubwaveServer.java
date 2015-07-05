@@ -337,13 +337,11 @@ public class SubwaveServer {
       String conversationName = message.messageBody;
       if (conversationName == null || conversationName.trim().length() < 1)
          conversationName = Defaults.DEFAULT_CONVERSATION_NAME;
-      Conversation conversation = addConversation(conversationID, conversationName);
+      addConversation(conversationID, conversationName);
 
-      // Send the conversation name to the client
-      connection.send(getNameUpdateMessage(conversationID, SERVER_ID));
-
-      // Add client to the conversation as a member. On fail, remove the conversation.
-      if (!conversation.addMember(client)) removeConversation(conversationID);
+      // Auto-invite the client to join the new conversation.
+      Message invitation = new Message(MessageType.CONVERSATION_INVITE, conversationID, connection.getClientID(), conversationName);
+      connection.send(invitation);
    }
 
    private static void handleConversationInvite(Connection connection, Message message) {
