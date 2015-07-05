@@ -8,7 +8,6 @@ import com.tanndev.subwave.common.*;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -38,26 +37,11 @@ public class SubwaveClient {
    private static ConcurrentHashMap<Integer, Map<Integer, String>> nameMaps = new ConcurrentHashMap<Integer, Map<Integer, String>>();
 
    public static void main(String[] args) {
-      // TODO parse arguements
-      // Get server address and port from arguments, if there.
-//      String serverAddress = null;
-//      int serverPort = 0;
-//      if (args.length > 0) serverAddress = args[0];
-//      try {
-//         if (args.length > 1) serverPort = Integer.parseInt(args[1]);
-//      } catch (NumberFormatException e) {}
-
-      // Get login information from the user
-      Scanner scan = new Scanner(System.in);
-
-      // Get friendly name
-      System.out.println("What name would you like to use? (Leave blank for default.)");
-      String friendlyName = scan.nextLine().trim();
-      if (friendlyName.length() < 1) friendlyName = null;
 
       // Start the UI
-      if (args.length > 0 && args[0].equalsIgnoreCase("-tui")) ui = new ClientTUI(null, 0, friendlyName);
-      else ui = new SubwaveClientGUI(null, 0, friendlyName);
+      if (args.length > 0 && args[0].equalsIgnoreCase("-tui")) {
+         ui = new ClientTUI();
+      } else ui = new SubwaveClientGUI();
       ui.start();
    }
 

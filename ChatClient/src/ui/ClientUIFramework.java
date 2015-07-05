@@ -13,9 +13,6 @@ import com.tanndev.subwave.common.Message;
  */
 public abstract class ClientUIFramework extends Thread {
 
-   public ClientUIFramework() {}
-   public ClientUIFramework(String serverAddress, int port, String friendlyName) {}
-
    /**
     * This method must be implemented by all subclasses.
     * <p/>

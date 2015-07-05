@@ -34,7 +34,28 @@ public class ClientTUI extends ClientUIFramework {
     * @see com.tanndev.subwave.common.Connection
     * @see com.tanndev.subwave.common.Connection#setPrintMessages(boolean)
     */
-   public ClientTUI(String serverAddress, int port, String friendlyName) {
+   public ClientTUI() {
+      // Get login information from the user
+      Scanner scan = new Scanner(System.in);
+      String serverAddress = Defaults.DEFAULT_SERVER_ADDRESS;
+      int port = Defaults.DEFAULT_SERVER_PORT;
+      String friendlyName = Defaults.DEFAULT_NICKNAME;
+
+      // Get connection
+      System.out.println("Where would you like to connect? Use \"address:port\" form. (Leave blank for default.)");
+      String userAnswer = scan.nextLine().trim();
+      if (userAnswer != null && userAnswer.length() > 0) {
+         String[] splitArray = userAnswer.split(":");
+         serverAddress = splitArray[0];
+         port = Integer.parseInt(splitArray[1]);
+         // TODO Parse this more carefully.
+      }
+
+      // Get friendly name
+      System.out.println("What name would you like to use? (Leave blank for default.)");
+      userAnswer = scan.nextLine().trim();
+      if (userAnswer.length() > 0) friendlyName = userAnswer;
+
       // Attempt to open the connection.
       serverConnectionID = SubwaveClient.connectToServer(serverAddress, port, friendlyName);
       if (serverConnectionID == 0) {

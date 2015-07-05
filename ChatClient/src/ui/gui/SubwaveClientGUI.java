@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SubwaveClientGUI extends ClientUIFramework {
 
+   protected JFrame parentFrame;
    protected ConversationListPanel conversationListPanel;
    protected PeerListPanel peerListPanel;
    protected ChatPanel chatPanel;
@@ -24,7 +25,7 @@ public class SubwaveClientGUI extends ClientUIFramework {
    private ConcurrentHashMap<Integer, PeerElement> peerMap = new ConcurrentHashMap<Integer, PeerElement>();
    private ConcurrentHashMap<Integer, ConversationElement> conversationMap = new ConcurrentHashMap<Integer, ConversationElement>();
 
-   public SubwaveClientGUI(String serverAddress, int port, String friendlyName) {
+   public SubwaveClientGUI() {
       // Set the UI root
       uiRoot = this;
 
@@ -32,9 +33,9 @@ public class SubwaveClientGUI extends ClientUIFramework {
       Runnable task = new Runnable() {
          public void run() {
             //Create and set up the window.
-            JFrame frame = new JFrame("Subwave Client");
-            frame.setLocationRelativeTo(null);
-            frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            parentFrame = new JFrame("Subwave Client");
+            parentFrame.setLocationRelativeTo(null);
+            parentFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
             // Create side bar
             JPanel sideBar = new JPanel(new GridLayout(0, 1));
@@ -50,11 +51,11 @@ public class SubwaveClientGUI extends ClientUIFramework {
             mainPanel.add(chatPanel, BorderLayout.CENTER);
 
             // Put the content pane in the frame
-            frame.add(mainPanel);
+            parentFrame.add(mainPanel);
 
             //Display the window.
-            frame.pack();
-            frame.setVisible(true);
+            parentFrame.pack();
+            parentFrame.setVisible(true);
 
             synchronized (this) {
                this.notifyAll();
@@ -71,6 +72,36 @@ public class SubwaveClientGUI extends ClientUIFramework {
          } catch (InterruptedException e) {
             ErrorHandler.logError("Exception thrown while waiting for UI.", e);
          }
+      }
+
+      // Ask for connection information:
+      String serverAddress = Defaults.DEFAULT_SERVER_ADDRESS;
+      int port = Defaults.DEFAULT_SERVER_PORT;
+      String friendlyName = Defaults.DEFAULT_NICKNAME;
+      String connectionResponse = (String) JOptionPane.showInputDialog(parentFrame,
+            "Where would you like to connect?",
+            "Subwave Client Connecting...",
+            JOptionPane.PLAIN_MESSAGE,
+            null,
+            null,
+            Defaults.DEFAULT_SERVER_ADDRESS + ":" + Defaults.DEFAULT_SERVER_PORT);
+      if (connectionResponse != null && connectionResponse.length() > 0) {
+         String[] splitArray = connectionResponse.split(":");
+         serverAddress = splitArray[0];
+         port = Integer.parseInt(splitArray[1]);
+         // TODO Parse this more carefully.
+      }
+
+      // Ask for a friendly name:
+      connectionResponse = (String) JOptionPane.showInputDialog(parentFrame,
+            "What nickname would you like to use?",
+            "Subwave Client Connecting...",
+            JOptionPane.PLAIN_MESSAGE,
+            null,
+            null,
+            Defaults.DEFAULT_NICKNAME);
+      if (connectionResponse != null && connectionResponse.length() > 0) {
+         friendlyName = connectionResponse;
       }
 
       // Attempt to open the connection.

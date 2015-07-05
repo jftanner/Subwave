@@ -26,6 +26,7 @@ public class ConversationListPanel extends JPanel {
       // Create the conversation list
       conversationListModel = new DefaultListModel<ConversationElement>();
       JList conversationList = new JList(conversationListModel);
+      conversationList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       JScrollPane scrollPane = new JScrollPane(conversationList);
       scrollPane.setPreferredSize(new Dimension(200, 150));
 
