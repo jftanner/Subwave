@@ -160,6 +160,16 @@ public class SubwaveClient {
       removeConnectionFromMap(connectionID);
    }
 
+   public static int getMyClientID(int connectionID) {
+      // Get the connection from the connectionID
+      Connection connection = connectionMap.get(connectionID);
+
+      // Avoid possible null pointer exception.
+      if (connection == null) return -1;
+
+      return connection.getClientID();
+   }
+
    /**
     * Sets the {@link Connection#printMessages} flag.
     *

@@ -19,6 +19,7 @@ public class SubwaveClientGUI extends ClientUIFramework {
    protected ChatPanel chatPanel;
    protected SubwaveClientGUI uiRoot;
    protected int serverConnectionID;
+   protected int myClientID;
 
    private ConcurrentHashMap<Integer, PeerElement> peerMap = new ConcurrentHashMap<Integer, PeerElement>();
    private ConcurrentHashMap<Integer, ConversationElement> conversationMap = new ConcurrentHashMap<Integer, ConversationElement>();
@@ -79,6 +80,7 @@ public class SubwaveClientGUI extends ClientUIFramework {
          ErrorHandler.logError("No server connection for GUI to use.");
          System.exit(0);
       }
+      myClientID = SubwaveClient.getMyClientID(serverConnectionID);
    }
 
    public void shutdown() {
@@ -133,6 +135,9 @@ public class SubwaveClientGUI extends ClientUIFramework {
 
    @Override
    public void handleNetworkConnect(int connectionID, int clientID, String friendlyName) {
+      // Ignore connect messages regarding this client.
+      if (clientID == myClientID) return;
+
       // Add a new peer to the map.
       PeerElement peer = new PeerElement(connectionID, clientID);
       if (peerMap.putIfAbsent(clientID, peer) != null) return;
