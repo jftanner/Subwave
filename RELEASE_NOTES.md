@@ -1,3 +1,15 @@
+# v0.0.4
+## New Features:
+- Conversation switching in the client GUI (Issue #41)
+- Conversations are now highlighted when they have new messages.
+
+## Fixes:
+- Conversation list no longer can get duplicates with repeated invites. (Issue #39)
+
+** Known Issues
+- A second server throws an exception if launched with the same port (Issue #34)
+- Various TUI features unimplemented or broken with GUI upgrade
+
 # v0.0.3
 ## New Features:
 - Client GUI added

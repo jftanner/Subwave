@@ -21,14 +21,12 @@ This is an extremely early version and development is ongoing.
 - See the [Travis CI](https://travis-ci.org/tanndev/Subwave) page to check the success of build tasks.
 
 ## Server Instructions
-As of version 0.0.2, there is now a GUI for the server that allows it to be run without a command line.
 - Download SubwaveServer.jar.
 - Go to the download location and double click the file. (Or, using a command line, type "java -jar SubwaveServer.jar")
 - The server will start automatically and provide the IP and local port being used.
 - Note: users behind a NAT or firewall will need to configure port forwarding and/or firewall exemptions manually.
 
 ## Client instructions
-As of version 0.0.3, there is now a GUI for the client that allows it to be run without a command line.
 - Download SubwaveClient.jar.
 - Go to the download location and double click the file. (Or, using a command line, type "java -jar SubwaveClient.jar")
 - Enter the server address and port of the remote server, or press enter to use defaults. Use the form "address:port".
@@ -42,11 +40,11 @@ As of version 0.0.3, there is now a GUI for the client that allows it to be run 
  - Click the "Invite to Conversation" button.
  - The selected user(s) will be automatically added to your current conversation.
 - To change conversations:
- - NOT IMPLEMENTED in v0.0.3
+ - Click the desired conversation.
+ - Conversations with new messages will be highlighted in bold.
 
 ## Current version limitations
-As of version 0.0.3 there remain a number of limitations and issues:
-- Clients can receive invites to conversations they are already members of (Issue #39)
+As of version 0.0.4 there remain a number of limitations and issues:
 - A second server throws an exception if launched with the same port (Issue #34)
 - Various TUI features are unimplemented or were broken with the GUI upgrade.
  - Some of the features will be implemented or repaired in a future release.
