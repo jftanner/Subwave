@@ -23,7 +23,7 @@ public class SubwaveClientGUI extends ClientUIFramework {
    private ConcurrentHashMap<Integer, PeerElement> peerMap = new ConcurrentHashMap<Integer, PeerElement>();
    private ConcurrentHashMap<Integer, ConversationElement> conversationMap = new ConcurrentHashMap<Integer, ConversationElement>();
 
-   public SubwaveClientGUI() {
+   public SubwaveClientGUI(String serverAddress, int port, String friendlyName) {
       // Set the UI root
       uiRoot = this;
 
@@ -74,7 +74,7 @@ public class SubwaveClientGUI extends ClientUIFramework {
 
       // Attempt to open the connection.
       // TODO ask instead of defaults
-      serverConnectionID = SubwaveClient.connectToServer(null, 0, null);
+      serverConnectionID = SubwaveClient.connectToServer(serverAddress, port, friendlyName);
       if (serverConnectionID == 0) {
          ErrorHandler.logError("No server connection for GUI to use.");
          System.exit(0);

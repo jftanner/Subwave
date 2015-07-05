@@ -56,10 +56,9 @@ public class SubwaveClient {
       if (friendlyName.length() < 1) friendlyName = null;
 
       // Start the UI
-      if (args.length > 0 && args[0].equalsIgnoreCase("-tui")) {
-         ui = new ClientTUI(null, 0, friendlyName);
-         ui.start();
-      } else ui = new SubwaveClientGUI();
+      if (args.length > 0 && args[0].equalsIgnoreCase("-tui")) ui = new ClientTUI(null, 0, friendlyName);
+      else ui = new SubwaveClientGUI(null, 0, friendlyName);
+      ui.start();
    }
 
    /**
@@ -73,6 +72,7 @@ public class SubwaveClient {
     *
     * @return connectionID of the new connection. If no connection is made successfully, returns zero.
     */
+
    public static int connectToServer(String serverAddress, int port, String nickname) {
       // Check parameters and assign defaults if necessary.
       if (serverAddress == null) serverAddress = Defaults.DEFAULT_SERVER_ADDRESS;
