@@ -125,25 +125,36 @@ public class SubwaveClientGUI extends ClientUIFramework {
    }
 
    public void commandConversationNew() {
+   }
 
+   public void commandMessageSend(int connectionID, int conversationID, String messageBody) {
+      if (messageBody.length() > 0) SubwaveClient.sendChatMessage(connectionID, conversationID, messageBody);
+      // TODO Check for emotes and other escape commands.
    }
 
    @Override
    public void handleChatMessage(int connectionID, int conversationID, int sourceClientID, String message) {
-      super.handleChatMessage(connectionID, conversationID, sourceClientID, message);
+      String senderName = SubwaveClient.getName(connectionID, sourceClientID);
+      String stringToPost = senderName + " says \"" + message + "\"";
+      chatPanel.postMessage(connectionID, conversationID, stringToPost);
    }
 
    @Override
    public void handleChatEmote(int connectionID, int conversationID, int sourceClientID, String message) {
-      super.handleChatEmote(connectionID, conversationID, sourceClientID, message);
+      String senderName = SubwaveClient.getName(connectionID, sourceClientID);
+      String stringToPost = senderName + " " + message;
+      chatPanel.postMessage(connectionID, conversationID, stringToPost);
    }
 
    @Override
    public void handleConversationInvite(int connectionID, int conversationID, int sourceClientID, String conversationName) {
       ConversationElement conversationElement = new ConversationElement(connectionID, conversationID, conversationName);
       conversationListPanel.addConversation(conversationElement);
+
       // Join automatically
+      // TODO Ask user if they'd like to join.
       SubwaveClient.sendConversationJoin(connectionID, conversationID);
+      chatPanel.addConversation(connectionID, conversationID);
    }
 
    @Override
