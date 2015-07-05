@@ -31,12 +31,14 @@ public class ChatPanel extends JPanel {
    }
 
    public void displayConversation(ConversationElement conversation) {
+      if (conversation == null) return;
       cardLayout.show(this, buildCardName(conversation));
       displayedConversation = conversation;
       parentUI.repaint();
    }
 
    public void addConversation(ConversationElement conversation) {
+      if (conversation == null) return;
       ChatCard chatCard = new ChatCard(parentUI, conversation);
       String cardName = buildCardName(conversation);
       add(chatCard, cardName);
@@ -45,6 +47,7 @@ public class ChatPanel extends JPanel {
    }
 
    public void removeConversation(ConversationElement conversation) {
+      if (conversation == null) return;
       String cardName = buildCardName(conversation);
       ChatCard chatCard = cardMap.get(cardName);
       if (chatCard == null) return;
@@ -55,6 +58,7 @@ public class ChatPanel extends JPanel {
    }
 
    public void postMessage(ConversationElement conversation, String message) {
+      if (conversation == null) return;
       ChatCard chatCard = cardMap.get(buildCardName(conversation));
       if (chatCard == null) return;
 
