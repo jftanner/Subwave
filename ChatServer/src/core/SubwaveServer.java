@@ -3,6 +3,7 @@ package com.tanndev.subwave.server.core;
 import com.tanndev.subwave.common.*;
 import com.tanndev.subwave.server.ui.BasicServerGUI;
 
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -69,6 +70,10 @@ public class SubwaveServer {
       // Add the name to the name list.
       nameMap.put(clientID, nickname);
 
+      // Broadcast message to all users
+      Message message = new Message(MessageType.NETWORK_CONNECT, SERVER_ID, clientID, nickname);
+      broadcastToAll(message);
+
       return client;
    }
 
@@ -91,6 +96,10 @@ public class SubwaveServer {
       if (client != null) {
          client.clientConnection.close();
          System.out.println("DC - ClientID: " + clientID);
+
+         // Broadcast message to all users
+         Message message = new Message(MessageType.NETWORK_DISCONNECT, SERVER_ID, clientID, Message.CLIENT_DISCONNECTED);
+         broadcastToAll(message);
       }
    }
 
@@ -175,7 +184,8 @@ public class SubwaveServer {
     * @param message message to broadcast to all clients
     */
    public static void broadcastToAll(Message message) {
-      for (Client client : clientMap.values()) {
+      Collection<Client> clients = clientMap.values();
+      for (Client client : clients) {
          client.clientConnection.send(message);
       }
    }

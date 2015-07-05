@@ -40,10 +40,10 @@ public class SubwaveClientGUI extends ClientUIFramework {
 
             // Create side bar
             JPanel sideBar = new JPanel(new GridLayout(0, 1));
-            clientListPanel = new ClientListPanel(uiRoot);
-            sideBar.add(clientListPanel);
             conversationListPanel = new ConversationListPanel(uiRoot);
+            clientListPanel = new ClientListPanel(uiRoot);
             sideBar.add(conversationListPanel);
+            sideBar.add(clientListPanel);
 
             //Create main panel
             JPanel mainPanel = new JPanel(new BorderLayout());
