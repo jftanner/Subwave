@@ -141,7 +141,7 @@ public class SubwaveClient {
     * <p/>
     * The connection is closed regardless of whether or not the disconnect message is sent successfully.
     *
-    * @param connection connection to disconnect and close
+    * @param connectionID connection to disconnect and close
     */
    public static void disconnectFromServer(int connectionID) {
       // Get the connection from the connectionID
@@ -195,7 +195,7 @@ public class SubwaveClient {
          ErrorHandler.logError("Client UI is not bound to SubwaveClient.");
          Message reply = new Message(MessageType.REFUSE, message.conversationID, connection.getClientID(), Message.CRITICAL_ERROR);
          connection.send(reply);
-         return;
+         System.exit(1);
       }
 
       // Unpack message data

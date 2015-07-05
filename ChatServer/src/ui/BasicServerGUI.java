@@ -1,5 +1,7 @@
 package com.tanndev.subwave.server.ui;
 
+import com.tanndev.subwave.common.ErrorHandler;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -56,7 +58,7 @@ public class BasicServerGUI extends JPanel {
             //Create and set up the window.
             JFrame frame = new JFrame("Subwave Server");
             frame.setLocationRelativeTo(null);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
             //Add contents to the window.
             frame.add(new BasicServerGUI());
@@ -80,10 +82,10 @@ public class BasicServerGUI extends JPanel {
       // Wait on the task.
       try {
          synchronized (task) {
-            task.wait();
+            task.wait(1000);
          }
       } catch (InterruptedException e) {
-         e.printStackTrace();
+         ErrorHandler.logError("Exception thrown while waiting for UI.", e);
       }
    }
 

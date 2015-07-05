@@ -35,7 +35,7 @@ public class SubwaveClientGUI extends ClientUIFramework {
       uiRoot = this;
 
       // Make a runnable task to create the conversation list panel
-      Runnable createAndShowGUI = new Runnable() {
+      Runnable task = new Runnable() {
          public void run() {
             //Create and set up the window.
             JFrame frame = new JFrame("Subwave Client");
@@ -61,11 +61,23 @@ public class SubwaveClientGUI extends ClientUIFramework {
             //Display the window.
             frame.pack();
             frame.setVisible(true);
+
+            synchronized (this) {
+               this.notifyAll();
+            }
          }
       };
 
       // Schedule a thread to run the new task.
-      javax.swing.SwingUtilities.invokeLater(createAndShowGUI);
+      javax.swing.SwingUtilities.invokeLater(task);
+
+      synchronized (task) {
+         try {
+            uiRoot.wait(1000);
+         } catch (InterruptedException e) {
+            ErrorHandler.logError("Exception thrown while waiting for UI.", e);
+         }
+      }
    }
 
    public void shutdown() {
