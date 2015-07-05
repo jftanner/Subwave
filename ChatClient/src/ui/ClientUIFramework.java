@@ -28,9 +28,9 @@ public abstract class ClientUIFramework extends Thread {
 
    public void handleConversationInvite(int connectionID, int conversationID, int sourceClientID, String conversationName) {handleUnhandled(connectionID, conversationID, sourceClientID, conversationName);}
 
-   public void handleConversationJoin(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
+   public void handleConversationJoin(int connectionID, int conversationID, int sourceClientID, String sourceClientNickname) {handleUnhandled(connectionID, conversationID, sourceClientID, sourceClientNickname);}
 
-   public void handleConversationLeave(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
+   public void handleConversationLeave(int connectionID, int conversationID, int sourceClientID) {handleUnhandled(connectionID, conversationID, sourceClientID, Message.LEFT_CONVERSATION);}
 
    /**
     * Called whenever a name is updated.
@@ -54,7 +54,7 @@ public abstract class ClientUIFramework extends Thread {
 
    public void handleNetworkConnect(int connectionID, int clientID, String friendlyName) {handleUnhandled(connectionID, 0, clientID, friendlyName);}
 
-   public void handleNetworkDisconnect(int connectionID, int clientID) {handleUnhandled(connectionID, 0, clientID, Message.DISCONNECT_INTENT);}
+   public void handleNetworkDisconnect(int connectionID, int clientID) {handleUnhandled(connectionID, 0, clientID, Message.CLIENT_DISCONNECTED);}
 
    public void handleDebug(int connectionID, int conversationID, int clientID, String message) {
    /*

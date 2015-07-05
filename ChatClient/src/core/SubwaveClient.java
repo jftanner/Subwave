@@ -231,7 +231,7 @@ public class SubwaveClient {
 
          case CONVERSATION_LEAVE: // Client wants to leave a conversation
             // TODO Handle conversation leave
-            ui.handleConversationLeave(connectionID, conversationID, clientID, messageBody);
+            ui.handleConversationLeave(connectionID, conversationID, clientID);
             break;
 
          case NAME_UPDATE: // Client wants to change a friendly name

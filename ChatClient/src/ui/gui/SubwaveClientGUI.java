@@ -12,11 +12,11 @@ import java.awt.*;
  */
 public class SubwaveClientGUI extends ClientUIFramework {
 
-   protected static ConversationListPanel conversationListPanel;
-   protected static ClientListPanel clientListPanel;
-   protected static ChatPanel chatPanel;
-   protected static SubwaveClientGUI uiRoot;
-   protected static int serverConnectionID;
+   protected ConversationListPanel conversationListPanel;
+   protected ClientListPanel clientListPanel;
+   protected ChatPanel chatPanel;
+   protected SubwaveClientGUI uiRoot;
+   protected int serverConnectionID;
 
    public SubwaveClientGUI() {
       // Attempt to open the connection.
@@ -95,8 +95,8 @@ public class SubwaveClientGUI extends ClientUIFramework {
    }
 
    @Override
-   public void handleConversationLeave(int connectionID, int conversationID, int sourceClientID, String message) {
-      super.handleConversationLeave(connectionID, conversationID, sourceClientID, message);
+   public void handleConversationLeave(int connectionID, int conversationID, int sourceClientID) {
+      super.handleConversationLeave(connectionID, conversationID, sourceClientID);
    }
 
    @Override
