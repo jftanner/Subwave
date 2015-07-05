@@ -6,6 +6,7 @@ import com.tanndev.subwave.common.ErrorHandler;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by James Tanner on 7/2/2015.
@@ -13,10 +14,13 @@ import java.awt.*;
 public class SubwaveClientGUI extends ClientUIFramework {
 
    protected ConversationListPanel conversationListPanel;
-   protected ClientListPanel clientListPanel;
+   protected PeerListPanel peerListPanel;
    protected ChatPanel chatPanel;
    protected SubwaveClientGUI uiRoot;
    protected int serverConnectionID;
+
+   private ConcurrentHashMap<Integer, PeerElement> peerMap = new ConcurrentHashMap<Integer, PeerElement>();
+   private ConcurrentHashMap<Integer, ConversationElement> conversationMap = new ConcurrentHashMap<Integer, ConversationElement>();
 
    public SubwaveClientGUI() {
       // Attempt to open the connection.
@@ -41,9 +45,9 @@ public class SubwaveClientGUI extends ClientUIFramework {
             // Create side bar
             JPanel sideBar = new JPanel(new GridLayout(0, 1));
             conversationListPanel = new ConversationListPanel(uiRoot);
-            clientListPanel = new ClientListPanel(uiRoot);
+            peerListPanel = new PeerListPanel(uiRoot);
             sideBar.add(conversationListPanel);
-            sideBar.add(clientListPanel);
+            sideBar.add(peerListPanel);
 
             //Create main panel
             JPanel mainPanel = new JPanel(new BorderLayout());
@@ -116,12 +120,22 @@ public class SubwaveClientGUI extends ClientUIFramework {
 
    @Override
    public void handleNetworkConnect(int connectionID, int clientID, String friendlyName) {
-      super.handleNetworkConnect(connectionID, clientID, friendlyName);
+      // Add a new peer to the map.
+      PeerElement peer = new PeerElement(connectionID, clientID);
+      if (peerMap.putIfAbsent(clientID, peer) != null) return;
+
+      // Add the peer to the UI list.
+      peerListPanel.addPeer(peer);
    }
 
    @Override
    public void handleNetworkDisconnect(int connectionID, int clientID) {
-      super.handleNetworkDisconnect(connectionID, clientID);
+      // Remove the peer from the map.
+      PeerElement peer = peerMap.get(clientID);
+      if (peer == null) return;
+
+      // Remove the peer from the UI list.
+      peerListPanel.removePeer(peer);
    }
 
    @Override

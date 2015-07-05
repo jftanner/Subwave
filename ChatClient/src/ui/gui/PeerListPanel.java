@@ -8,13 +8,13 @@ import java.awt.event.ActionListener;
 /**
  * Created by jtanner on 7/3/2015.
  */
-public class ClientListPanel extends JPanel {
+public class PeerListPanel extends JPanel {
 
-   SubwaveClientGUI parentUI;
-   DefaultListModel<ClientElement> clientListModel;
+   private SubwaveClientGUI parentUI;
+   private DefaultListModel<PeerElement> peerListModel;
 
 
-   public ClientListPanel(SubwaveClientGUI parentUI) {
+   public PeerListPanel(SubwaveClientGUI parentUI) {
       super(new BorderLayout());
 
       // Save parent
@@ -24,9 +24,9 @@ public class ClientListPanel extends JPanel {
       JLabel labelClients = new JLabel("Other Users:");
 
       // Create the client list
-      clientListModel = new DefaultListModel<ClientElement>();
-      JList clientList = new JList(clientListModel);
-      JScrollPane scrollPane = new JScrollPane(clientList);
+      peerListModel = new DefaultListModel<PeerElement>();
+      JList peerList = new JList(peerListModel);
+      JScrollPane scrollPane = new JScrollPane(peerList);
       scrollPane.setPreferredSize(new Dimension(200, 150));
 
       // Create button panel
@@ -55,9 +55,15 @@ public class ClientListPanel extends JPanel {
       return button;
    }
 
-   protected void addClient(ClientElement client) {
-      if (clientListModel == null || client == null) return;
+   protected void addPeer(PeerElement peer) {
+      if (peerListModel == null || peer == null) return;
 
-      clientListModel.addElement(client);
+      peerListModel.addElement(peer);
+   }
+
+   protected void removePeer(PeerElement peer) {
+      if (peerListModel == null || peer == null) return;
+
+      peerListModel.removeElement(peer);
    }
 }

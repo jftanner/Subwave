@@ -257,6 +257,14 @@ public class SubwaveClient {
             ui.handleRefuse(connectionID, conversationID, clientID, messageBody);
             break;
 
+         case NETWORK_CONNECT: // Received debug message.
+            ui.handleNetworkConnect(connectionID, clientID, messageBody);
+            break;
+
+         case NETWORK_DISCONNECT: // Received debug message.
+            ui.handleNetworkDisconnect(connectionID, clientID);
+            break;
+
          case DEBUG: // Received debug message.
             ui.handleDebug(connectionID, conversationID, clientID, messageBody);
             break;
