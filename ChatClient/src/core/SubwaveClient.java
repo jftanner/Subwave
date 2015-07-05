@@ -258,6 +258,10 @@ public class SubwaveClient {
             break;
 
          case NETWORK_CONNECT: // Received debug message.
+            // Save the name of the peer client.
+            setName(connectionID, clientID, messageBody);
+
+            // Pass the notification to the UI.
             ui.handleNetworkConnect(connectionID, clientID, messageBody);
             break;
 
