@@ -2,7 +2,7 @@ language: java
 jdk:
 - oraclejdk8
 - oraclejdk7
-- opendjdk6
+- openjdk6
 script: ant deploy
 deploy:
   provider: releases
