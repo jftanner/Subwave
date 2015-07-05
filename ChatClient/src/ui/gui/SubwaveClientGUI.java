@@ -24,14 +24,6 @@ public class SubwaveClientGUI extends ClientUIFramework {
    private ConcurrentHashMap<Integer, ConversationElement> conversationMap = new ConcurrentHashMap<Integer, ConversationElement>();
 
    public SubwaveClientGUI() {
-      // Attempt to open the connection.
-      // TODO ask instead of defaults
-      serverConnectionID = SubwaveClient.connectToServer(null, 0, null);
-      if (serverConnectionID == 0) {
-         ErrorHandler.logError("No server connection for GUI to use.");
-         System.exit(0);
-      }
-
       // Set the UI root
       uiRoot = this;
 
@@ -74,10 +66,18 @@ public class SubwaveClientGUI extends ClientUIFramework {
 
       synchronized (task) {
          try {
-            uiRoot.wait(Defaults.DEFAULT_UI_LAUNCH_WAIT);
+            task.wait(Defaults.DEFAULT_UI_LAUNCH_WAIT);
          } catch (InterruptedException e) {
             ErrorHandler.logError("Exception thrown while waiting for UI.", e);
          }
+      }
+
+      // Attempt to open the connection.
+      // TODO ask instead of defaults
+      serverConnectionID = SubwaveClient.connectToServer(null, 0, null);
+      if (serverConnectionID == 0) {
+         ErrorHandler.logError("No server connection for GUI to use.");
+         System.exit(0);
       }
    }
 
