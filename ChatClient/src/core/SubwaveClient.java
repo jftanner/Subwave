@@ -52,9 +52,8 @@ public class SubwaveClient {
 
       // Get friendly name
 //      System.out.println("What name would you like to use? (Leave blank for default.)");
-//      String friendlyName = scan.nextLine().trim();
-//      if (friendlyName.length() < 1) friendlyName = null;
-      String friendlyName = null;
+      String friendlyName = scan.nextLine().trim();
+      if (friendlyName.length() < 1) friendlyName = null;
 
       // Start the UI
       if (args.length > 0 && args[0].equalsIgnoreCase("-tui")) {
