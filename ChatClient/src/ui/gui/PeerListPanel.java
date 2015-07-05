@@ -41,20 +41,8 @@ public class PeerListPanel extends JPanel {
 
    private JPanel createButtonPanel() {
       JPanel buttonPanel = new JPanel(new GridLayout(0, 1));
-      buttonPanel.add(createConversationNewButton());
       buttonPanel.add(createConversationInviteButton());
       return buttonPanel;
-   }
-
-   private JButton createConversationNewButton() {
-      JButton button = new JButton("New Conversation");
-      button.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            parentUI.commandConversationNew();
-         }
-      });
-      return button;
    }
 
    private JButton createConversationInviteButton() {

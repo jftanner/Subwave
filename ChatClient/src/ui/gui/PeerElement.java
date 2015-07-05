@@ -23,4 +23,9 @@ public class PeerElement implements Comparable<PeerElement> {
       if (result == 0) result = clientID - o.clientID;
       return result;
    }
+
+   @Override
+   public boolean equals(Object o) {
+      return compareTo((PeerElement) o) == 0;
+   }
 }

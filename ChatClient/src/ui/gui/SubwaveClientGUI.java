@@ -125,6 +125,7 @@ public class SubwaveClientGUI extends ClientUIFramework {
 
    public void switchToConversation(ConversationElement conversation) {
       chatPanel.displayConversation(conversation);
+      conversationListPanel.selectConversation(conversation);
    }
 
    public void commandConversationNew() {
@@ -198,6 +199,7 @@ public class SubwaveClientGUI extends ClientUIFramework {
       // TODO Ask user if they'd like to join.
       SubwaveClient.sendConversationJoin(connectionID, conversationID);
       chatPanel.addConversation(conversation);
+      conversation.setNewMessageFlag(true);
    }
 
    @Override

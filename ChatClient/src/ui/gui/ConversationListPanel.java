@@ -41,6 +41,7 @@ public class ConversationListPanel extends JPanel {
    private JScrollPane createConversationList() {
       conversationListModel = new DefaultListModel<ConversationElement>();
       conversationList = new JList<ConversationElement>(conversationListModel);
+      conversationList.setCellRenderer(new ListFlagRenderer());
       conversationList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       JScrollPane scrollPane = new JScrollPane(conversationList);
       scrollPane.setPreferredSize(new Dimension(200, 150));
@@ -57,8 +58,20 @@ public class ConversationListPanel extends JPanel {
 
    private JPanel createButtonPanel() {
       JPanel buttonPanel = new JPanel(new GridLayout(0, 1));
+      buttonPanel.add(createConversationNewButton());
       buttonPanel.add(createConversationLeaveButton());
       return buttonPanel;
+   }
+
+   private JButton createConversationNewButton() {
+      JButton button = new JButton("New Conversation");
+      button.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            parentUI.commandConversationNew();
+         }
+      });
+      return button;
    }
 
    private JButton createConversationLeaveButton() {
@@ -85,10 +98,25 @@ public class ConversationListPanel extends JPanel {
 
    protected void addConversation(ConversationElement conversation) {
       if (conversationListModel == null) return;
+      if (conversationListModel.contains(conversation)) return;
       conversationListModel.addElement(conversation);
    }
 
    protected void selectConversation(ConversationElement conversation) {
       conversationList.setSelectedValue(conversation, true);
+   }
+
+   class ListFlagRenderer extends DefaultListCellRenderer {
+      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+         Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
+         ConversationElement conversation = (ConversationElement) value;
+         if (conversation != null && conversation.hasNewMessage()) {
+            c.setFont(c.getFont().deriveFont(Font.BOLD));
+         } else {
+            c.setFont(c.getFont().deriveFont(Font.PLAIN));
+         }
+         return c;
+      }
    }
 }

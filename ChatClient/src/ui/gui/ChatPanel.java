@@ -34,6 +34,7 @@ public class ChatPanel extends JPanel {
       if (conversation == null) return;
       cardLayout.show(this, buildCardName(conversation));
       displayedConversation = conversation;
+      conversation.setNewMessageFlag(false);
       parentUI.repaint();
    }
 
@@ -43,7 +44,8 @@ public class ChatPanel extends JPanel {
       String cardName = buildCardName(conversation);
       add(chatCard, cardName);
       cardMap.put(cardName, chatCard);
-      displayConversation(conversation);
+      conversation.setNewMessageFlag(true);
+      parentUI.repaint();
    }
 
    public void removeConversation(ConversationElement conversation) {
@@ -61,12 +63,9 @@ public class ChatPanel extends JPanel {
       if (conversation == null) return;
       ChatCard chatCard = cardMap.get(buildCardName(conversation));
       if (chatCard == null) return;
-
       chatCard.postMessage(message);
-
-      // Show conversation automatically
-      // TODO indicate new messages and let user change instead.
-      displayConversation(conversation);
+      if (displayedConversation != conversation) conversation.setNewMessageFlag(true);
+      parentUI.repaint();
    }
 
    public ConversationElement getDisplayedConversation() {
