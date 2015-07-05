@@ -21,7 +21,7 @@ public class ConversationListPanel extends JPanel {
       this.parentUI = parentUI;
 
       // Create label
-      JLabel labelConversations = new JLabel("Open Conversations:");
+      JLabel labelConversations = new JLabel("Conversations you've joined:");
 
       // Create the conversation list
       conversationListModel = new DefaultListModel<ConversationElement>();

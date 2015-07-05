@@ -21,7 +21,7 @@ public class PeerListPanel extends JPanel {
       this.parentUI = parentUI;
 
       // Create label
-      JLabel labelClients = new JLabel("Other Users:");
+      JLabel labelClients = new JLabel("Other users on this server:");
 
       // Create the client list
       peerListModel = new DefaultListModel<PeerElement>();
