@@ -36,7 +36,7 @@ public class SubwaveClientGUI extends ClientUIFramework {
             //Create and set up the window.
             JFrame frame = new JFrame("Subwave Client");
             frame.setLocationRelativeTo(null);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
             // Create side bar
             JPanel sideBar = new JPanel(new GridLayout(0, 1));
