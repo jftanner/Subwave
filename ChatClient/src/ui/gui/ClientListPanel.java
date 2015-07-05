@@ -10,11 +10,11 @@ import java.awt.event.ActionListener;
  */
 public class ClientListPanel extends JPanel {
 
-   ClientGUI parentUI;
+   SubwaveClientGUI parentUI;
    DefaultListModel<ClientElement> clientListModel;
 
 
-   public ClientListPanel(ClientGUI parentUI) {
+   public ClientListPanel(SubwaveClientGUI parentUI) {
       super(new BorderLayout());
 
       // Save parent
@@ -27,6 +27,7 @@ public class ClientListPanel extends JPanel {
       clientListModel = new DefaultListModel<ClientElement>();
       JList clientList = new JList(clientListModel);
       JScrollPane scrollPane = new JScrollPane(clientList);
+      scrollPane.setPreferredSize(new Dimension(200, 150));
 
       // Create button panel
       JPanel buttonPanel = createButtonPanel();
@@ -44,7 +45,7 @@ public class ClientListPanel extends JPanel {
    }
 
    private JButton createConversationInviteButton() {
-      JButton button = new JButton("Create New client");
+      JButton button = new JButton("Invite to Conversation");
       button.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {

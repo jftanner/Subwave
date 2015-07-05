@@ -10,14 +10,15 @@ import java.awt.*;
 /**
  * Created by James Tanner on 7/2/2015.
  */
-public class ClientGUI extends ClientUIFramework {
+public class SubwaveClientGUI extends ClientUIFramework {
 
    protected static ConversationListPanel conversationListPanel;
    protected static ClientListPanel clientListPanel;
-   protected static ClientGUI uiRoot;
+   protected static ChatPanel chatPanel;
+   protected static SubwaveClientGUI uiRoot;
    protected static int serverConnectionID;
 
-   public ClientGUI() {
+   public SubwaveClientGUI() {
       // Attempt to open the connection.
       // TODO ask instead of defaults
       serverConnectionID = SubwaveClient.connectToServer(null, 0, null);
@@ -30,22 +31,28 @@ public class ClientGUI extends ClientUIFramework {
       uiRoot = this;
 
       // Make a runnable task to create the conversation list panel
-      Runnable createConversationListPanel = new Runnable() {
+      Runnable createAndShowGUI = new Runnable() {
          public void run() {
             //Create and set up the window.
             JFrame frame = new JFrame("Subwave Client");
             frame.setLocationRelativeTo(null);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            // Create content pane
-            JPanel contentPanel = new JPanel(new FlowLayout());
+            // Create side bar
+            JPanel sideBar = new JPanel(new GridLayout(0, 1));
             clientListPanel = new ClientListPanel(uiRoot);
-            contentPanel.add(clientListPanel);
+            sideBar.add(clientListPanel);
             conversationListPanel = new ConversationListPanel(uiRoot);
-            contentPanel.add(conversationListPanel);
+            sideBar.add(conversationListPanel);
+
+            //Create main panel
+            JPanel mainPanel = new JPanel(new BorderLayout());
+            chatPanel = new ChatPanel(uiRoot);
+            mainPanel.add(sideBar, BorderLayout.LINE_START);
+            mainPanel.add(chatPanel, BorderLayout.CENTER);
 
             // Put the content pane in the frame
-            frame.add(contentPanel);
+            frame.add(mainPanel);
 
             //Display the window.
             frame.pack();
@@ -54,7 +61,7 @@ public class ClientGUI extends ClientUIFramework {
       };
 
       // Schedule a thread to run the new task.
-      javax.swing.SwingUtilities.invokeLater(createConversationListPanel);
+      javax.swing.SwingUtilities.invokeLater(createAndShowGUI);
    }
 
    public void shutdown() {

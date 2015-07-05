@@ -1,7 +1,7 @@
 package com.tanndev.subwave.client.core;
 
 import com.tanndev.subwave.client.ui.ClientUIFramework;
-import com.tanndev.subwave.client.ui.gui.ClientGUI;
+import com.tanndev.subwave.client.ui.gui.SubwaveClientGUI;
 import com.tanndev.subwave.client.ui.tui.ClientTUI;
 import com.tanndev.subwave.common.*;
 
@@ -51,16 +51,16 @@ public class SubwaveClient {
       Scanner scan = new Scanner(System.in);
 
       // Get friendly name
-      System.out.println("What name would you like to use? (Leave blank for default.)");
-      String friendlyName = scan.nextLine().trim();
-      if (friendlyName.length() < 1) friendlyName = null;
-
+//      System.out.println("What name would you like to use? (Leave blank for default.)");
+//      String friendlyName = scan.nextLine().trim();
+//      if (friendlyName.length() < 1) friendlyName = null;
+      String friendlyName = null;
 
       // Start the UI
       if (args.length > 0 && args[0].equalsIgnoreCase("-tui")) {
          ui = new ClientTUI(null, 0, friendlyName);
          ui.start();
-      } else ui = new ClientGUI();
+      } else ui = new SubwaveClientGUI();
    }
 
    /**

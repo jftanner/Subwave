@@ -10,11 +10,11 @@ import java.awt.event.ActionListener;
  */
 public class ConversationListPanel extends JPanel {
 
-   ClientGUI parentUI;
+   SubwaveClientGUI parentUI;
    DefaultListModel<ConversationElement> conversationListModel;
 
 
-   public ConversationListPanel(ClientGUI parentUI) {
+   public ConversationListPanel(SubwaveClientGUI parentUI) {
       super(new BorderLayout());
 
       // Save parent
@@ -27,6 +27,7 @@ public class ConversationListPanel extends JPanel {
       conversationListModel = new DefaultListModel<ConversationElement>();
       JList conversationList = new JList(conversationListModel);
       JScrollPane scrollPane = new JScrollPane(conversationList);
+      scrollPane.setPreferredSize(new Dimension(200, 150));
 
       // Create button panel
       JPanel buttonPanel = createButtonPanel();
