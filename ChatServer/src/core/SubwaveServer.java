@@ -74,6 +74,15 @@ public class SubwaveServer {
       Message message = new Message(MessageType.NETWORK_CONNECT, SERVER_ID, clientID, nickname);
       broadcastToAll(message);
 
+      // Update the client with the other existing clients.
+      Collection<Client> clients = clientMap.values();
+      for (Client existingClient : clients) {
+         int existingClientID = existingClient.clientID;
+         String existingClientName = nameMap.get(existingClientID);
+         message = new Message(MessageType.NETWORK_CONNECT, SERVER_ID, existingClientID, existingClientName);
+         clientConnection.send(message);
+      }
+
       return client;
    }
 
@@ -192,7 +201,7 @@ public class SubwaveServer {
 
    public static Message getNameUpdateMessage(int conversationID, int clientID) {
       // Get the appropriate friendly name
-      String friendlyName = null;
+      String friendlyName;
       if (conversationID == SERVER_ID) friendlyName = nameMap.get(clientID);
       else friendlyName = nameMap.get(conversationID);
 
