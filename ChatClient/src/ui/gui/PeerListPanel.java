@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 public class PeerListPanel extends JPanel {
 
    private SubwaveClientGUI parentUI;
+   private JList<PeerElement> peerList;
    private DefaultListModel<PeerElement> peerListModel;
 
 
@@ -25,7 +26,7 @@ public class PeerListPanel extends JPanel {
 
       // Create the client list
       peerListModel = new DefaultListModel<PeerElement>();
-      JList peerList = new JList(peerListModel);
+      peerList = new JList<PeerElement>(peerListModel);
       JScrollPane scrollPane = new JScrollPane(peerList);
       scrollPane.setPreferredSize(new Dimension(200, 150));
 
@@ -61,10 +62,17 @@ public class PeerListPanel extends JPanel {
       button.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            // TODO send conversation invite to selected client(s)
+            inviteSelectedToConversation();
          }
       });
       return button;
+   }
+
+   private void inviteSelectedToConversation() {
+      java.util.List<PeerElement> selectedPeers = peerList.getSelectedValuesList();
+      for (PeerElement peerElement : selectedPeers) {
+         parentUI.commandConversationInvite(peerElement.clientID);
+      }
    }
 
    protected void addPeer(PeerElement peer) {

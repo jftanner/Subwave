@@ -13,6 +13,7 @@ public class ChatPanel extends JPanel {
    private SubwaveClientGUI parentUI;
    private CardLayout cardLayout;
    private ConcurrentHashMap<String, ChatCard> cardMap = new ConcurrentHashMap<String, ChatCard>();
+   private int displayedConversationID;
 
    public ChatPanel(SubwaveClientGUI parentUI) {
       super(new CardLayout());
@@ -31,6 +32,7 @@ public class ChatPanel extends JPanel {
 
    public void displayConversation(int connectionID, int conversationID) {
       cardLayout.show(this, buildCardName(connectionID, conversationID));
+      displayedConversationID = conversationID;
       parentUI.repaint();
    }
 
@@ -51,6 +53,10 @@ public class ChatPanel extends JPanel {
       // Show conversation automatically
       // TODO indicate new messages and let user change instead.
       displayConversation(connectionID, conversationID);
+   }
+
+   public int getDisplayedConversationID() {
+      return displayedConversationID;
    }
 
    private String buildCardName(int connectionID, int conversationID) {

@@ -142,6 +142,15 @@ public class SubwaveClientGUI extends ClientUIFramework {
       SubwaveClient.sendConversationNew(serverConnectionID, conversationName);
    }
 
+   public void commandConversationInvite(int targetClientID) {
+      // Get the conversation
+      int conversationID = chatPanel.getDisplayedConversationID();
+      if (conversationID < 1) return;
+
+      // Build the message
+      SubwaveClient.sendConversationInvite(serverConnectionID, conversationID, targetClientID);
+   }
+
    public void commandMessageSend(int connectionID, int conversationID, String messageBody) {
       if (messageBody == null || messageBody.length() < 1) return;
       if (messageBody.startsWith("\\me"))
