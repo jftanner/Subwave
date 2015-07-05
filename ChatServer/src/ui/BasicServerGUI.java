@@ -17,7 +17,7 @@ public class BasicServerGUI extends JPanel {
    private static JTextArea textOutput;
 
    public BasicServerGUI() {
-      super(new GridBagLayout());
+      super(new BorderLayout());
 
       // Create label
       JLabel labelOutput = new JLabel("Server Messages:");
@@ -37,19 +37,9 @@ public class BasicServerGUI extends JPanel {
       });
 
       //Add Components to this panel.
-      GridBagConstraints c = new GridBagConstraints();
-      c.gridwidth = GridBagConstraints.REMAINDER;
-
-      c.fill = GridBagConstraints.HORIZONTAL;
-      add(labelOutput, c);
-
-      c.fill = GridBagConstraints.BOTH;
-      c.weightx = 1.0;
-      c.weighty = 1.0;
-      add(scrollPane, c);
-
-      c.fill = GridBagConstraints.HORIZONTAL;
-      add(shutdownButton, c);
+      add(labelOutput, BorderLayout.NORTH);
+      add(scrollPane, BorderLayout.CENTER);
+      add(shutdownButton, BorderLayout.SOUTH);
    }
 
    public static void createAndShowGUI() {
