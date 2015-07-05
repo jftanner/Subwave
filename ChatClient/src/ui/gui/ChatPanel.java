@@ -36,7 +36,9 @@ public class ChatPanel extends JPanel {
 
    public void addConversation(int connectionID, int conversationID) {
       ChatCard chatCard = new ChatCard(parentUI, connectionID, conversationID);
-      add(chatCard, buildCardName(connectionID, conversationID));
+      String cardName = buildCardName(connectionID, conversationID);
+      add(chatCard, cardName);
+      cardMap.put(cardName, chatCard);
       displayConversation(connectionID, conversationID);
    }
 

@@ -31,7 +31,7 @@ public class ChatCard extends JPanel {
       JLabel labelConversations = new JLabel("Current Conversation: " + conversationName);
 
       // Create the conversation window
-      outputArea = new JTextArea();
+      outputArea = new JTextArea("Connected to the conversation \"" + conversationName + "\".");
       outputArea.setEditable(false);
       JScrollPane scrollPane = new JScrollPane(outputArea);
       scrollPane.setPreferredSize(new Dimension(500, 300));
