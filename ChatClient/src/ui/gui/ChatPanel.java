@@ -25,6 +25,7 @@ public class ChatPanel extends JPanel {
 
       // Create the conversation window
       outputArea = new JTextArea();
+      outputArea.setEditable(false);
       JScrollPane scrollPane = new JScrollPane(outputArea);
       scrollPane.setPreferredSize(new Dimension(500, 300));
 
