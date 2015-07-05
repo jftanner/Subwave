@@ -40,8 +40,20 @@ public class PeerListPanel extends JPanel {
 
    private JPanel createButtonPanel() {
       JPanel buttonPanel = new JPanel(new GridLayout(0, 1));
+      buttonPanel.add(createConversationNewButton());
       buttonPanel.add(createConversationInviteButton());
       return buttonPanel;
+   }
+
+   private JButton createConversationNewButton() {
+      JButton button = new JButton("New Conversation");
+      button.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            parentUI.commandConversationNew();
+         }
+      });
+      return button;
    }
 
    private JButton createConversationInviteButton() {
@@ -57,13 +69,13 @@ public class PeerListPanel extends JPanel {
 
    protected void addPeer(PeerElement peer) {
       if (peerListModel == null || peer == null) return;
-
       peerListModel.addElement(peer);
+      parentUI.repaint();
    }
 
    protected void removePeer(PeerElement peer) {
       if (peerListModel == null || peer == null) return;
-
       peerListModel.removeElement(peer);
+      parentUI.repaint();
    }
 }

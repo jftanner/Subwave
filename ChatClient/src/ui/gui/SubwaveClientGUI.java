@@ -114,6 +114,11 @@ public class SubwaveClientGUI extends ClientUIFramework {
       myClientID = SubwaveClient.getMyClientID(serverConnectionID);
    }
 
+   protected void repaint() {
+      parentFrame.repaint();
+      parentFrame.revalidate();
+   }
+
    public void shutdown() {
       // TODO Shutdown GUI gracefully.
       System.exit(0);

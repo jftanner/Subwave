@@ -42,7 +42,6 @@ public class ConversationListPanel extends JPanel {
    private JPanel createButtonPanel() {
       JPanel buttonPanel = new JPanel(new GridLayout(0, 1));
       buttonPanel.add(createConversationLeaveButton());
-      buttonPanel.add(createConversationNewButton());
       return buttonPanel;
    }
 
@@ -52,17 +51,6 @@ public class ConversationListPanel extends JPanel {
          @Override
          public void actionPerformed(ActionEvent e) {
             //TODO parentUI.commandConversationLeave();
-         }
-      });
-      return button;
-   }
-
-   private JButton createConversationNewButton() {
-      JButton button = new JButton("New Conversation");
-      button.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            parentUI.commandConversationNew();
          }
       });
       return button;
