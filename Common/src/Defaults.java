@@ -7,6 +7,7 @@ package com.tanndev.subwave.common;
  */
 public class Defaults {
    public static final int DEFAULT_SERVER_PORT = 4444;
+   public static final int DEFAULT_UI_LAUNCH_WAIT = 5000;
 
    public static final String DEFAULT_SERVER_ADDRESS = "localhost";
    public static final String DEFAULT_NICKNAME = "Someone";

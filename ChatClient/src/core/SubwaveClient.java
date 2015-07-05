@@ -1,6 +1,8 @@
 package com.tanndev.subwave.client.core;
 
 import com.tanndev.subwave.client.ui.ClientUIFramework;
+import com.tanndev.subwave.client.ui.gui.SubwaveClientGUI;
+import com.tanndev.subwave.client.ui.tui.ClientTUI;
 import com.tanndev.subwave.common.*;
 
 import java.io.IOException;
@@ -34,19 +36,14 @@ public class SubwaveClient {
 
    private static ConcurrentHashMap<Integer, Map<Integer, String>> nameMaps = new ConcurrentHashMap<Integer, Map<Integer, String>>();
 
-   /**
-    * The user interface MUST call this function in order to bind to the chat client.
-    * <p/>
-    * Without binding, the UI can still request and close connections, send messages, etc. However, incoming messages
-    * cannot be delivered to the UI for processing, For proper function, this method should be called using
-    * <blockquote>SubwaveClient.bindUI(this);</blockquote> at the start of the run method of the UI class.
-    *
-    * @param ui
-    */
-   public static void bindUI(ClientUIFramework ui) {
-      SubwaveClient.ui = ui;
-   }
+   public static void main(String[] args) {
 
+      // Start the UI
+      if (args.length > 0 && args[0].equalsIgnoreCase("-tui")) {
+         ui = new ClientTUI();
+      } else ui = new SubwaveClientGUI();
+      ui.start();
+   }
 
    /**
     * Attempts to create a connection to the selected remote server.
@@ -59,6 +56,7 @@ public class SubwaveClient {
     *
     * @return connectionID of the new connection. If no connection is made successfully, returns zero.
     */
+
    public static int connectToServer(String serverAddress, int port, String nickname) {
       // Check parameters and assign defaults if necessary.
       if (serverAddress == null) serverAddress = Defaults.DEFAULT_SERVER_ADDRESS;
@@ -126,7 +124,7 @@ public class SubwaveClient {
     * <p/>
     * The connection is closed regardless of whether or not the disconnect message is sent successfully.
     *
-    * @param connection connection to disconnect and close
+    * @param connectionID connection to disconnect and close
     */
    public static void disconnectFromServer(int connectionID) {
       // Get the connection from the connectionID
@@ -144,6 +142,16 @@ public class SubwaveClient {
 
       // Remove the connection from the connectionMap
       removeConnectionFromMap(connectionID);
+   }
+
+   public static int getMyClientID(int connectionID) {
+      // Get the connection from the connectionID
+      Connection connection = connectionMap.get(connectionID);
+
+      // Avoid possible null pointer exception.
+      if (connection == null) return -1;
+
+      return connection.getClientID();
    }
 
    /**
@@ -180,7 +188,7 @@ public class SubwaveClient {
          ErrorHandler.logError("Client UI is not bound to SubwaveClient.");
          Message reply = new Message(MessageType.REFUSE, message.conversationID, connection.getClientID(), Message.CRITICAL_ERROR);
          connection.send(reply);
-         return;
+         System.exit(1);
       }
 
       // Unpack message data
@@ -196,11 +204,6 @@ public class SubwaveClient {
          case CHAT_EMOTE: // Client is sending an emote to an existing chat.
             // TODO Handle chat message and emote
             ui.handleChatEmote(connectionID, conversationID, clientID, messageBody);
-            break;
-
-         case CONVERSATION_NEW: // Client wants a new conversation.
-            // TODO Handle conversation new
-            ui.handleConversationNew(connectionID, conversationID, clientID, messageBody);
             break;
 
          case CONVERSATION_INVITE: // Client wants to invite another client to a conversation
@@ -221,7 +224,7 @@ public class SubwaveClient {
 
          case CONVERSATION_LEAVE: // Client wants to leave a conversation
             // TODO Handle conversation leave
-            ui.handleConversationLeave(connectionID, conversationID, clientID, messageBody);
+            ui.handleConversationLeave(connectionID, conversationID, clientID);
             break;
 
          case NAME_UPDATE: // Client wants to change a friendly name
@@ -244,7 +247,19 @@ public class SubwaveClient {
          case REFUSE: // Unused
             // Send to debugging.
             // TODO handle refuse properly.
-            ui.handleDebug(connectionID, conversationID, clientID, messageBody);
+            ui.handleRefuse(connectionID, conversationID, clientID, messageBody);
+            break;
+
+         case NETWORK_CONNECT: // Received debug message.
+            // Save the name of the peer client.
+            setName(connectionID, clientID, messageBody);
+
+            // Pass the notification to the UI.
+            ui.handleNetworkConnect(connectionID, clientID, messageBody);
+            break;
+
+         case NETWORK_DISCONNECT: // Received debug message.
+            ui.handleNetworkDisconnect(connectionID, clientID);
             break;
 
          case DEBUG: // Received debug message.

@@ -3,6 +3,7 @@ package com.tanndev.subwave.server.core;
 import com.tanndev.subwave.common.*;
 import com.tanndev.subwave.server.ui.BasicServerGUI;
 
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -69,6 +70,19 @@ public class SubwaveServer {
       // Add the name to the name list.
       nameMap.put(clientID, nickname);
 
+      // Broadcast message to all users
+      Message message = new Message(MessageType.NETWORK_CONNECT, SERVER_ID, clientID, nickname);
+      broadcastToAll(message);
+
+      // Update the client with the other existing clients.
+      Collection<Client> clients = clientMap.values();
+      for (Client existingClient : clients) {
+         int existingClientID = existingClient.clientID;
+         String existingClientName = nameMap.get(existingClientID);
+         message = new Message(MessageType.NETWORK_CONNECT, SERVER_ID, existingClientID, existingClientName);
+         clientConnection.send(message);
+      }
+
       return client;
    }
 
@@ -91,6 +105,10 @@ public class SubwaveServer {
       if (client != null) {
          client.clientConnection.close();
          System.out.println("DC - ClientID: " + clientID);
+
+         // Broadcast message to all users
+         Message message = new Message(MessageType.NETWORK_DISCONNECT, SERVER_ID, clientID, Message.CLIENT_DISCONNECTED);
+         broadcastToAll(message);
       }
    }
 
@@ -175,14 +193,15 @@ public class SubwaveServer {
     * @param message message to broadcast to all clients
     */
    public static void broadcastToAll(Message message) {
-      for (Client client : clientMap.values()) {
+      Collection<Client> clients = clientMap.values();
+      for (Client client : clients) {
          client.clientConnection.send(message);
       }
    }
 
    public static Message getNameUpdateMessage(int conversationID, int clientID) {
       // Get the appropriate friendly name
-      String friendlyName = null;
+      String friendlyName;
       if (conversationID == SERVER_ID) friendlyName = nameMap.get(clientID);
       else friendlyName = nameMap.get(conversationID);
 
@@ -318,13 +337,11 @@ public class SubwaveServer {
       String conversationName = message.messageBody;
       if (conversationName == null || conversationName.trim().length() < 1)
          conversationName = Defaults.DEFAULT_CONVERSATION_NAME;
-      Conversation conversation = addConversation(conversationID, conversationName);
+      addConversation(conversationID, conversationName);
 
-      // Send the conversation name to the client
-      connection.send(getNameUpdateMessage(conversationID, SERVER_ID));
-
-      // Add client to the conversation as a member. On fail, remove the conversation.
-      if (!conversation.addMember(client)) removeConversation(conversationID);
+      // Auto-invite the client to join the new conversation.
+      Message invitation = new Message(MessageType.CONVERSATION_INVITE, conversationID, connection.getClientID(), conversationName);
+      connection.send(invitation);
    }
 
    private static void handleConversationInvite(Connection connection, Message message) {
@@ -347,8 +364,7 @@ public class SubwaveServer {
       String conversationName = conversation.getName();
       Message invitation = new Message(MessageType.CONVERSATION_INVITE, conversationID, sourceClientID, conversationName);
 
-      // Send the inviting client's name to the target client along with the invitation.
-      targetClient.clientConnection.send(getNameUpdateMessage(SERVER_ID, connection.getClientID()));
+      // Send the invitation.
       targetClient.clientConnection.send(invitation);
 
    }
@@ -374,15 +390,6 @@ public class SubwaveServer {
       // Validate conversation.
       Conversation conversation = validateConversation(connection, message);
       if (conversation == null) return; // TODO Send reject message
-
-      // Send the conversation name to the client.
-      connection.send(getNameUpdateMessage(conversation.conversationID, client.clientID));
-
-      // Get all members names.
-      Client[] conversationMembers = conversation.getMemberList();
-      for (Client member : conversationMembers) {
-         connection.send(getNameUpdateMessage(SERVER_ID, member.clientID));
-      }
 
       // Add client to the conversation as a member.
       conversation.addMember(client);

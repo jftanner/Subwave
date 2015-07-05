@@ -1,5 +1,8 @@
 package com.tanndev.subwave.server.ui;
 
+import com.tanndev.subwave.common.Defaults;
+import com.tanndev.subwave.common.ErrorHandler;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -14,7 +17,7 @@ public class BasicServerGUI extends JPanel {
    private static JTextArea textOutput;
 
    public BasicServerGUI() {
-      super(new GridBagLayout());
+      super(new BorderLayout());
 
       // Create label
       JLabel labelOutput = new JLabel("Server Messages:");
@@ -34,19 +37,9 @@ public class BasicServerGUI extends JPanel {
       });
 
       //Add Components to this panel.
-      GridBagConstraints c = new GridBagConstraints();
-      c.gridwidth = GridBagConstraints.REMAINDER;
-
-      c.fill = GridBagConstraints.HORIZONTAL;
-      add(labelOutput, c);
-
-      c.fill = GridBagConstraints.BOTH;
-      c.weightx = 1.0;
-      c.weighty = 1.0;
-      add(scrollPane, c);
-
-      c.fill = GridBagConstraints.HORIZONTAL;
-      add(shutdownButton, c);
+      add(labelOutput, BorderLayout.NORTH);
+      add(scrollPane, BorderLayout.CENTER);
+      add(shutdownButton, BorderLayout.SOUTH);
    }
 
    public static void createAndShowGUI() {
@@ -56,7 +49,7 @@ public class BasicServerGUI extends JPanel {
             //Create and set up the window.
             JFrame frame = new JFrame("Subwave Server");
             frame.setLocationRelativeTo(null);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
             //Add contents to the window.
             frame.add(new BasicServerGUI());
@@ -80,10 +73,10 @@ public class BasicServerGUI extends JPanel {
       // Wait on the task.
       try {
          synchronized (task) {
-            task.wait();
+            task.wait(Defaults.DEFAULT_UI_LAUNCH_WAIT);
          }
       } catch (InterruptedException e) {
-         e.printStackTrace();
+         ErrorHandler.logError("Exception thrown while waiting for UI.", e);
       }
    }
 

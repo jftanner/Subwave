@@ -34,9 +34,27 @@ public class ClientTUI extends ClientUIFramework {
     * @see com.tanndev.subwave.common.Connection
     * @see com.tanndev.subwave.common.Connection#setPrintMessages(boolean)
     */
-   public ClientTUI(String serverAddress, int port, String friendlyName) {
-      // Use the ClientUIFramework constructor to bind to the chat client.
-      super();
+   public ClientTUI() {
+      // Get login information from the user
+      Scanner scan = new Scanner(System.in);
+      String serverAddress = Defaults.DEFAULT_SERVER_ADDRESS;
+      int port = Defaults.DEFAULT_SERVER_PORT;
+      String friendlyName = Defaults.DEFAULT_NICKNAME;
+
+      // Get connection
+      System.out.println("Where would you like to connect? Use \"address:port\" form. (Leave blank for default.)");
+      String userAnswer = scan.nextLine().trim();
+      if (userAnswer != null && userAnswer.length() > 0) {
+         String[] splitArray = userAnswer.split(":");
+         serverAddress = splitArray[0];
+         port = Integer.parseInt(splitArray[1]);
+         // TODO Parse this more carefully.
+      }
+
+      // Get friendly name
+      System.out.println("What name would you like to use? (Leave blank for default.)");
+      userAnswer = scan.nextLine().trim();
+      if (userAnswer.length() > 0) friendlyName = userAnswer;
 
       // Attempt to open the connection.
       serverConnectionID = SubwaveClient.connectToServer(serverAddress, port, friendlyName);
@@ -48,29 +66,6 @@ public class ClientTUI extends ClientUIFramework {
       // Switch off the local connection message printing.
       SubwaveClient.setConnectionPrinting(serverConnectionID, false);
       System.out.println("Hiding TX/RX messages.");
-   }
-
-   public static void main(String[] args) {
-      // Get server address and port from arguments, if there.
-      String serverAddress = null;
-      int serverPort = 0;
-      if (args.length > 0) serverAddress = args[0];
-      try {
-         if (args.length > 1) serverPort = Integer.parseInt(args[1]);
-      } catch (NumberFormatException e) {}
-
-      // Get login information from the user
-      Scanner scan = new Scanner(System.in);
-
-      // Get friendly name
-      System.out.println("What name would you like to use? (Leave blank for default.)");
-      String friendlyName = scan.nextLine().trim();
-      if (friendlyName.length() < 1) friendlyName = null;
-
-
-      // Start the UI
-      ClientTUI ui = new ClientTUI(serverAddress, serverPort, friendlyName);
-      ui.start();
    }
 
    /**

@@ -81,9 +81,7 @@ public class SocketListener extends Thread {
             // Start message listener.
             new ConnectionListener(connection).start();
 
-            // Send final ack to enable client.
-            Message finalACK = new Message(MessageType.NETWORK_CONNECT, 0, clientID, Message.CONNECTION_FINAL_ACK);
-            connection.send(finalACK);
+            // TODO Send lists of all currently connected clients.
 
          } catch (IOException e) {
             ErrorHandler.logError("IO exception thrown by SeverListener.", e);

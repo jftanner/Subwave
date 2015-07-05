@@ -14,18 +14,6 @@ import com.tanndev.subwave.common.Message;
 public abstract class ClientUIFramework extends Thread {
 
    /**
-    * Constructor
-    * <p/>
-    * By default, binds the client UI to the SubwaveClient. Subclasses that override this constructor should either use
-    * super() or bind themselves to the SubwaveClient using the bindUI method.
-    *
-    * @see com.tanndev.subwave.client.core.SubwaveClient#bindUI(ClientUIFramework)
-    */
-   public ClientUIFramework() {
-      SubwaveClient.bindUI(this);
-   }
-
-   /**
     * This method must be implemented by all subclasses.
     * <p/>
     * Calls to this method should cause the user interface to close all open connections and shut down.
@@ -38,13 +26,11 @@ public abstract class ClientUIFramework extends Thread {
 
    public void handleChatEmote(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 
-   public void handleConversationNew(int connectionID, int conversationID, int sourceClientID, String conversationName) {handleUnhandled(connectionID, conversationID, sourceClientID, conversationName);}
-
    public void handleConversationInvite(int connectionID, int conversationID, int sourceClientID, String conversationName) {handleUnhandled(connectionID, conversationID, sourceClientID, conversationName);}
 
-   public void handleConversationJoin(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
+   public void handleConversationJoin(int connectionID, int conversationID, int sourceClientID, String sourceClientNickname) {handleUnhandled(connectionID, conversationID, sourceClientID, sourceClientNickname);}
 
-   public void handleConversationLeave(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
+   public void handleConversationLeave(int connectionID, int conversationID, int sourceClientID) {handleUnhandled(connectionID, conversationID, sourceClientID, Message.LEFT_CONVERSATION);}
 
    /**
     * Called whenever a name is updated.
@@ -64,7 +50,11 @@ public abstract class ClientUIFramework extends Thread {
 
    public void handleAcknowledge(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
 
-   public void handleRefuse(int connectionID, int conversationID, int sourceClientID, String message) {handleUnhandled(connectionID, conversationID, sourceClientID, message);}
+   public void handleRefuse(int connectionID, int conversationID, int sourceClientID, String message) {handleDebug(connectionID, conversationID, sourceClientID, message);}
+
+   public void handleNetworkConnect(int connectionID, int clientID, String friendlyName) {handleUnhandled(connectionID, 0, clientID, friendlyName);}
+
+   public void handleNetworkDisconnect(int connectionID, int clientID) {handleUnhandled(connectionID, 0, clientID, Message.CLIENT_DISCONNECTED);}
 
    public void handleDebug(int connectionID, int conversationID, int clientID, String message) {
    /*

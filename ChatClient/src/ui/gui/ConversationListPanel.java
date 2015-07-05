@@ -1,7 +1,5 @@
 package com.tanndev.subwave.client.ui.gui;
 
-import com.tanndev.subwave.client.ui.tui.ConversationElement;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -12,21 +10,25 @@ import java.awt.event.ActionListener;
  */
 public class ConversationListPanel extends JPanel {
 
-   ClientGUI parentUI;
-   JList<ConversationElement> conversationList;
+   SubwaveClientGUI parentUI;
+   DefaultListModel<ConversationElement> conversationListModel;
 
-   public ConversationListPanel(ClientGUI parentUI) {
+
+   public ConversationListPanel(SubwaveClientGUI parentUI) {
       super(new BorderLayout());
 
       // Save parent
       this.parentUI = parentUI;
 
       // Create label
-      JLabel labelConversations = new JLabel("Open Conversations:");
+      JLabel labelConversations = new JLabel("Conversations you've joined:");
 
-      // Create text area
-      conversationList = new JList<ConversationElement>();
+      // Create the conversation list
+      conversationListModel = new DefaultListModel<ConversationElement>();
+      JList conversationList = new JList(conversationListModel);
+      conversationList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       JScrollPane scrollPane = new JScrollPane(conversationList);
+      scrollPane.setPreferredSize(new Dimension(200, 150));
 
       // Create button panel
       JPanel buttonPanel = createButtonPanel();
@@ -39,30 +41,24 @@ public class ConversationListPanel extends JPanel {
 
    private JPanel createButtonPanel() {
       JPanel buttonPanel = new JPanel(new GridLayout(0, 1));
-      buttonPanel.add(createConversationNewButton());
-      buttonPanel.add(createShutdownButton());
+      buttonPanel.add(createConversationLeaveButton());
       return buttonPanel;
    }
 
-   private JButton createShutdownButton() {
-      JButton button = new JButton("Exit Subwave Client");
+   private JButton createConversationLeaveButton() {
+      JButton button = new JButton("Leave Conversation");
       button.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            parentUI.shutdown();
+            //TODO parentUI.commandConversationLeave();
          }
       });
       return button;
    }
 
-   private JButton createConversationNewButton() {
-      JButton button = new JButton("Create New Conversation");
-      button.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            parentUI.commandConversationNew();
-         }
-      });
-      return button;
+   protected void addConversation(ConversationElement conversation) {
+      if (conversationListModel == null || conversation == null) return;
+
+      conversationListModel.addElement(conversation);
    }
 }
