@@ -33,7 +33,9 @@ public class ConversationListPanel extends JPanel {
       //Add Components to this panel.
       add(scrollPane, BorderLayout.CENTER);
       add(buttonPanel, BorderLayout.SOUTH);
-      setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Conversations joined:"));
+      setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Conversations joined:"),
+            BorderFactory.createEmptyBorder(1, 1, 1, 1)));
    }
 
    private JScrollPane createConversationList() {
@@ -60,7 +62,7 @@ public class ConversationListPanel extends JPanel {
       JPanel buttonPanel = new JPanel(layout);
       buttonPanel.add(createConversationNewButton());
       buttonPanel.add(createConversationLeaveButton());
-      buttonPanel.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 2));
+      buttonPanel.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
       return buttonPanel;
    }
 

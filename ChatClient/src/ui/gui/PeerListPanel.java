@@ -34,7 +34,9 @@ public class PeerListPanel extends JPanel {
       //Add Components to this panel.
       add(scrollPane, BorderLayout.CENTER);
       add(buttonPanel, BorderLayout.SOUTH);
-      setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Other users on this server"));
+      setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Users Connected:"),
+            BorderFactory.createEmptyBorder(1, 1, 1, 1)));
    }
 
    private JScrollPane createPeerList() {
@@ -55,7 +57,7 @@ public class PeerListPanel extends JPanel {
       layout.setVgap(2);
       JPanel buttonPanel = new JPanel(layout);
       buttonPanel.add(createConversationInviteButton());
-      buttonPanel.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 2));
+      buttonPanel.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
       return buttonPanel;
    }
 
