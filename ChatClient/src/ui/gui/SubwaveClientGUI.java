@@ -43,7 +43,7 @@ public class SubwaveClientGUI extends ClientUIFramework {
             peerListPanel = new PeerListPanel(uiRoot);
             sideBar.add(conversationListPanel);
             sideBar.add(peerListPanel);
-            sideBar.setBorder(BorderFactory.createEmptyBorder(0, 2, 2, 4));
+            sideBar.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 4));
 
             // Create status bar
             JPanel statusBar = new JPanel(new BorderLayout());
