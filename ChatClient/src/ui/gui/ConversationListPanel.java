@@ -15,6 +15,7 @@ public class ConversationListPanel extends JPanel {
    private SubwaveClientGUI parentUI;
    private DefaultListModel<ConversationElement> conversationListModel;
    private JList<ConversationElement> conversationList;
+   private JButton conversationLeaveButton;
 
 
    public ConversationListPanel(SubwaveClientGUI parentUI) {
@@ -60,8 +61,8 @@ public class ConversationListPanel extends JPanel {
       GridLayout layout = new GridLayout(0, 1);
       layout.setVgap(2);
       JPanel buttonPanel = new JPanel(layout);
-      buttonPanel.add(createConversationNewButton());
       buttonPanel.add(createConversationLeaveButton());
+      buttonPanel.add(createConversationNewButton());
       buttonPanel.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
       return buttonPanel;
    }
@@ -79,15 +80,16 @@ public class ConversationListPanel extends JPanel {
    }
 
    private JButton createConversationLeaveButton() {
-      JButton button = new JButton("Leave Conversation");
-      button.addActionListener(new ActionListener() {
+      conversationLeaveButton = new JButton("Leave Conversation");
+      conversationLeaveButton.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
             leaveSelectedConversation();
          }
       });
-      button.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-      return button;
+      conversationLeaveButton.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+      conversationLeaveButton.setEnabled(false);
+      return conversationLeaveButton;
    }
 
    private void switchToSelectedConversation() {
@@ -99,16 +101,23 @@ public class ConversationListPanel extends JPanel {
       ConversationElement conversation = conversationList.getSelectedValue();
       conversationListModel.removeElement(conversation);
       parentUI.commandConversationLeave();
+      updateLeaveButtonEnabled();
    }
 
    protected void addConversation(ConversationElement conversation) {
       if (conversationListModel == null) return;
       if (conversationListModel.contains(conversation)) return;
       conversationListModel.addElement(conversation);
+      updateLeaveButtonEnabled();
    }
 
    protected void selectConversation(ConversationElement conversation) {
       conversationList.setSelectedValue(conversation, true);
+      updateLeaveButtonEnabled();
+   }
+
+   private void updateLeaveButtonEnabled() {
+      conversationLeaveButton.setEnabled(parentUI.isDisplayingConversation());
    }
 
    class ListFlagRenderer extends DefaultListCellRenderer {
