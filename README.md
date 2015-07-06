@@ -1,5 +1,4 @@
-[![Stories in Ready](https://badge.waffle.io/tanndev/Subwave.png?label=ready&title=Ready)](https://waffle.io/tanndev/Subwave)
-[![Build Status](https://travis-ci.org/tanndev/Subwave.svg?branch=master)](https://travis-ci.org/tanndev/Subwave)
+
 # Subwave
 Subwave is a simple conversation-based chat system similar to IRC.
 
@@ -17,8 +16,8 @@ There are two ways to download and deploy the application:
 
 ## Project Status:
 This is an extremely early version and development is ongoing.
-- See the [Waffle IO](https://waffle.io/tanndev/Subwave) board to see current issue status.
-- See the [Travis CI](https://travis-ci.org/tanndev/Subwave) page to check the success of build tasks.
+- See the [![Stories in Ready](https://badge.waffle.io/tanndev/Subwave.png?label=ready&title=Ready)](https://waffle.io/tanndev/Subwave) [Waffle IO](https://waffle.io/tanndev/Subwave) board to see current issue status.
+- See the [![Build Status](https://travis-ci.org/tanndev/Subwave.svg?branch=master)](https://travis-ci.org/tanndev/Subwave) [Travis CI](https://travis-ci.org/tanndev/Subwave) page to check the success of build tasks.
 
 ## Server Instructions
 - Download SubwaveServer.jar.
