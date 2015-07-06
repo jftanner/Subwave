@@ -60,7 +60,7 @@ public class SubwaveClientGUI extends ClientUIFramework {
             mainPanel.add(sideBar, BorderLayout.LINE_START);
             mainPanel.add(chatPanel, BorderLayout.CENTER);
             mainPanel.add(statusBar, BorderLayout.SOUTH);
-            mainPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+            mainPanel.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
 
             // Put the content pane in the frame
             parentFrame.add(mainPanel);
