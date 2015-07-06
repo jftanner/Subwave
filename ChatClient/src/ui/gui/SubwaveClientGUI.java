@@ -6,6 +6,7 @@ import com.tanndev.subwave.common.Defaults;
 import com.tanndev.subwave.common.ErrorHandler;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 import java.awt.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -40,7 +41,9 @@ public class SubwaveClientGUI extends ClientUIFramework {
             // Create side bar
             JPanel sideBar = new JPanel(new GridLayout(0, 1));
             conversationListPanel = new ConversationListPanel(uiRoot);
+            conversationListPanel.setBorder(BorderFactory.createEmptyBorder(0, 2, 1, 2));
             peerListPanel = new PeerListPanel(uiRoot);
+            peerListPanel.setBorder(BorderFactory.createEmptyBorder(1, 2, 0, 2));
             sideBar.add(conversationListPanel);
             sideBar.add(peerListPanel);
             sideBar.setBorder(BorderFactory.createEmptyBorder(0, 2, 2, 4));
@@ -53,13 +56,14 @@ public class SubwaveClientGUI extends ClientUIFramework {
 
             //Create chat panel
             chatPanel = new ChatPanel(uiRoot);
-            chatPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+            chatPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 
             // Add components to frame
             JPanel mainPanel = new JPanel(new BorderLayout());
             mainPanel.add(sideBar, BorderLayout.LINE_START);
             mainPanel.add(chatPanel, BorderLayout.CENTER);
             mainPanel.add(statusBar, BorderLayout.SOUTH);
+            mainPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 
             // Put the content pane in the frame
             parentFrame.add(mainPanel);
