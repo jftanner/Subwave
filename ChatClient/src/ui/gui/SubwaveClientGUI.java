@@ -126,6 +126,11 @@ public class SubwaveClientGUI extends ClientUIFramework {
    public void switchToConversation(ConversationElement conversation) {
       chatPanel.displayConversation(conversation);
       conversationListPanel.selectConversation(conversation);
+      peerListPanel.updateInviteButtonEnabled();
+   }
+
+   public boolean isDisplayingConversation() {
+      return chatPanel.getDisplayedConversation() != null;
    }
 
    public void commandConversationNew() {
@@ -163,8 +168,9 @@ public class SubwaveClientGUI extends ClientUIFramework {
       // Tell the server
       SubwaveClient.sendConversationLeave(conversation.connectionID, conversation.conversationID);
 
-
+      // Update the UI
       chatPanel.removeConversation(conversation);
+      peerListPanel.updateInviteButtonEnabled();
    }
 
    public void commandMessageSend(int connectionID, int conversationID, String messageBody) {
