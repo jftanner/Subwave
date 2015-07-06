@@ -27,9 +27,14 @@ public class SocketListener extends Thread {
       // Create the socket.
       try {
          serverSocket = new ServerSocket(port);
+         return;
+      } catch (BindException e) {
+         ErrorHandler.logError("The selected port is already in use.");
       } catch (IOException e) {
          ErrorHandler.logError("Could not create socket.", e);
       }
+      // If an error occurred, exit.
+      System.exit(1);
    }
 
    /**
