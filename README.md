@@ -15,8 +15,8 @@ There are two ways to download and deploy the application:
 - Clone the repository using git and run the "deploy" task using Ant. (Advanced)
 
 ## Project Status:
- [![Stories in Ready](https://badge.waffle.io/tanndev/Subwave.png?label=ready&title=Ready)](https://waffle.io/tanndev/Subwave)[![Build Status](https://travis-ci.org/tanndev/Subwave.svg?branch=master)](https://travis-ci.org/tanndev/Subwave)
-This is an extremely early version and development is ongoing.
+[![Stories in Ready](https://badge.waffle.io/tanndev/Subwave.png?label=ready&title=Ready)](https://waffle.io/tanndev/Subwave)
+[![Build Status](https://travis-ci.org/tanndev/Subwave.svg?branch=master)](https://travis-ci.org/tanndev/Subwave)
 - See the [Waffle IO](https://waffle.io/tanndev/Subwave) board to see current issue status.
 - See the [Travis CI](https://travis-ci.org/tanndev/Subwave) page to check the success of build tasks.
 
