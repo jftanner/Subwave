@@ -17,15 +17,18 @@ public class BasicServerGUI extends JPanel {
    private static JTextArea textOutput;
 
    public BasicServerGUI() {
-      super(new BorderLayout());
-
-      // Create label
-      JLabel labelOutput = new JLabel("Server Messages:");
+      // Set up the layout manager
+      BorderLayout layout = new BorderLayout();
+      layout.setVgap(2);
+      setLayout(layout);
 
       // Create text area
       textOutput = new JTextArea(20, 50);
       textOutput.setEditable(false);
       JScrollPane scrollPane = new JScrollPane(textOutput);
+      scrollPane.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(Color.GRAY),
+            BorderFactory.createEmptyBorder(2, 3, 2, 2)));
 
       // Create button
       JButton shutdownButton = new JButton("Shutdown Server");
@@ -35,11 +38,14 @@ public class BasicServerGUI extends JPanel {
             System.exit(0);
          }
       });
+      shutdownButton.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
       //Add Components to this panel.
-      add(labelOutput, BorderLayout.NORTH);
       add(scrollPane, BorderLayout.CENTER);
       add(shutdownButton, BorderLayout.SOUTH);
+      setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Server Messages:"),
+            BorderFactory.createEmptyBorder(1, 1, 1, 1)));
    }
 
    public static void createAndShowGUI() {
