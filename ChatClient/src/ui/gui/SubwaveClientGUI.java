@@ -43,15 +43,20 @@ public class SubwaveClientGUI extends ClientUIFramework {
             peerListPanel = new PeerListPanel(uiRoot);
             sideBar.add(conversationListPanel);
             sideBar.add(peerListPanel);
+            sideBar.setBorder(BorderFactory.createEmptyBorder(0, 2, 2, 4));
 
             // Create status bar
             JPanel statusBar = new JPanel(new BorderLayout());
             labelStatus = new JLabel("Connecting...");
             statusBar.add(labelStatus, BorderLayout.LINE_START);
+            statusBar.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 
-            //Create main panel
-            JPanel mainPanel = new JPanel(new BorderLayout());
+            //Create chat panel
             chatPanel = new ChatPanel(uiRoot);
+            chatPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+            // Add components to frame
+            JPanel mainPanel = new JPanel(new BorderLayout());
             mainPanel.add(sideBar, BorderLayout.LINE_START);
             mainPanel.add(chatPanel, BorderLayout.CENTER);
             mainPanel.add(statusBar, BorderLayout.SOUTH);
