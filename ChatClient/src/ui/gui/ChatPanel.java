@@ -55,7 +55,7 @@ public class ChatPanel extends JPanel {
       if (chatCard == null) return;
       remove(chatCard);
       cardLayout.show(this, BLANK_CARD_NAME);
-      displayedConversation = conversation;
+      displayedConversation = null;
       parentUI.repaint();
    }
 

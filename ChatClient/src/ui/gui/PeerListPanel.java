@@ -1,6 +1,8 @@
 package com.tanndev.subwave.client.ui.gui;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +15,7 @@ public class PeerListPanel extends JPanel {
    private SubwaveClientGUI parentUI;
    private JList<PeerElement> peerList;
    private DefaultListModel<PeerElement> peerListModel;
+   private JButton inviteButton;
 
 
    public PeerListPanel(SubwaveClientGUI parentUI) {
@@ -24,11 +27,8 @@ public class PeerListPanel extends JPanel {
       // Create label
       JLabel labelClients = new JLabel("Other users on this server:");
 
-      // Create the client list
-      peerListModel = new DefaultListModel<PeerElement>();
-      peerList = new JList<PeerElement>(peerListModel);
-      JScrollPane scrollPane = new JScrollPane(peerList);
-      scrollPane.setPreferredSize(new Dimension(200, 150));
+      // Create the client list;
+      JScrollPane scrollPane = createPeerList();
 
       // Create button panel
       JPanel buttonPanel = createButtonPanel();
@@ -39,6 +39,19 @@ public class PeerListPanel extends JPanel {
       add(buttonPanel, BorderLayout.SOUTH);
    }
 
+   private JScrollPane createPeerList() {
+      peerListModel = new DefaultListModel<PeerElement>();
+      peerList = new JList<PeerElement>(peerListModel);
+      JScrollPane scrollPane = new JScrollPane(peerList);
+      scrollPane.setPreferredSize(new Dimension(200, 150));
+
+      peerList.addListSelectionListener(new ListSelectionListener() {
+         @Override
+         public void valueChanged(ListSelectionEvent e) {updateInviteButtonEnabled(); }
+      });
+      return scrollPane;
+   }
+
    private JPanel createButtonPanel() {
       JPanel buttonPanel = new JPanel(new GridLayout(0, 1));
       buttonPanel.add(createConversationInviteButton());
@@ -46,14 +59,15 @@ public class PeerListPanel extends JPanel {
    }
 
    private JButton createConversationInviteButton() {
-      JButton button = new JButton("Invite to Conversation");
-      button.addActionListener(new ActionListener() {
+      inviteButton = new JButton("Invite to Conversation");
+      inviteButton.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
             inviteSelectedToConversation();
          }
       });
-      return button;
+      inviteButton.setEnabled(false);
+      return inviteButton;
    }
 
    private void inviteSelectedToConversation() {
@@ -72,6 +86,14 @@ public class PeerListPanel extends JPanel {
    protected void removePeer(PeerElement peer) {
       if (peerListModel == null || peer == null) return;
       peerListModel.removeElement(peer);
+      peerList.clearSelection();
+
       parentUI.repaint();
+   }
+
+   public void updateInviteButtonEnabled() {
+      boolean peerSelected = peerList.getSelectedIndex() != -1;
+      boolean conversationSelected = parentUI.isDisplayingConversation();
+      inviteButton.setEnabled(peerSelected && conversationSelected);
    }
 }
