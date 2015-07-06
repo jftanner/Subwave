@@ -88,7 +88,7 @@ public class SubwaveClientGUI extends ClientUIFramework {
       if (connectionResponse.length() > 0) {
          String[] splitArray = connectionResponse.split(":");
          serverAddress = splitArray[0];
-         if (splitArray.length > 0) port = Integer.parseInt(splitArray[1]);
+         if (splitArray.length > 1) port = Integer.parseInt(splitArray[1]);
          // TODO Parse this more carefully.
       }
 
