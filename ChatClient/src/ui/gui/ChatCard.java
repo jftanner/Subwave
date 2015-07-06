@@ -29,6 +29,7 @@ public class ChatCard extends JPanel {
       // Create label
       String conversationName = SubwaveClient.getName(connectionID, conversationID);
       JLabel labelConversations = new JLabel("Current Conversation: " + conversationName);
+      labelConversations.setHorizontalAlignment(SwingConstants.CENTER);
 
       // Create the conversation window
       outputArea = new JTextArea("Connected to the conversation \"" + conversationName + "\".");
