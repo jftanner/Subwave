@@ -84,7 +84,8 @@ public class SubwaveClientGUI extends ClientUIFramework {
             null,
             null,
             Defaults.DEFAULT_SERVER_ADDRESS + ":" + Defaults.DEFAULT_SERVER_PORT);
-      if (connectionResponse != null && connectionResponse.length() > 0) {
+      if (connectionResponse == null) System.exit(0);
+      if (connectionResponse.length() > 0) {
          String[] splitArray = connectionResponse.split(":");
          serverAddress = splitArray[0];
          port = Integer.parseInt(splitArray[1]);
@@ -99,7 +100,8 @@ public class SubwaveClientGUI extends ClientUIFramework {
             null,
             null,
             Defaults.DEFAULT_NICKNAME);
-      if (connectionResponse != null && connectionResponse.length() > 0) {
+      if (connectionResponse == null) System.exit(0);
+      if (connectionResponse.length() > 0) {
          friendlyName = connectionResponse;
       }
 
