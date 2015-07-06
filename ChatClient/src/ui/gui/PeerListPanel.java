@@ -35,7 +35,7 @@ public class PeerListPanel extends JPanel {
       add(scrollPane, BorderLayout.CENTER);
       add(buttonPanel, BorderLayout.SOUTH);
       setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Users Connected:"),
+            BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Users Online:"),
             BorderFactory.createEmptyBorder(1, 1, 1, 1)));
    }
 

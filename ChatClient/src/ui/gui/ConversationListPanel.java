@@ -35,7 +35,7 @@ public class ConversationListPanel extends JPanel {
       add(scrollPane, BorderLayout.CENTER);
       add(buttonPanel, BorderLayout.SOUTH);
       setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Conversations joined:"),
+            BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Conversations Joined:"),
             BorderFactory.createEmptyBorder(1, 1, 1, 1)));
    }
 
