@@ -21,6 +21,7 @@ public class SubwaveClientGUI extends ClientUIFramework {
    private ConversationListPanel conversationListPanel;
    private PeerListPanel peerListPanel;
    private ChatPanel chatPanel;
+   private JLabel labelStatus;
    private ConcurrentHashMap<Integer, PeerElement> peerMap = new ConcurrentHashMap<Integer, PeerElement>();
    private ConcurrentHashMap<Integer, ConversationElement> conversationMap = new ConcurrentHashMap<Integer, ConversationElement>();
 
@@ -43,11 +44,17 @@ public class SubwaveClientGUI extends ClientUIFramework {
             sideBar.add(conversationListPanel);
             sideBar.add(peerListPanel);
 
+            // Create status bar
+            JPanel statusBar = new JPanel(new BorderLayout());
+            labelStatus = new JLabel("Connecting...");
+            statusBar.add(labelStatus, BorderLayout.LINE_START);
+
             //Create main panel
             JPanel mainPanel = new JPanel(new BorderLayout());
             chatPanel = new ChatPanel(uiRoot);
             mainPanel.add(sideBar, BorderLayout.LINE_START);
             mainPanel.add(chatPanel, BorderLayout.CENTER);
+            mainPanel.add(statusBar, BorderLayout.SOUTH);
 
             // Put the content pane in the frame
             parentFrame.add(mainPanel);
@@ -113,6 +120,7 @@ public class SubwaveClientGUI extends ClientUIFramework {
          System.exit(0);
       }
       myClientID = SubwaveClient.getMyClientID(serverConnectionID);
+      labelStatus.setText("Connected to Subwave Server at " + serverAddress + ":" + port);
    }
 
    protected void repaint() {
