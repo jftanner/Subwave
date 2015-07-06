@@ -29,7 +29,10 @@ This is an extremely early version and development is ongoing.
 ## Client instructions
 - Download SubwaveClient.jar.
 - Go to the download location and double click the file. (Or, using a command line, type "java -jar SubwaveClient.jar")
-- Enter the server address and port of the remote server, or press enter to use defaults. Use the form "address:port".
+- Enter the server address and port of the remote server, or press enter to use defaults.
+ - You must enter a complete port and address string in the form of "address:port".
+ - The proper address and port is displayed near the top of the server output.
+ - If the server is on the same machine as the client, the default setting "localhost:4444" will usually work.
 - Enter the nickname you'd like to use.
 - To create a new conversation:
  - Click the "New Conversation" button.
@@ -44,13 +47,13 @@ This is an extremely early version and development is ongoing.
  - Conversations with new messages will be highlighted in bold.
 
 ## Current version limitations
-As of version 0.0.4 there remain a number of limitations and issues:
-- A second server throws an exception if launched with the same port (Issue #34)
-- Various TUI features are unimplemented or were broken with the GUI upgrade.
- - Some of the features will be implemented or repaired in a future release.
+As of version 0.0.5 there remain a few limitations and issues:
+- Various text-user-interface (TUI) features are unimplemented or were broken with the GUI upgrade.
+ - Some features will be implemented or repaired in a future release.
+ - Some features will not be available in the TUI.
 - openJDK 6 is not compatible with the client GUI
- - openJDK 6 support may be restored during development.
- - Oracle JDK 7 and Oracle JDK 8 are both supported.
+ - openJDK 6 does not support parametrized types with JList objects.
+ - Oracle JDK 7 and Oracle JDK 8 are both still supported.
 
 See the issue tracker at [Waffle IO](https://waffle.io/tanndev/Subwave) for current progress information.
 
