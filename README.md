@@ -45,6 +45,10 @@ There are two ways to download and deploy the application:
 - To change conversations:
  - Click the desired conversation.
  - Conversations with new messages will be highlighted in bold.
+- To talk in a conversation:
+ - Type into the box below the conversation window.
+ - Press enter, or click "send", to send the message.
+ - To emote, start your message with "\me". (Ex: "\me waves hello.")
 
 ## Current version limitations
 As of version 0.0.5 there remain a few limitations and issues:
