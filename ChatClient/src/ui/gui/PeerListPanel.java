@@ -24,19 +24,17 @@ public class PeerListPanel extends JPanel {
       // Save parent
       this.parentUI = parentUI;
 
-      // Create label
-      JLabel labelClients = new JLabel("Other users on this server:");
-
       // Create the client list;
       JScrollPane scrollPane = createPeerList();
+      scrollPane.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
       // Create button panel
       JPanel buttonPanel = createButtonPanel();
 
       //Add Components to this panel.
-      add(labelClients, BorderLayout.PAGE_START);
       add(scrollPane, BorderLayout.CENTER);
       add(buttonPanel, BorderLayout.SOUTH);
+      setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Other users on this server"));
    }
 
    private JScrollPane createPeerList() {
@@ -53,8 +51,11 @@ public class PeerListPanel extends JPanel {
    }
 
    private JPanel createButtonPanel() {
-      JPanel buttonPanel = new JPanel(new GridLayout(0, 1));
+      GridLayout layout = new GridLayout(0, 1);
+      layout.setVgap(2);
+      JPanel buttonPanel = new JPanel(layout);
       buttonPanel.add(createConversationInviteButton());
+      buttonPanel.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 2));
       return buttonPanel;
    }
 
@@ -67,6 +68,7 @@ public class PeerListPanel extends JPanel {
          }
       });
       inviteButton.setEnabled(false);
+      inviteButton.setBorder(BorderFactory.createLineBorder(Color.GRAY));
       return inviteButton;
    }
 

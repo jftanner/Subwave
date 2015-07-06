@@ -23,19 +23,17 @@ public class ConversationListPanel extends JPanel {
       // Save parent
       this.parentUI = parentUI;
 
-      // Create label
-      JLabel labelConversations = new JLabel("Conversations you've joined:");
-
       // Create the conversation list
       JScrollPane scrollPane = createConversationList();
+      scrollPane.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
       // Create button panel
       JPanel buttonPanel = createButtonPanel();
 
       //Add Components to this panel.
-      add(labelConversations, BorderLayout.PAGE_START);
       add(scrollPane, BorderLayout.CENTER);
       add(buttonPanel, BorderLayout.SOUTH);
+      setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Conversations joined:"));
    }
 
    private JScrollPane createConversationList() {
@@ -57,9 +55,12 @@ public class ConversationListPanel extends JPanel {
    }
 
    private JPanel createButtonPanel() {
-      JPanel buttonPanel = new JPanel(new GridLayout(0, 1));
+      GridLayout layout = new GridLayout(0, 1);
+      layout.setVgap(2);
+      JPanel buttonPanel = new JPanel(layout);
       buttonPanel.add(createConversationNewButton());
       buttonPanel.add(createConversationLeaveButton());
+      buttonPanel.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 2));
       return buttonPanel;
    }
 
@@ -71,6 +72,7 @@ public class ConversationListPanel extends JPanel {
             parentUI.commandConversationNew();
          }
       });
+      button.setBorder(BorderFactory.createLineBorder(Color.GRAY));
       return button;
    }
 
@@ -82,6 +84,7 @@ public class ConversationListPanel extends JPanel {
             leaveSelectedConversation();
          }
       });
+      button.setBorder(BorderFactory.createLineBorder(Color.GRAY));
       return button;
    }
 
