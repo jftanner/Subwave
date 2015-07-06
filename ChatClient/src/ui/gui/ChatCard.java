@@ -33,12 +33,15 @@ public class ChatCard extends JPanel {
 
       // Create the conversation window
       outputArea = new JTextArea("Connected to the conversation \"" + conversationName + "\".");
+      outputArea.setBorder(BorderFactory.createLineBorder(Color.GRAY));
       outputArea.setEditable(false);
       JScrollPane scrollPane = new JScrollPane(outputArea);
       scrollPane.setPreferredSize(new Dimension(500, 300));
+      scrollPane.setBorder(BorderFactory.createEmptyBorder(2, 2, 1, 2));
 
       // Create the input panel.
       JPanel inputPanel = createInputPanel();
+      inputPanel.setBorder(BorderFactory.createEmptyBorder(1, 2, 2, 2));
 
       // Add components to this panel.
       add(labelConversations, BorderLayout.NORTH);
@@ -61,6 +64,7 @@ public class ChatCard extends JPanel {
          @Override
          public void actionPerformed(ActionEvent e) { sendMessage(); }
       });
+      inputField.setBorder(BorderFactory.createLineBorder(Color.GRAY));
       return inputField;
    }
 
@@ -70,6 +74,7 @@ public class ChatCard extends JPanel {
          @Override
          public void actionPerformed(ActionEvent e) { sendMessage(); }
       });
+      button.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
       return button;
    }
 
